@@ -1,0 +1,27 @@
+{
+  "name": "drawit",
+  "version": "1.0.0",
+  "description": "Draw It! is a multiplayer online game where you try to guess what your friends are drawing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustDrawIt/drawit.git"
+  },
+  "keywords": [],
+  "author": "JustDrawIt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JustDrawIt/drawit/issues"
+  },
+  "homepage": "https://github.com/JustDrawIt/drawit#readme",
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.8.2"
+  }
+}
