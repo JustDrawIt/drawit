@@ -4,7 +4,8 @@
   "description": "Draw It! is a multiplayer online game where you try to guess what your friends are drawing.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,8 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.8.2"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   }
 }
