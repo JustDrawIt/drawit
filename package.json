@@ -8,7 +8,8 @@
     "build": "webpack --mode production ./client/index.jsx --output ./public/main.min.js",
     "dev:client": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output ./public/main.js",
     "dev:server": "nodemon server/",
-    "test:client": "jest"
+    "test:client": "jest",
+    "test:server": "mocha server/test"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
@@ -29,6 +30,7 @@
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "chai": "^4.1.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
@@ -39,7 +41,9 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.1.0",
+    "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
+    "request": "^2.87.0",
     "webpack": "^4.10.2",
     "webpack-cli": "^2.1.4",
     "webpack-dev-server": "^3.1.4"
