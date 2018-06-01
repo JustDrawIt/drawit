@@ -7,4 +7,12 @@ describe('<App />', () => {
     const wrapper = shallow(<App />);
     expect(wrapper).toBeDefined();
   });
+
+  test('Has redux store', () => {
+    const wrapper = shallow(<App />);
+    const store = wrapper.prop('store');
+
+    expect(store).toBeDefined();
+    expect(store.dispatch).toBeInstanceOf(Function);
+  });
 });
