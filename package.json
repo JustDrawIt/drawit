@@ -2,14 +2,15 @@
   "name": "drawit",
   "version": "1.0.0",
   "description": "Draw It! is a multiplayer online game where you try to guess what your friends are drawing.",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
     "build": "webpack --mode production ./client/index.jsx --output ./public/main.min.js",
     "dev:client": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output ./public/main.js",
     "dev:server": "nodemon server/",
     "test:client": "jest",
-    "test:server": "mocha server/test"
+    "test:server": "mocha server/test",
+    "deploy": "npm install && npm run build && npm start"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
