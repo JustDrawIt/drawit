@@ -52,6 +52,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-plugin-emotion": "^9.1.2",
+    "body-parser": "^1.18.3",
     "connect-history-api-fallback": "^1.5.0",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
