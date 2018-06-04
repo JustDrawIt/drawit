@@ -15,7 +15,7 @@ const ScreenCreateGame = ({ history }) => (
   <div>
     <h2><b>Create Game</b></h2>
     <Container>
-      <CreateGameForm />
+      <CreateGameForm history={history} />
     </Container>
   </div>
 );

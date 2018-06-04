@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import axios from 'axios';
-// import ReactRouterPropTypes from 'react-router-prop-types';
+import ReactRouterPropTypes from 'react-router-prop-types';
 import Button from '../Util/Button';
 import Input from '../Util/Input';
 
@@ -37,7 +37,7 @@ class CreateGameForm extends PureComponent {
     const { maxPlayers, maxRounds, timePerRound } = this.state;
     const newGame = { maxPlayers, maxRounds, timePerRound };
     axios.post('/games', newGame)
-      .then(({ data }) => { console.log(data); })
+      .then(({ data }) => this.props.history.push(`/games/${data.joinCode}`))
       .catch((err) => { console.log(`${err} ERROR`); });
   }
 
@@ -61,8 +61,8 @@ class CreateGameForm extends PureComponent {
   }
 }
 
-// CreateGameForm.propTypes = {
-//   history: ReactRouterPropTypes.history.isRequired,
-// };
+CreateGameForm.propTypes = {
+  history: ReactRouterPropTypes.history.isRequired,
+};
 
 export default CreateGameForm;
