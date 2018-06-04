@@ -5,17 +5,25 @@ const db = require('../database/database');
 
 const games = express.Router();
 
-games.post('/', function(req, res){
-  // start game with options from the database
-  // respond with the join code
-  // const roundTime = req.body.timePerRound;
-  // const maxPlayers = req.body.maxPlayers;
-  // const maxRounds = req.body.maxRounds;
-  const newGame = new db.Game
+games.post('/', (req, res) => {
 
+  const { timePerRound, maxPlayers, maxRounds } = req.body;
+  const joinCode = shortid.generate();
+  const newGame = new db.Game({
+    timePerRound,
+    maxRounds,
+    maxPlayers,
+    joinCode,
+  });
 
-
-  res.send(shortid.generate());
-})
+  newGame.save((err) => {
+    if (err) {
+      console.error(err);
+      res.send({ error: 'something went wrong saving the game to the database'});
+    }
+    //save
+    res.send({ joinCode });
+  });
+});
 
 module.exports = games;
