@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'react-emotion'
+import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import JoinGame from '../components/Login/Join';
 import CreateGame from '../components/Login/CreateGame';

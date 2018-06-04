@@ -37,25 +37,24 @@ class CreateGameForm extends PureComponent {
     const { maxPlayers, maxRounds, timePerRound } = this.state;
     const newGame = { maxPlayers, maxRounds, timePerRound };
     axios.post('/games', newGame)
-      .then((success) => { console.log(`POST SUCCESS ${success}`); })
-      .catch((err) => { console.log(err); });
+      .then(({ data }) => { console.log(data); })
+      .catch((err) => { console.log(`${err} ERROR`); });
   }
+
 
   render() {
     return (
       <div>
         Max Rounds:
-        <br />
         <Input onChange={this.setMaxRounds} placeholder="5" type="number" />
+        <br />
         Max Players:
-        <br />
         <Input onChange={this.setMaxPlayers} placeholder="5" type="number" />
-        Time Per Round:
         <br />
+        Time Per Round:
         <Input onChange={this.setTimePerRound} placeholder="2" type="number" />
-
+        <br />
         <Button onClick={this.createGame}>Go!</Button>
-        <span>or</span>
         {this.state.error ? <p>{this.state.error}</p> : null}
       </div>
     );
