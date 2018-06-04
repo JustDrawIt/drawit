@@ -2,14 +2,15 @@
   "name": "drawit",
   "version": "1.0.0",
   "description": "Draw It! is a multiplayer online game where you try to guess what your friends are drawing.",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
     "build": "webpack --mode production ./client/index.jsx --output ./public/main.min.js",
     "dev:client": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output ./public/main.js",
     "dev:server": "nodemon server/",
     "test:client": "jest",
-    "test:server": "mocha server/test"
+    "test:server": "mocha server/test",
+    "deploy": "npm install && npm run build && npm start"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
@@ -49,15 +50,25 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "babel-plugin-emotion": "^9.1.2",
+    "body-parser": "^1.18.3",
+    "connect-history-api-fallback": "^1.5.0",
+    "cors": "^2.8.4",
     "dotenv": "^6.0.0",
+    "emotion": "^9.1.3",
     "express": "^4.16.3",
     "mongoose": "^5.1.3",
+    "morgan": "^1.9.0",
+    "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-emotion": "^9.1.3",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
+    "react-router-prop-types": "^1.0.3",
     "redux": "^4.0.0",
-    "shortid": "^2.2.8",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1"
   }
 }
