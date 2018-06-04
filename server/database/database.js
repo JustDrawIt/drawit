@@ -9,10 +9,14 @@ db.once('open', () => console.log('connected to db'));
 
 const gameSchema = mongoose.Schema({
   joinCode: Number,
-  players: String,
+  timePerRound: Number,
+  maxPlayers: Number,
+  maxRounds: Number,
+  players: [String],
 });
 
 const Game = mongoose.model('Game', gameSchema);
+
 
 module.exports.Game = Game;
 

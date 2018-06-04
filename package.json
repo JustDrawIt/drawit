@@ -57,6 +57,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "redux": "^4.0.0",
+    "shortid": "^2.2.8",
     "socket.io": "^2.1.1"
   }
 }
