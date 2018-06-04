@@ -5,4 +5,5 @@ module.exports = {
   PORT: process.env.PORT || 8080,
   PATH: path.resolve(__dirname, '../public'),
   MONGODB: process.env.MONGODB,
+  IS_DEV: process.env.NODE_ENV !== 'production',
 };
