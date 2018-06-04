@@ -1,5 +1,14 @@
 import React, { PureComponent } from 'react';
+import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import Button from '../Util/Button';
+import Input from '../Util/Input';
+
+const Container = styled('div')`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+`;
 
 class JoinGame extends PureComponent {
   constructor(props) {
@@ -29,11 +38,12 @@ class JoinGame extends PureComponent {
 
   render() {
     return (
-      <div>
-        <input onChange={this.setJoinCode} placeholder="Join code" type="text" />
-        <button onClick={this.join}>Play!</button>
+      <Container>
+        <Input onChange={this.setJoinCode} placeholder="Join code" type="text" />
+        <Button onClick={this.join}>Play!</Button>
+        <span>or</span>
         {this.state.error ? <p>{this.state.error}</p> : null}
-      </div>
+      </Container>
     );
   }
 }
