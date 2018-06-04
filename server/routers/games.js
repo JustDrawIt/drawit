@@ -18,11 +18,10 @@ games.post('/', (req, res) => {
 
   newGame.save((err) => {
     if (err) {
-      console.error(err);
       res.send({ error: 'something went wrong saving the game to the database'});
+    } else {
+      res.send({ joinCode });
     }
-    //save
-    res.send({ joinCode });
   });
 });
 
