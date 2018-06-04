@@ -1,9 +1,15 @@
 const express = require('express');
-const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
 
-const server = express();
-const PUBLIC = path.resolve(__dirname, '../public');
+const setupRouters = require('./routers');
+const setupListeners = require('./listeners');
 
-server.use(express.static(PUBLIC));
+const app = express();
+const server = http.Server(app);
+const io = socketio(server);
 
-module.exports = server;
+setupRouters(app);
+setupListeners(io);
+
+module.exports.server = server;
