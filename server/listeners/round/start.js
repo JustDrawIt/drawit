@@ -1,5 +1,5 @@
 const randomWord = require('random-word');
-const { findGameWithJoinCode } = require('../database/helpers');
+const { findGameWithJoinCode } = require('../../database/helpers');
 
 module.exports = ({ data, socket, io }) => {
   const { joinCode } = data;
