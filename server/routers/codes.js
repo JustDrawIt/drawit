@@ -4,14 +4,10 @@ const { findGameWithJoinCode } = require('../database/helpers');
 const codes = express.Router();
 
 codes.post('/', (req, res) => {
-  findGameWithJoinCode(req.body.joinCode)
-    .then((found) => {
-      if (found) {
-        res.status(200).send({ gameFound: true });
-      } else {
-        res.status(404).send({ gameFound: false });
-      }
-    })
-    .catch(err => res.end({ error: err, message: 'DATABASE ERROR' }));
+  const { joinCode } = req.body;
+  findGameWithJoinCode(joinCode)
+    .then(game => res.send({ valid: !!game, error: null }))
+    .catch(error => res.statusCode(500).end({ error }));
 });
+
 module.exports = codes;
