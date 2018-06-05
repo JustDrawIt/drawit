@@ -5,7 +5,9 @@ const findGameWithJoinCode = joinCode => Game.findOne({ joinCode })
   .catch(() => Promise.reject(`Something went wrong when finding a game with the join code: ${joinCode}`));
 
 const addPlayerToGame = (joinCode, player) => findGameWithJoinCode(joinCode).then((game) => {
-  if (game.players.length >= game.maxPlayers) {
+  if (game.players.includes(player)) {
+    return Promise.reject('Nickname is already used.');
+  } else if (game.players.length >= game.maxPlayers) {
     return Promise.reject('The maximum amount of players has been reached.');
   }
   game.players.push(player);
