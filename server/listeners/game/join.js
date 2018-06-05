@@ -1,4 +1,4 @@
-const { addPlayerToGame } = require('../database/helpers');
+const { addPlayerToGame } = require('../../database/helpers');
 
 module.exports = ({ data, socket, io }) => {
   const { nickname, joinCode, isAdmin } = data;
