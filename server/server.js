@@ -6,7 +6,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const history = require('connect-history-api-fallback');
 
-
 const setupRouters = require('./routers');
 const setupListeners = require('./listeners');
 const { PUBLIC_PATH, MORGAN_OPTS, HISTORY_OPTS } = require('./config');
