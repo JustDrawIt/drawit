@@ -4,9 +4,9 @@
 
 ## Team
 
-  - __Product Owner__: Paul Marinaro
+  - __Product Owner__: Jelani Hankins
   - __Scrum Master__: Cain Watson
-  - __Development Team Members__: Paul Marinaro, Cain Watson, Eric O'Neal
+  - __Development Team Members__: Jelani Hankins, Cain Watson, Eric O'Neal
 
 ## Table of Contents
 
@@ -42,9 +42,23 @@ From within the root directory:
 npm install
 ```
 
+The server uses __dotenv__, a npm package for separating environment variables into a non-commited file. Inside the root of this project create a __.env__ file and place any envs necessary to the projects inside. For example:
+
+```sh
+echo MONGODB=your_mongodb_uri_here > .env
+```
+
+### NPM Scripts
+```sh
+npm run dev:server # start server with nodemon
+npm run dev:client # start client webpack server
+npm run test:server # run server tests
+npm run test:client # run client tests
+```
+
 ### Roadmap
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
+View the project roadmap [here](https://github.com/JustDrawIt/drawit/issues)
 
 ## Contributing
 
