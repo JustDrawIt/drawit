@@ -7,7 +7,7 @@ codes.post('/', (req, res) => {
   const { joinCode } = req.body;
   findGameWithJoinCode(joinCode)
     .then(game => res.send({ valid: !!game, error: null }))
-    .catch(error => res.statusCode(500).end({ error }));
+    .catch(error => res.status(500).send({ error }));
 });
 
 module.exports = codes;
