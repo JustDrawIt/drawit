@@ -11,7 +11,13 @@ module.exports = ({ data, socket, io }) => {
   } else if (!socket.isAdmin) {
     socket.emit('round:not_started', { error: 'Only the admin can start the game.' });
   } else {
-    const hasntDrawn = room.filter(socket => !socket.hasDrawn);
+    let hasntDrawn = room.filter(socket => !socket.hasDrawn);
+
+    if (hasntDrawn.length <= 0) {
+      room.map(socket => socket.hasDrawn = false);
+      hasntDrawn = room;
+    }
+
     const randomPlayerIndex = Math.floor(Math.random() * hasntDrawn.length);
     const randomPlayer = room[randomPlayerIndex];
     const word = randomWord();
