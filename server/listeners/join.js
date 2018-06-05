@@ -1,20 +1,16 @@
-const { findGameWithJoinCode } = require('../database/helpers');
+const { addPlayerToGame } = require('../database/helpers');
 
 module.exports = ({ data, socket, io }) => {
   const { nickname, joinCode, isAdmin } = data;
 
-  findGameWithJoinCode(joinCode)
-    .then((game) => {
-      if (game) {
-        socket.nickname = nickname;
-        socket.isAdmin = isAdmin;
-        socket.hasDrawn = false;
+  addPlayerToGame(joinCode, nickname)
+    .then((savedGame) => {
+      socket.nickname = nickname;
+      socket.isAdmin = isAdmin;
+      socket.hasDrawn = false;
 
-        socket.join(joinCode);
-        io.in(joinCode).emit('joined', `${nickname} just joined!`);
-      } else {
-        socket.emit('not_joined', { error: `There are no games with join code: ${joinCode}` });
-      }
+      socket.join(joinCode);
+      io.in(joinCode).emit('joined', `${nickname} just joined!`);
     })
-    .catch(() => socket.emit('not_joined', { error: `Something went wrong when querying for game with join code: ${joinCode}` }));
+    .catch(error => socket.emit('not_joined', { error }));
 };
