@@ -49,7 +49,7 @@ class NicknameForm extends PureComponent {
           <Button onClick={this.joinGame}>Join!</Button>
           {this.state.error ? <p>{this.state.error}</p> : null}
         </Container>
-        <ChatBox />
+        <ChatBox nickname={this.state.nickname} />
       </div>
     );
   }
