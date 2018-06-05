@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import uuidv4 from 'uuid/v4';
 import styled from 'react-emotion';
 import socket from '../../sockets';
 import Button from '../Util/Button';
@@ -45,12 +46,13 @@ class ChatBox extends PureComponent {
 
   sendMessage() {
     const { message } = this.state;
+    const { nickname, joinCode } = this.props;
     // emit message, need to pass join code
-    if (!this.props.nickname) {
+    if (!nickname) {
       this.setState({ error: 'No Nickname' });
     } else {
       this.setState({ error: '' });
-      socket.emit('round:guess', { message, nickname: this.props.nickname, joinCode: this.props.joinCode });
+      socket.emit('round:guess', { message, nickname, joinCode });
     }
   }
 
@@ -60,7 +62,7 @@ class ChatBox extends PureComponent {
       <ChatContainer>
         <ChatWindow>
           {this.state.messages.map((message => (
-            <ChatMessage key={Math.random()} nickname={message.nickname} message={message.message} > </ChatMessage>))) }
+            <ChatMessage key={uuidv4()} nickname={message.nickname} message={message.message} > </ChatMessage>))) }
         </ChatWindow>
         <Input onChange={this.setMessage} placeholder="Type a message!" type="text" />
         <Button onClick={this.sendMessage}>Send!</Button>
