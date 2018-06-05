@@ -13,6 +13,7 @@ const gameSchema = mongoose.Schema({
   maxPlayers: Number,
   maxRounds: Number,
   players: [String],
+  word: String,
 });
 
 const Game = mongoose.model('Game', gameSchema);
