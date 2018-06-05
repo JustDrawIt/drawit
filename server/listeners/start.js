@@ -28,15 +28,18 @@ module.exports = ({ data, socket, io }) => {
 
         io.in(joinCode).emit('round:started');
         setTimeout(() => {
-          if (game.roundsPlayed + 1 > game.maxRounds) {
-            // emit game scores
-            const scores = {};
-            io.in(joinCode).emit('game:end', { scores });
-          } else {
-            // emit round & game scores
-            const scores = {};
-            io.in(joinCode).emit('round:end', { scores });
-          }
+          findGameWithJoinCode(joinCode)
+            .then((updatedGame) => {
+              const { roundsPlayed, maxRounds, players } = updatedGame;
+              if (roundsPlayed > maxRounds) {
+                const scores = players;
+                io.in(joinCode).emit('game:end', { scores });
+              } else {
+                const scores = players;
+                io.in(joinCode).emit('round:end', { scores });
+              }
+            })
+            .catch(error => io.in(joinCode).emit('round:end', { error }));
         }, game.timePerRound);
       })
       .catch(error => socket.emit('round:not_started', { error }));
