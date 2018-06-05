@@ -45,7 +45,12 @@ class ChatBox extends PureComponent {
   sendMessage() {
     const { message } = this.state;
     // emit message, need to pass join code
-    socket.emit('chat', { message, nickname: this.props.nickname });
+    if (!this.props.nickname) {
+      this.setState({ error: 'No Nickname' });
+    } else {
+      this.setState({ error: '' });
+      socket.emit('chat', { message, nickname: this.props.nickname, });
+    }
   }
 
   // nickname in props
