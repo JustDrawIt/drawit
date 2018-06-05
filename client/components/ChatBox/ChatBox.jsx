@@ -37,7 +37,6 @@ class ChatBox extends PureComponent {
       });
     });
     socket.on('game:joined', (data) => {
-      console.log(data, 'GAME JOINED');
       this.setState({
         messages: [{ nickname: null, message: `${data.nickname} joined the game!` }, ...this.state.messages],
       });
