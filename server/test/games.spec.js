@@ -15,7 +15,7 @@ describe('/games router', () => {
     request.post(API, { json }, async (_, response) => {
       expect(response.statusCode).to.equal(200);
       expect(response.body.error).to.be.null;
-      expect(response.body.game).to.have.keys(['_id', '__v', 'timePerRound', 'maxPlayers', 'maxRounds', 'players', 'joinCode']);
+      expect(response.body.game).to.have.keys(['_id', '__v', 'roundsPlayed', 'timePerRound', 'maxPlayers', 'maxRounds', 'players', 'joinCode']);
       expect(response.body.game.timePerRound).to.equal(timePerRound);
       expect(response.body.game.maxPlayers).to.equal(maxPlayers);
       expect(response.body.game.maxRounds).to.equal(maxRounds);

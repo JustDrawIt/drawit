@@ -41,15 +41,18 @@ describe('database helpers', () => {
       it('adds a player to a games players', async () => {
         const newPlayer = 'Bob';
         const savedGame = await addPlayerToGame(joinCode, newPlayer);
-        expect(savedGame.players).to.contain(newPlayer);
+
+        expect(savedGame.players[0]).to.exist;
+        expect(savedGame.players[0].nickname).to.equal(newPlayer);
+        expect(savedGame.players[0].score).to.equal(0);
       });
 
       it('rejects when the maximum amount of players has been reached', async () => {
         await Promise.all(new Array(newGame.maxPlayers)
           .fill(undefined)
-          .map(() => addPlayerToGame(joinCode)));
+          .map((_, i) => addPlayerToGame(joinCode, `Player-${i}`)));
 
-        addPlayerToGame(joinCode).catch((error) => {
+        addPlayerToGame(joinCode, 'Player').catch((error) => {
           expect(error).to.exist;
           expect(error).to.be.a('string');
         });
