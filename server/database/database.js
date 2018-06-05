@@ -4,15 +4,38 @@ const { MONGODB } = require('../config');
 mongoose.connect(MONGODB);
 
 const db = mongoose.connection;
-db.on('error', () => console.error('connection error'));
-db.once('open', () => console.log('connected to db'));
+db.on('error', () => console.error('The connection to database could not be established.'));
+db.once('open', () => console.log('Connection to database established.'));
 
 const gameSchema = mongoose.Schema({
   joinCode: String,
-  timePerRound: Number,
-  maxPlayers: Number,
-  maxRounds: Number,
-  players: [String],
+  players: [{
+    nickname: {
+      type: String,
+      required: true,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+  }],
+  word: String,
+  roundsPlayed: {
+    type: Number,
+    default: 0,
+  },
+  timePerRound: {
+    type: Number,
+    default: 10000,
+  },
+  maxPlayers: {
+    type: Number,
+    default: 4,
+  },
+  maxRounds: {
+    type: Number,
+    default: 6,
+  },
 });
 
 const Game = mongoose.model('Game', gameSchema);
