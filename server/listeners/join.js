@@ -10,7 +10,7 @@ module.exports = ({ data, socket, io }) => {
       socket.hasDrawn = false;
 
       socket.join(joinCode);
-      io.in(joinCode).emit('joined', `${nickname} just joined!`);
+      io.in(joinCode).emit('joined', { nickname });
     })
     .catch(error => socket.emit('not_joined', { error }));
 };
