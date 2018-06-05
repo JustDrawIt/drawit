@@ -1,4 +1,4 @@
-const { findGameWithJoinCode } = require('../database/helpers');
+const { findGameWithJoinCode } = require('../../database/helpers');
 
 module.exports = async ({ data, socket, io }) => {
   try {
