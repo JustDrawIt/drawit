@@ -11,7 +11,7 @@ const ChatMessageStyle = styled('div') `
 
 const ChatMessage = props => (
   <ChatMessageStyle>
-      {props.nickname}: {props.message}
+    {props.nickname ? `${props.nickname}: ${props.message}` : props.message}
   </ChatMessageStyle>
 );
 
