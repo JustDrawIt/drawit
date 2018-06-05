@@ -3,6 +3,7 @@ import styled from 'react-emotion';
 import Button from '../Util/Button';
 import Input from '../Util/Input';
 import socket from '../../sockets';
+import ChatBox from '../ChatBox/ChatBox';
 
 const Container = styled('div')`
   display: flex;
@@ -41,12 +42,15 @@ class NicknameForm extends PureComponent {
 
   render() {
     return (
-      <Container>
-        <h2><b>Enter A Nickname</b></h2>
-        <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
-        <Button onClick={this.joinGame}>Join!</Button>
-        {this.state.error ? <p>{this.state.error}</p> : null}
-      </Container>
+      <div>
+        <Container>
+          <h2><b>Enter A Nickname</b></h2>
+          <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
+          <Button onClick={this.joinGame}>Join!</Button>
+          {this.state.error ? <p>{this.state.error}</p> : null}
+        </Container>
+        <ChatBox />
+      </div>
     );
   }
 }
