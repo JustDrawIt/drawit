@@ -6,3 +6,5 @@ const socket = io(PORT);
 socket.on('connect', () => {
   console.log('Client connected!');
 });
+
+export default socket;
