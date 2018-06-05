@@ -18,5 +18,4 @@ const ScreenGame = ({ match }) => (
   </Container>
 );
 
-
 export default ScreenGame;
