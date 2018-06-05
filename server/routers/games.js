@@ -1,28 +1,20 @@
 const express = require('express');
 const shortid = require('shortid');
-const helpers = require('../database/helpers');
-const db = require('../database/database');
+const { createGame } = require('../database/helpers');
 
 const games = express.Router();
 
 games.post('/', (req, res) => {
-
   const { timePerRound, maxPlayers, maxRounds } = req.body;
   const joinCode = shortid.generate();
-  const newGame = new db.Game({
+
+  createGame({
     timePerRound,
     maxRounds,
     maxPlayers,
     joinCode,
-  });
-
-  newGame.save((err) => {
-    if (err) {
-      res.send({ error: 'something went wrong saving the game to the database'});
-    } else {
-      res.send({ joinCode });
-    }
-  });
+  }).then(game => res.send({ game, error: null }))
+    .catch(error => res.status(500).send({ error }));
 });
 
 module.exports = games;
