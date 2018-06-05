@@ -3,18 +3,12 @@ import styled from 'react-emotion';
 import socket from '../../sockets';
 import Button from '../Util/Button';
 import Input from '../Util/Input';
+import ChatMessage from './ChatMessage';
 
 const ChatWindow = styled('div')`
     height: 400px;
     overflow: auto;
     background: #f9f9f9;
-`;
-
-const ChatMessage = styled('div')`
-    padding: 14px 0px;
-    margin: 0 20px;
-    border-bottom: 1px solid #e9e9e9;
-    color: #555;
 `;
 
 const ChatContainer = styled('div')`
@@ -32,8 +26,14 @@ class ChatBox extends PureComponent {
     this.state = {
       message: '',
       error: '',
+      messages: [],
     };
-
+    // listen for chat events
+    socket.on('chat', (data) => {
+      this.setState({
+        messages: [data, ...this.state.messages],
+      });
+    });
     this.setMessage = this.setMessage.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
   }
@@ -44,8 +44,7 @@ class ChatBox extends PureComponent {
 
   sendMessage() {
     const { message } = this.state;
-    console.log(message, this.props.nickname);
-    // emit message
+    // emit message, need to pass join code
     socket.emit('chat', { message, nickname: this.props.nickname });
   }
 
@@ -54,7 +53,8 @@ class ChatBox extends PureComponent {
     return (
       <ChatContainer>
         <ChatWindow>
-          <ChatMessage>Chat Window </ChatMessage>
+          {this.state.messages.map((message => (
+            <ChatMessage key={Math.random()} nickname={message.nickname} message={message.message} > </ChatMessage>))) }
         </ChatWindow>
         <Input onChange={this.setMessage} placeholder="Type a message!" type="text" />
         <Button onClick={this.sendMessage}>Send!</Button>
