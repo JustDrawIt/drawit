@@ -9,7 +9,7 @@ module.exports = ({ data, socket, io }) => {
       socket.isAdmin = isAdmin;
       socket.hasDrawn = false;
 
-      socket.join(joinCode, () => io.in(joinCode).emit('joined', { nickname }));
+      socket.join(joinCode, () => io.in(joinCode).emit('round:joined', { nickname }));
     })
-    .catch(error => socket.emit('not_joined', { error }));
+    .catch(error => socket.emit('round:not_joined', { error }));
 };
