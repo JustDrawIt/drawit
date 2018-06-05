@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import styled from 'react-emotion';
 import socket from '../../sockets';
 import Button from '../Util/Button';
@@ -29,7 +30,7 @@ class ChatBox extends PureComponent {
       messages: [],
     };
     // listen for chat events
-    socket.on('chat', (data) => {
+    socket.on('round:incorrect_guess', (data) => {
       this.setState({
         messages: [data, ...this.state.messages],
       });
@@ -49,7 +50,7 @@ class ChatBox extends PureComponent {
       this.setState({ error: 'No Nickname' });
     } else {
       this.setState({ error: '' });
-      socket.emit('chat', { message, nickname: this.props.nickname, });
+      socket.emit('round:guess', { message, nickname: this.props.nickname, joinCode: this.props.joinCode });
     }
   }
 
@@ -69,5 +70,6 @@ class ChatBox extends PureComponent {
   }
 }
 
+const mapStateToProps = state => ({ nickname: state.game.nickname });
 
-export default ChatBox;
+export default connect(mapStateToProps, null)(ChatBox);

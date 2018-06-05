@@ -7,9 +7,7 @@ const gameDefaultState = {
 export default function gameReducer(state = gameDefaultState, action) {
   switch (action.type) {
     case types.SET_NICKNAME:
-      console.log(action.nickname);
       return { ...state, nickname: action.nickname };
-
     default:
       return state;
   }
