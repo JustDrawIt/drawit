@@ -18,13 +18,13 @@ const Input = styled('input')`
   text-align: center;
 
   ::placeholder {
-    transition: all 250ms ease-in-out;
+    transition: opacity 250ms ease;
   }
 
   :focus, :hover {
     outline: none;
     border-color: #333;
-    transition: all 400ms ease-out;
+    transition: border 400ms ease-out;
 
     ::placeholder {
       opacity: .5;

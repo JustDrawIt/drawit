@@ -30,8 +30,8 @@ const Button = styled('button')`
   font-size: ${props => props.fontSize || fontSize};
   padding: ${props => props.padding || padding};
 
-  transition: all 300ms ease-out;
-  border: 0px;
+  transition: background 300ms ease-out;
+  border: 0;
   margin: 5px auto;
   display: block;
   cursor: pointer;
