@@ -48,5 +48,4 @@ const gameSchema = mongoose.Schema({
 const Game = mongoose.model('Game', gameSchema);
 
 module.exports.Game = Game;
-
 module.exports.User = User;
