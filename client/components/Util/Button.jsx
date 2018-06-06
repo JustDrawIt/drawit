@@ -1,25 +1,48 @@
-import styled from 'react-emotion';
+import styled, { css } from 'react-emotion';
+
+const width = '180px';
+const fontSize = '20px';
+const padding = '8px';
+
+const types = {
+  default: css`
+    color: #f8f8f8;
+    background: #2f2f2f;
+
+    :hover {
+      background: #000;
+    }
+  `,
+  colored: css`
+    color: #f8f8f8;
+    background: blue;
+
+    :hover {
+      background: #0038D3;
+    }
+  `,
+};
 
 const Button = styled('button')`
-  color: #f8f8f8;
-  background-color: #222;
-  font-size: 20px;
-  padding: 12px;
-  margin: 5px auto;
-  width: 180px;
+  ${props => types[props.type || 'default']};
+
+  width: ${props => props.width || width};
+  font-size: ${props => props.fontSize || fontSize};
+  padding: ${props => props.padding || padding};
+
+  transition: background 300ms ease-out;
   border: 0;
+  margin: 5px auto;
+  display: block;
   cursor: pointer;
-  transition: background-color 300ms ease;
 
   :focus {
     outline: none;
   }
 
-  :hover {
-    transition: background-color 300ms ease;
-    background-color: #000;
+  a {
+    color: inherit;
   }
 `;
 
 export default Button;
-

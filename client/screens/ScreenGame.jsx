@@ -1,15 +1,9 @@
 import React from 'react';
-import styled from 'react-emotion';
-import NicknameForm from '../components/NicknameForm/NicknameForm';
-import ChatBox from '../components/ChatBox/ChatBox';
+import ReactRouterPropTypes from 'react-router-prop-types';
+import NicknameForm from '../components/Game/NicknameForm';
+import ChatBox from '../components/Game/Chat/Box';
+import Container from '../components/util/Centered';
 
-const Container = styled('div')`
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 const game = { players: ['jelani'] };
 const ScreenGame = ({ match }) => (
   <Container>
@@ -17,5 +11,9 @@ const ScreenGame = ({ match }) => (
     <ChatBox joinCode={match.params.joinCode} />
   </Container>
 );
+
+ScreenGame.propTypes = {
+  match: ReactRouterPropTypes.match.isRequired,
+};
 
 export default ScreenGame;
