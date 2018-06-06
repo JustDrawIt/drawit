@@ -17,4 +17,4 @@ SESSION_SECRET=youre_secret
 ```
 
 ## Config
-A [config.js](server/config.js) has been created to manage the environment variables across the server. Use it to import any variables you need.
+A [config.js](/server/config.js) has been created to manage the environment variables across the server. Use it to import any variables you need.
