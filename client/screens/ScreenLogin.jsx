@@ -14,8 +14,9 @@ const Background = styled('div')`
 const Container = styled(Centered)`
   background: #fefefe;
   border-radius: 30px;
-  padding: 80px 130px 120px 130px;
+  padding: 80px 110px 120px 110px;
   h1 {
+    min-width: 8ch;
     font-family: 'Pacifico', cursive;
     font-size: 4rem;
     margin-bottom: 70px;
