@@ -20,7 +20,7 @@ class NicknameForm extends PureComponent {
       error: '',
     };
 
-    this.setNicknameState = this.setNickname.bind(this);
+    this.setNickname = this.setNickname.bind(this);
     this.joinGame = this.joinGame.bind(this);
   }
 
@@ -35,7 +35,7 @@ class NicknameForm extends PureComponent {
     if (!nickname) {
       this.setState({ error: 'Please enter a nickname!' });
     } else {
-      this.props.setNickname(nickname);
+      this.props.dispatchNickname(nickname);
       socket.emit('game:join', { nickname, joinCode });
     }
   }
@@ -55,12 +55,12 @@ class NicknameForm extends PureComponent {
 }
 
 NicknameForm.propTypes = {
-  setNickname: PropTypes.func.isRequired,
+  dispatchNickname: PropTypes.func.isRequired,
   joinCode: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
-  setNickname: nickname => dispatch(setNickname(nickname)),
+  dispatchNickname: nickname => dispatch(setNickname(nickname)),
 });
 
 export default connect(null, mapDispatchToProps)(NicknameForm);
