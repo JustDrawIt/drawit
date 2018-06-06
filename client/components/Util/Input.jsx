@@ -3,11 +3,13 @@ import styled from 'react-emotion';
 const width = '180px';
 const fontSize = '20px';
 const padding = '8px';
+const rounded = '30px';
 
 const Input = styled('input')`
   width: ${props => props.width || width};
   font-size: ${props => props.fontSize || fontSize};
   padding: ${props => props.padding || padding};
+  border-radius: ${props => (props.rounded ? rounded : '3px')};
 
   transition: border 300ms ease;
   border: 3px solid #ccc;
@@ -16,10 +18,6 @@ const Input = styled('input')`
   font-size: 20px;
   display: block;
   text-align: center;
-
-  ::placeholder {
-    transition: opacity 250ms ease;
-  }
 
   :focus, :hover {
     outline: none;

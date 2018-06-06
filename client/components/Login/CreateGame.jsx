@@ -13,7 +13,7 @@ const Container = styled('div')`
 
 const CreateGame = () => (
   <Container>
-    <Button type="colored">
+    <Button color="primary">
       <Link to="/create_game">Create a game</Link>
     </Button>
   </Container>

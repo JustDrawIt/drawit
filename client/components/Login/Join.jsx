@@ -7,7 +7,7 @@ import Input from '../util/Input';
 const Container = styled('div')`
   text-align: center;
   span {
-    font-size: 20px;
+    font-size: 18px;
   }
 `;
 
