@@ -14,18 +14,18 @@
 1. [Requirements](#requirements)
 1. [Development](#development)
     1. [Installing Dependencies](#installing-dependencies)
+    1. [Environment Variables](#environment-variables)
     1. [NPM Scripts](#npm-scripts)
 1. [Team](#team)
 1. [Contributing](#contributing)
 
 ## Usage
 
-> This projects uses
-  - React
-  - Express
-  - SocketIO
-  - MongoDB
-  - Mongoose
+> This projects uses:
+  - React v16
+  - Express v4
+  - SocketIO v2
+  - MongoDB through Mongoose v5
 
 ## Requirements
 
@@ -42,9 +42,12 @@ From within the root directory:
 npm install
 ```
 
+### Environment Variables
+
 Ensure your environment variables are setup correctly. View the environment docs [here](docs/Env.md)
 
 ### NPM Scripts
+
 ```sh
 npm run dev:server # start server with nodemon
 npm run dev:client # start client webpack server
