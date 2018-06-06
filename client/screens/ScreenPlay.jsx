@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import JoinGame from '../components/Login/Join';
-import CreateGame from '../components/Login/CreateGame';
+import JoinGame from '../components/Play/Join';
+import CreateGame from '../components/Play/CreateGame';
 import Centered from '../components/util/Centered';
 
 const Background = styled('div')`
@@ -23,7 +23,7 @@ const Container = styled(Centered)`
   }
 `;
 
-const ScreenLogin = ({ history }) => (
+const ScreenPlay = ({ history }) => (
   <Background>
     <Container>
       <h1>Draw It!</h1>
@@ -33,8 +33,8 @@ const ScreenLogin = ({ history }) => (
   </Background>
 );
 
-ScreenLogin.propTypes = {
+ScreenPlay.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
 };
 
-export default ScreenLogin;
+export default ScreenPlay;
