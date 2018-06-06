@@ -16,4 +16,12 @@ module.exports = {
     stream: PROD ? fs.createWriteStream(LOG_PATH, { flags: 'a' }) : undefined,
   },
   HISTORY_OPTS: { verbose: DEV },
+  COOKIE_OPTS: {
+    maxAge: 86400000, // 24 hours
+    keys: [],
+  },
+  GOOGLE_KEYS: {
+    CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  },
 };
