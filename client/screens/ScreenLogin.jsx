@@ -1,39 +1,14 @@
 import React from 'react';
-import styled from 'react-emotion';
-import ReactRouterPropTypes from 'react-router-prop-types';
-import JoinGame from '../components/Login/Join';
-import CreateGame from '../components/Login/CreateGame';
-import Centered from '../components/util/Centered';
+import Container from '../components/util/Centered';
+import GoogleLogin from '../components/GoogleLogin';
 
-const Background = styled('div')`
-  width: 100%;
-  height: 100%;
-  background: #FF9000;
-`;
-
-const Container = styled(Centered)`
-  background: #fefefe;
-  border-radius: 30px;
-  padding: 80px 130px 120px 130px;
-  h1 {
-    font-family: 'Pacifico', cursive;
-    font-size: 4rem;
-    margin-bottom: 70px;
-  }
-`;
-
-const ScreenLogin = ({ history }) => (
-  <Background>
+const ScreenLogin = () => (
+  <div>
+    <h2>Login</h2>
     <Container>
-      <h1>Draw It!</h1>
-      <JoinGame history={history} />
-      <CreateGame />
+      <GoogleLogin />
     </Container>
-  </Background>
+  </div>
 );
-
-ScreenLogin.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
-};
 
 export default ScreenLogin;

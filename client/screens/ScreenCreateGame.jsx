@@ -12,7 +12,6 @@ const ScreenCreateGame = ({ history }) => (
   </div>
 );
 
-
 ScreenCreateGame.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
 };

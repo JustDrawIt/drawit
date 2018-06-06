@@ -2,7 +2,6 @@ const { Game } = require('./database');
 
 const findGameWithJoinCode = joinCode => Game.findOne({ joinCode })
   .then(game => game || Promise.reject(`There are no games with the join code: ${joinCode}`))
-  .catch(() => Promise.reject(`Something went wrong when finding a game with the join code: ${joinCode}`));
 
 const addPlayerToGame = (joinCode, nickname) => findGameWithJoinCode(joinCode).then((game) => {
   if (game.players.find(player => player.nickname === nickname)) {
