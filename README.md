@@ -14,7 +14,7 @@
 1. [Requirements](#requirements)
 1. [Development](#development)
     1. [Installing Dependencies](#installing-dependencies)
-    1. [Tasks](#tasks)
+    1. [NPM Scripts](#npm-scripts)
 1. [Team](#team)
 1. [Contributing](#contributing)
 
@@ -42,11 +42,7 @@ From within the root directory:
 npm install
 ```
 
-The server uses __dotenv__, a npm package for separating environment variables into a non-commited file. Inside the root of this project create a __.env__ file and place any envs necessary to the projects inside. For example:
-
-```sh
-echo MONGODB=your_mongodb_uri_here > .env
-```
+Ensure your environment variables are setup correctly. View the environment docs [here](docs/Env.md)
 
 ### NPM Scripts
 ```sh
