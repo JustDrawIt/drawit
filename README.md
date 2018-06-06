@@ -48,7 +48,7 @@ npm install
 
 ### Environment Variables
 
-Ensure your environment variables are setup correctly. View the environment docs [here](docs/Env.md)
+Ensure your environment variables are setup correctly. View the environment docs [here](/docs/Env.md)
 
 ### NPM Scripts
 
@@ -65,4 +65,4 @@ View the project roadmap [here](https://github.com/JustDrawIt/drawit/issues)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for contribution guidelines.
