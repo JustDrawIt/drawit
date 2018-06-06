@@ -3,7 +3,6 @@ const { findGameWithJoinCode } = require('../database/helpers');
 
 const codes = express.Router();
 
-
 codes.post('/', (req, res) => {
   const { joinCode } = req.body;
   findGameWithJoinCode(joinCode)
