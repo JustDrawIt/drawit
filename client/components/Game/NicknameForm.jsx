@@ -25,7 +25,7 @@ class NicknameForm extends PureComponent {
   }
 
   setNickname({ target }) {
-    this.setState({ nickname: target.value });
+    this.setState({ nickname: target.value, error: '' });
   }
 
   joinGame() {
