@@ -8,3 +8,4 @@ authCallBack.get('/google', passport.authenticate('google'), (req, res) => {
   res.send('you reached callback URI');
 });
 
+module.exports = authCallBack;
