@@ -4,8 +4,8 @@ const passportSetup = require('../passport');
 
 const authCallBack = express.Router();
 
-authCallBack.get('/google', passport.authenticate('google'), (req, res) => {
-  res.send('you reached callback URI');
+authCallBack.get('/google/redirect', passport.authenticate('google'), (req, res) => {
+  res.redirect('/games');
 });
 
 module.exports = authCallBack;
