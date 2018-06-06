@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
+import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import Button from '../util/Button';
 import Input from '../util/Input';
@@ -30,8 +31,16 @@ class JoinGame extends PureComponent {
 
   join() {
     const { joinCode } = this.state;
+    const { history } = this.props;
+
     if (joinCode.length >= 7) {
-      this.props.history.push(`/games/${joinCode}`);
+      const url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
+      axios.post(`${url}/codes`, { joinCode })
+        .then(response => (response.data.valid
+          ? history.push(`/games/${joinCode}`)
+          : this.setState({ error: 'There are no games with that join code!' })
+        ))
+        .catch(() => this.setState({ error: 'There are no games with that join code!' }));
     } else {
       this.setState({ error: 'Join code must be at least 7 chars long.' });
     }
