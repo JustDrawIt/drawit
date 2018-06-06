@@ -1,8 +1,16 @@
 import React, { PureComponent } from 'react';
+import styled from 'react-emotion';
 import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import Button from '../Util/Button';
-import Input from '../Util/Input';
+import Button from './util/Button';
+import Input from './util/Input';
+
+const Container = styled('div')`
+  label span {
+    display: block;
+    text-align: left;
+  }
+`;
 
 class CreateGameForm extends PureComponent {
   constructor(props) {
@@ -35,28 +43,39 @@ class CreateGameForm extends PureComponent {
 
   createGame() {
     const { maxPlayers, maxRounds, timePerRound } = this.state;
-    const newGame = { maxPlayers, maxRounds, timePerRound };
-    axios.post('/games', newGame)
+    axios.post('/games', { maxPlayers, maxRounds, timePerRound })
       .then(({ data }) => this.props.history.push(`/games/${data.joinCode}`))
       .catch((err) => { console.log(`${err} ERROR`); });
   }
 
 
   render() {
+    const { error } = this.state;
+    const { maxPlayers, maxRounds, timePerRound } = this.state;
+
     return (
-      <div>
-        Max Rounds:
-        <Input onChange={this.setMaxRounds} placeholder="5" type="number" />
-        <br />
-        Max Players:
-        <Input onChange={this.setMaxPlayers} placeholder="5" type="number" />
-        <br />
-        Time Per Round:
-        <Input onChange={this.setTimePerRound} placeholder="2" type="number" />
-        <br />
+      <Container>
+        <div>
+          <label htmlFor="max-rounds">
+            <span>Max Rounds</span>
+            <Input onChange={this.setMaxRounds} id="max-rounds" placeholder={maxRounds} type="number" />
+          </label>
+        </div>
+        <div>
+          <label htmlFor="max-players">
+            <span>Max Players</span>
+            <Input onChange={this.setMaxPlayers} id="max-players" placeholder={maxPlayers} type="number" />
+          </label>
+        </div>
+        <div>
+          <label htmlFor="time-per-round">
+            <span>Time Per Round</span>
+            <Input onChange={this.setTimePerRound} id="time-per-round" placeholder={timePerRound} type="number" />
+          </label>
+        </div>
         <Button onClick={this.createGame}>Go!</Button>
-        {this.state.error ? <p>{this.state.error}</p> : null}
-      </div>
+        {error ? <p>{error}</p> : null}
+      </Container>
     );
   }
 }
