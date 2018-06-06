@@ -31,19 +31,21 @@ class JoinGame extends PureComponent {
   join() {
     const { joinCode } = this.state;
     if (joinCode.length >= 7) {
-      this.props.history.push(`/games/${this.state.joinCode}`);
+      this.props.history.push(`/games/${joinCode}`);
     } else {
       this.setState({ error: 'Join code must be at least 7 chars long.' });
     }
   }
 
   render() {
+    const { error } = this.state;
+
     return (
       <Container>
         <Input onChange={this.setJoinCode} placeholder="Join code" type="text" />
         <Button onClick={this.join}>Play!</Button>
         <span>or</span>
-        {this.state.error ? <p>{this.state.error}</p> : null}
+        {error ? <p>{error}</p> : null}
       </Container>
     );
   }
