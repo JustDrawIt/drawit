@@ -10,7 +10,8 @@
 
 ## Table of Contents
 
-1. [Usage](#Usage)
+1. [Wireframe](#wireframe)
+1. [Usage](#usage)
 1. [Requirements](#requirements)
 1. [Development](#development)
     1. [Installing Dependencies](#installing-dependencies)
@@ -18,6 +19,9 @@
     1. [NPM Scripts](#npm-scripts)
 1. [Team](#team)
 1. [Contributing](#contributing)
+
+## Wireframe
+See the wireframe [here](https://marvelapp.com/302b0ih/screen/43626438)
 
 ## Usage
 
