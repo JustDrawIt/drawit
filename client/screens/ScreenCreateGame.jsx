@@ -1,15 +1,7 @@
 import React from 'react';
-import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import CreateGameForm from '../components/CreateGameForm';
-
-const Container = styled('div')`
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
+import Container from '../components/util/Centered';
 
 const ScreenCreateGame = ({ history }) => (
   <div>
