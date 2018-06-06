@@ -10,10 +10,21 @@ passport.use(new GoogleStrategy({
   clientSecret: keys.google.clientSecret,
 }, (accessToken, refreshToken, profile, done) => {
   // passport Callback function
-  new user.User({
-    username: profile.displayName,
+  // check if user exists in database
+  user.UserfindOne({
     googleId: profile.id,
-  }).save().then((newUser) => {
-    console.log(`new user created: ${newUser}`);
-  });
+  })
+    .then((currentUser) => {
+      if (currentUser) {
+      // User exists
+        console.log(`user is: ${currentUser}`);
+      }
+      // create user
+      new user.User({
+        username: profile.displayName,
+        googleId: profile.id,
+      }).save().then((newUser) => {
+        console.log(`new user created: ${newUser}`);
+      });
+    });
 }));
