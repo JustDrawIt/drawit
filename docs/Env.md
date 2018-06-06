@@ -13,6 +13,7 @@ touch .env
 MONGODB=mongo_uri
 GOOGLE_CLIENT_ID=google_client_id
 GOOGLE_CLIENT_SECRET=google_client_secret
+SESSION_SECRET=youre_secret
 ```
 
 ## Config

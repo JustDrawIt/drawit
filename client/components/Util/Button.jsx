@@ -3,8 +3,7 @@ import styled, { css } from 'react-emotion';
 const width = '180px';
 const fontSize = '20px';
 const padding = '8px';
-
-const types = {
+const colors = {
   default: css`
     color: #f8f8f8;
     background: #2f2f2f;
@@ -13,7 +12,7 @@ const types = {
       background: #000;
     }
   `,
-  colored: css`
+  primary: css`
     color: #f8f8f8;
     background: blue;
 
@@ -22,13 +21,15 @@ const types = {
     }
   `,
 };
+const rounded = '30px';
 
 const Button = styled('button')`
-  ${props => types[props.type || 'default']};
+  ${props => (colors[props.color || 'default'])};
 
   width: ${props => props.width || width};
   font-size: ${props => props.fontSize || fontSize};
   padding: ${props => props.padding || padding};
+  border-radius: ${props => (props.rounded ? rounded : '3px')};
 
   transition: background 300ms ease-out;
   border: 0;
