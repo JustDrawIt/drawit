@@ -16,6 +16,12 @@
           "to"
         ]
       }
+    ],
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowTaggedTemplates": true
+      }
     ]
   }
 }
