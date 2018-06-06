@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const passportSetup = require('../passport');
 
 const auth = express.Router();
 
