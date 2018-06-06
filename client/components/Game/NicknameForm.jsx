@@ -18,6 +18,7 @@ class NicknameForm extends PureComponent {
     this.state = {
       nickname: '',
       error: '',
+      verified: false,
     };
 
     this.setNickname = this.setNickname.bind(this);
@@ -28,6 +29,11 @@ class NicknameForm extends PureComponent {
     this.setState({ nickname: target.value, error: '' });
   }
 
+  // verify nickname, makesure no duplicates, return promise, set verified to true;
+  verifyNickname(nickname) {
+    this.setState({ verified: true });
+  }
+
   joinGame() {
     const { nickname } = this.state;
     const { joinCode } = this.props;
@@ -36,21 +42,24 @@ class NicknameForm extends PureComponent {
       this.setState({ error: 'Please enter a nickname!' });
     } else {
       this.props.dispatchNickname(nickname);
+      this.verifyNickname(nickname);
       socket.emit('game:join', { nickname, joinCode });
     }
   }
 
   render() {
-    const { error } = this.state;
-
-    return (
-      <Container>
-        <h2>Enter A Nickname</h2>
-        <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
-        <Button onClick={this.joinGame}>Join!</Button>
-        {error ? <p>{error}</p> : null}
-      </Container>
-    );
+    const { error, verified } = this.state;
+    if (!verified) {
+      return (
+        <Container>
+          <h2>Enter A Nickname</h2>
+          <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
+          <Button onClick={this.joinGame}>Join!</Button>
+          {error ? <p>{error}</p> : null}
+        </Container>
+      );
+    }
+    return (<div></div>);
   }
 }
 
