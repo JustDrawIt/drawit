@@ -1,13 +1,14 @@
 import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import Button from '../Util/Button';
-import Input from '../Util/Input';
+import Button from '../util/Button';
+import Input from '../util/Input';
 
 const Container = styled('div')`
-  display: flex;
-  flex-direction: column;
   text-align: center;
+  span {
+    font-size: 20px;
+  }
 `;
 
 class JoinGame extends PureComponent {

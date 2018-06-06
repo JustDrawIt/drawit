@@ -3,20 +3,33 @@ import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import JoinGame from '../components/Login/Join';
 import CreateGame from '../components/Login/CreateGame';
+import Centered from '../components/util/Centered';
 
-const Container = styled('div')`
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const Background = styled('div')`
+  width: 100%;
+  height: 100%;
+  background: #FF9000;
+`;
+
+const Container = styled(Centered)`
+  background: #fefefe;
+  border-radius: 30px;
+  padding: 80px 130px 120px 130px;
+  h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 4rem;
+    margin-bottom: 70px;
+  }
 `;
 
 const ScreenLogin = ({ history }) => (
-  <Container>
-    <JoinGame history={history} />
-    <CreateGame />
-  </Container>
+  <Background>
+    <Container>
+      <h1>Draw It!</h1>
+      <JoinGame history={history} />
+      <CreateGame />
+    </Container>
+  </Background>
 );
 
 ScreenLogin.propTypes = {

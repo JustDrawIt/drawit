@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import Button from '../Util/Button';
-import Input from '../Util/Input';
+import Button from './util/Button';
+import Input from './util/Input';
 
 class CreateGameForm extends PureComponent {
   constructor(props) {

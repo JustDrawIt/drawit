@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import CreateGameForm from '../components/CreateGame/CreateGameForm';
+import CreateGameForm from '../components/CreateGameForm';
 
 const Container = styled('div')`
   margin: 0;
@@ -13,7 +13,7 @@ const Container = styled('div')`
 
 const ScreenCreateGame = ({ history }) => (
   <div>
-    <h2><b>Create Game</b></h2>
+    <h2>Create Game</h2>
     <Container>
       <CreateGameForm history={history} />
     </Container>
