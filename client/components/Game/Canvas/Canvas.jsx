@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
-import socket from '../../sockets';
-import { SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE } from './src';
+import socket from '../../../sockets';
+import { SketchPad, TOOL_PENCIL, TOOL_LINE, TOOL_RECTANGLE, TOOL_ELLIPSE } from './';
 
 
 const CanvasContainer = styled('div')`
