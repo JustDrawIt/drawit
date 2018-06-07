@@ -12,6 +12,14 @@ export const setToolAction = dispatch => tool => dispatch({
   type: GAME_TYPES.SET_TOOL,
   tool,
 });
+export const setFillAction = dispatch => fill => dispatch({
+  type: GAME_TYPES.SET_FILL,
+  fill,
+});
+export const setFillColorAction = dispatch => fillColor => dispatch({
+  type: GAME_TYPES.SET_FILL_COLOR,
+  fillColor,
+});
 
 export const addItemAction = dispatch => item => dispatch({
   type: GAME_TYPES.ADD_ITEM,
