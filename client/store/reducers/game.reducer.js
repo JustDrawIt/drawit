@@ -1,10 +1,11 @@
 import types from '../actions/types';
 
-const gameDefaultState = {
+const initialState = {
   nickname: '',
+  game: null,
 };
 
-export default function gameReducer(state = gameDefaultState, action) {
+export default function gameReducer(state = initialState, action) {
   switch (action.type) {
     case types.SET_NICKNAME:
       return { ...state, nickname: action.nickname };
