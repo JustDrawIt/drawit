@@ -8,6 +8,7 @@ import {
 
 const initialState = {
   nickname: '',
+  joinCode: '',
   game: null,
   canvas: {
     context: null,
@@ -26,6 +27,9 @@ export default function gameReducer(state = initialState, action) {
   switch (action.type) {
     case GAME_TYPES.SET_NICKNAME:
       return { ...state, nickname: action.nickname };
+
+    case GAME_TYPES.SET_JOIN_CODE:
+      return { ...state, joinCode: action.joinCode };
 
     case GAME_TYPES.SET_CONTEXT:
       return {

@@ -4,6 +4,10 @@ export const setNicknameAction = dispatch => nickname => dispatch({
   type: GAME_TYPES.SET_NICKNAME,
   nickname,
 });
+export const setJoinCodeAction = dispatch => joinCode => dispatch({
+  type: GAME_TYPES.SET_JOIN_CODE,
+  joinCode,
+});
 export const setContextAction = dispatch => context => dispatch({
   type: GAME_TYPES.SET_CONTEXT,
   context,
