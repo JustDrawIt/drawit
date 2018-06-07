@@ -1,19 +1,11 @@
-export {
-  default as Pencil,
-  TOOL_PENCIL
-} from './Pencil';
+import pencil from './Pencil/PencilTool';
+import line from './Line/LineTool';
+import rectangle from './Rectangle/RectangleTool';
+import ellipse from './Ellipse/EllipseTool';
 
-export {
-  default as Line,
-  TOOL_LINE
-} from './Line';
-
-export {
-  default as Ellipse,
-  TOOL_ELLIPSE
-} from './Ellipse';
-
-export {
-  default as Rectangle,
-  TOOL_RECTANGLE
-} from './Rectangle';
+export default {
+  [pencil.TOOL]: pencil,
+  [line.TOOL]: line,
+  [rectangle.TOOL]: rectangle,
+  [ellipse.TOOL]: ellipse,
+};
