@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
-import LineTool from './LineTool';
+import LineTool, { TOOL_LINE } from './LineTool';
+import ToolButton from '../../../../util/ToolButton';
 
 class Line extends PureComponent {
   constructor(props) {
@@ -18,18 +19,25 @@ class Line extends PureComponent {
   }
 
   render() {
+    const { active } = this.props;
+
     return (
-      <button onClick={this.onClick}>Line</button>
+      <ToolButton onClick={this.onClick} active={active}>
+        <i className="fas fa-ruler" />
+      </ToolButton>
     );
   }
 }
 
 Line.propTypes = {
+  active: PropTypes.bool.isRequired,
   dispatchTool: PropTypes.func.isRequired,
 };
 
 export default connect(
-  null,
+  ({ game }) => ({
+    active: !!game.canvas.tool && (game.canvas.tool.name === TOOL_LINE),
+  }),
   dispatch => ({
     dispatchTool: setToolAction(dispatch),
   }),

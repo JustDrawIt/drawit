@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
-import PencilTool from './PencilTool';
+import PencilTool, { TOOL_PENCIL } from './PencilTool';
+import ToolButton from '../../../../util/ToolButton';
 
 class Pencil extends PureComponent {
   constructor(props) {
@@ -18,18 +19,25 @@ class Pencil extends PureComponent {
   }
 
   render() {
+    const { active } = this.props;
+
     return (
-      <button onClick={this.onClick}>Pencil</button>
+      <ToolButton onClick={this.onClick} active={active}>
+        <i className="fas fa-pencil-alt" />
+      </ToolButton>
     );
   }
 }
 
 Pencil.propTypes = {
+  active: PropTypes.bool.isRequired,
   dispatchTool: PropTypes.func.isRequired,
 };
 
 export default connect(
-  null,
+  ({ game }) => ({
+    active: !!game.canvas.tool && (game.canvas.tool.name === TOOL_PENCIL),
+  }),
   dispatch => ({
     dispatchTool: setToolAction(dispatch),
   }),

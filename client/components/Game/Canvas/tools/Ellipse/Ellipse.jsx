@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
-import EllipseTool from './EllipseTool';
+import EllipseTool, { TOOL_ELLIPSE } from './EllipseTool';
+import ToolButton from '../../../../util/ToolButton';
 
 class Ellipse extends PureComponent {
   constructor(props) {
@@ -18,18 +19,25 @@ class Ellipse extends PureComponent {
   }
 
   render() {
+    const { active } = this.props;
+
     return (
-      <button onClick={this.onClick}>Ellipse</button>
+      <ToolButton onClick={this.onClick} active={active}>
+        <i className="far fa-circle" />
+      </ToolButton>
     );
   }
 }
 
 Ellipse.propTypes = {
+  active: PropTypes.bool.isRequired,
   dispatchTool: PropTypes.func.isRequired,
 };
 
 export default connect(
-  null,
+  ({ game }) => ({
+    active: !!game.canvas.tool && (game.canvas.tool.name === TOOL_ELLIPSE),
+  }),
   dispatch => ({
     dispatchTool: setToolAction(dispatch),
   }),
