@@ -6,7 +6,7 @@ import NicknameForm from '../components/Game/NicknameForm';
 import Canvas from '../components/Game/Canvas/Canvas';
 import ChatBox from '../components/Game/Chat/Box';
 import Container from '../components/util/Centered';
-import Flex from '../components/Util/Flex';
+import Flex from '../components/util/Flex';
 
 const game = { players: ['jelani'] };
 const ScreenGame = ({ match, nickname }) => {
