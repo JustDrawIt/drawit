@@ -3,16 +3,16 @@ import {
   DEFAULT_FILL,
   DEFAULT_STROKE_COLOR,
   DEFAULT_FILL_COLOR,
-} from './defaults';
+} from '../defaults';
 
 class BaseTool {
-  constructor(context, options = {}) {
+  constructor({ context, name, options }) {
     this.context = context;
+    this.name = name;
     this.imageData = null;
     this.item = null;
     this.options = {
       ...options,
-      tool: options.tool,
       size: options.size || DEFAULT_SIZE,
       fill: options.fill || DEFAULT_FILL,
       strokeColor: options.strokeColor || DEFAULT_STROKE_COLOR,
@@ -35,10 +35,11 @@ class BaseTool {
   }
 
   create({ mouseX, mouseY }) {
-    const { options } = this;
+    const { options, name } = this;
 
     return {
       ...options,
+      tool: name,
       start: {
         x: mouseX,
         y: mouseY,

@@ -1,11 +1,11 @@
-import pencil from './Pencil/PencilTool';
-import line from './Line/LineTool';
-import rectangle from './Rectangle/RectangleTool';
-import ellipse from './Ellipse/EllipseTool';
+import PencilTool, { TOOL_PENCIL } from './Pencil/PencilTool';
+import LineTool, { TOOL_LINE } from './Line/LineTool';
+import RectangleTool, { TOOL_RECTANGLE } from './Rectangle/RectangleTool';
+import EllipseTool, { TOOL_ELLIPSE } from './Ellipse/EllipseTool';
 
 export default {
-  [pencil.TOOL]: pencil,
-  [line.TOOL]: line,
-  [rectangle.TOOL]: rectangle,
-  [ellipse.TOOL]: ellipse,
+  [TOOL_PENCIL]: PencilTool,
+  [TOOL_LINE]: LineTool,
+  [TOOL_RECTANGLE]: RectangleTool,
+  [TOOL_ELLIPSE]: EllipseTool,
 };

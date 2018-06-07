@@ -1,9 +1,13 @@
 import BaseTool from '../BaseTool';
 
-const TOOL_LINE = 'line';
-class LineTool extends BaseTool {
+export const TOOL_LINE = 'line';
+export default class LineTool extends BaseTool {
   constructor(context, options = {}) {
-    super(context, { ...options, tool: TOOL_LINE });
+    super({
+      context,
+      name: TOOL_LINE,
+      options: { ...options, tool: TOOL_LINE },
+    });
   }
 
   drawShape({ mouseX, mouseY }) {
@@ -13,6 +17,3 @@ class LineTool extends BaseTool {
     context.lineTo(mouseX, mouseY);
   }
 }
-
-LineTool.TOOL = TOOL_LINE;
-export default LineTool;
