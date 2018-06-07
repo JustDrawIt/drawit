@@ -5,7 +5,7 @@ import styled from 'react-emotion';
 import Button from '../util/Button';
 import Input from '../util/Input';
 import socket from '../../sockets';
-import { setNickname } from '../../store/actions/game.actions';
+import { setNicknameAction } from '../../store/actions/game.actions';
 
 const Container = styled('div')`
   text-align: center;
@@ -69,7 +69,7 @@ NicknameForm.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  dispatchNickname: nickname => dispatch(setNickname(nickname)),
+  dispatchNickname: nickname => dispatch(setNicknameAction(nickname)),
 });
 
 export default connect(null, mapDispatchToProps)(NicknameForm);

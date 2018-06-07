@@ -1,6 +1,6 @@
 import types from './types';
 
-export const setNickname = nickname => ({
+export const setNicknameAction = nickname => ({
   type: types.SET_NICKNAME,
   nickname,
 });
