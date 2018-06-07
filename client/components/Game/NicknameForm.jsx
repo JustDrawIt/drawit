@@ -69,7 +69,7 @@ NicknameForm.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  dispatchNickname: nickname => dispatch(setNicknameAction(nickname)),
+  dispatchNickname: setNicknameAction(dispatch),
 });
 
 export default connect(null, mapDispatchToProps)(NicknameForm);
