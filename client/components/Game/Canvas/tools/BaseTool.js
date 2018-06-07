@@ -20,9 +20,14 @@ class BaseTool {
     };
   }
 
+  setItem(item) {
+    this.item = item;
+  }
+
   setContext(context) {
     this.context = context;
   }
+
   getContext() {
     return this.context;
   }
@@ -52,6 +57,19 @@ class BaseTool {
   }
 
   drawShape(position) { }
+  drawItem(item) {
+    this.item = item;
+    this.setOptions({
+      size: item.size,
+      fill: item.fill,
+      strokeColor: item.strokeColor,
+      fillColor: item.fillColor,
+    });
+    this.draw({
+      mouseX: item.end.x,
+      mouseY: item.end.y,
+    });
+  }
 
   draw(position) {
     const { context, imageData, options } = this;

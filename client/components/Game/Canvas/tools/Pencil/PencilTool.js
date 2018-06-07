@@ -33,6 +33,20 @@ export default class PencilTool extends BaseTool {
     context.lineTo(mouseX, mouseY);
   }
 
+  drawItem(stroke) {
+    const [first, ...rest] = stroke.points.slice(1);
+
+    this.stroke = {
+      ...stroke,
+      points: [first],
+    };
+
+    rest.forEach((position) => {
+      this.draw(position);
+      this.stroke.points.push(position);
+    });
+  }
+
   onMouseDown(position) {
     this.stroke = this.create(position);
   }
