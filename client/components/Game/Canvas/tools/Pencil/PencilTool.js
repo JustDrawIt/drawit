@@ -15,6 +15,10 @@ export default class PencilTool extends BaseTool {
     this.stroke = null;
   }
 
+  setItem(item) {
+    this.stroke = item;
+  }
+
   create({ mouseX, mouseY }) {
     const { options } = this;
 
