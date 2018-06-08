@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
 import axios from 'axios';
@@ -27,6 +28,19 @@ class CreateGameForm extends PureComponent {
     this.setMaxRounds = this.setMaxRounds.bind(this);
     this.setMaxPlayers = this.setMaxPlayers.bind(this);
     this.createGame = this.createGame.bind(this);
+  }
+
+  componentDidMount() {
+    (async () => {
+      const response = await fetch('http://localhost:8080/auth', { credentials: 'include' });
+      const json = await response.json();
+      if (json.user === null) {
+        console.log(' user not authenticated');
+        this.props.history.push('/login');
+      } else {
+        console.log(json);
+      }
+    })();
   }
 
   setMaxPlayers({ target }) {
