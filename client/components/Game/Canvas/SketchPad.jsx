@@ -45,27 +45,33 @@ class SketchPad extends PureComponent {
   }
 
   onMouseDown(event) {
-    const { tool } = this.props;
-    const position = this.getCursorPosition(event);
+    if (!this.props.disabled) {
+      const { tool } = this.props;
+      const position = this.getCursorPosition(event);
 
-    tool.onMouseDown(position);
+      tool.onMouseDown(position);
+    }
   }
 
   onMouseMove(event) {
-    const { tool } = this.props;
-    const position = this.getCursorPosition(event);
+    if (!this.props.disabled) {
+      const { tool } = this.props;
+      const position = this.getCursorPosition(event);
 
-    tool.onMouseMove(position);
+      tool.onMouseMove(position);
+    }
   }
 
   onMouseUp(event) {
-    const { tool, joinCode, dispatchItem } = this.props;
-    const position = this.getCursorPosition(event);
-    const item = tool.onMouseUp(position);
+    if (!this.props.disabled) {
+      const { tool, joinCode, dispatchItem } = this.props;
+      const position = this.getCursorPosition(event);
+      const item = tool.onMouseUp(position);
 
-    if (item) {
-      socket.emit('round:draw', { item, joinCode });
-      dispatchItem(item);
+      if (item) {
+        socket.emit('round:draw', { item, joinCode });
+        dispatchItem(item);
+      }
     }
   }
 
@@ -100,6 +106,7 @@ SketchPad.defaultProps = {
 };
 
 SketchPad.propTypes = {
+  disabled: PropTypes.bool.isRequired,
   joinCode: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   tool: PropTypes.object,
