@@ -1,53 +1,51 @@
-const randomWord = require('random-word');
-const { findGameWithJoinCode } = require('../../database/helpers');
+const randomWord = require('../../random-word');
+const { updateGameRound, findGameWithJoinCode } = require('../../database/helpers');
+const { GAME } = require('../../config');
 
-module.exports = ({ data, socket, io }) => {
+const { TIME_PER_ROUND, WAIT_AFTER_ROUND_ENDS } = GAME;
+
+const startRound = ({ data, socket, io }) => {
   const { joinCode } = data;
   const { sockets } = io.sockets;
-  const room = Object.values(sockets).filter(socket => !!socket.rooms[joinCode]);
+  const room = Object.values(sockets).filter(playerSocket => joinCode in playerSocket.rooms);
 
   if (room.length <= 1) {
     socket.emit('round:not_started', { error: 'There must be at least 1 other player to start the game.' });
   } else if (!socket.isAdmin) {
     socket.emit('round:not_started', { error: 'Only the admin can start the game.' });
   } else {
-    let hasntDrawn = room.filter(socket => !socket.hasDrawn);
+    let hasntDrawn = room.filter(playerSocket => !playerSocket.hasDrawn);
 
     if (hasntDrawn.length <= 0) {
-      room.map(socket => socket.hasDrawn = false);
+      room.map(playerSocket => playerSocket.hasDrawn = false);
       hasntDrawn = room;
     }
 
     const randomPlayerIndex = Math.floor(Math.random() * hasntDrawn.length);
     const randomPlayer = room[randomPlayerIndex];
-    const word = randomWord();
 
-    findGameWithJoinCode(joinCode)
-      .then((game) => {
-        game.word = word;
-        game.roundsPlayed += 1;
-        return game.save();
-      })
-      .then((game) => {
+    randomWord()
+      .then(word => updateGameRound(joinCode, word))
+      .then(({ word }) => {
         randomPlayer.hasDrawn = true;
         randomPlayer.emit('round:chosen', { word });
-
         io.in(joinCode).emit('round:started');
+
         setTimeout(() => {
           findGameWithJoinCode(joinCode)
-            .then((updatedGame) => {
-              const { roundsPlayed, maxRounds, players } = updatedGame;
+            .then(({ roundsPlayed, maxRounds, players }) => {
               if (roundsPlayed > maxRounds) {
-                const scores = players;
-                io.in(joinCode).emit('game:end', { scores });
+                io.in(joinCode).emit('game:end', { scores: players });
               } else {
-                const scores = players;
-                io.in(joinCode).emit('round:end', { scores });
+                io.in(joinCode).emit('round:end', { scores: players });
+                setTimeout(() => startRound({ data, socket, io }), WAIT_AFTER_ROUND_ENDS);
               }
             })
-            .catch(error => io.in(joinCode).emit('round:end', { error }));
-        }, game.timePerRound);
+            .catch(error => socket.emit({ error: error.message }));
+        }, TIME_PER_ROUND);
       })
-      .catch(error => socket.emit('round:not_started', { error }));
+      .catch(error => socket.emit('round:not_started', { error: error.message }));
   }
 };
+
+module.exports = startRound;
