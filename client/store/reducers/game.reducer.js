@@ -97,6 +97,15 @@ export default function gameReducer(state = initialState, action) {
         },
       };
 
+    case GAME_TYPES.CLEAR_ITEMS:
+      return {
+        ...state,
+        canvas: {
+          ...state.canvas,
+          items: [],
+        },
+      };
+
     default:
       return state;
   }

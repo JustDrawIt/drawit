@@ -29,3 +29,7 @@ export const addItemAction = dispatch => item => dispatch({
   type: GAME_TYPES.ADD_ITEM,
   item,
 });
+
+export const clearItemsAction = dispatch => () => dispatch({
+  type: GAME_TYPES.CLEAR_ITEMS,
+});

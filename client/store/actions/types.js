@@ -7,4 +7,6 @@ export const GAME_TYPES = {
   SET_FILL_COLOR: 'SET_FILL_COLOR',
 
   ADD_ITEM: 'ADD_ITEM',
+
+  CLEAR_ITEMS: 'CLEAR_ITEMS',
 };
