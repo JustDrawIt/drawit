@@ -7,7 +7,7 @@ const findGameWithJoinCode = joinCode => Game.findOne({ joinCode })
 const updateGameRound = (joinCode, word) => Game.findOneAndUpdate({ joinCode }, {
   $set: { word },
   $inc: { roundsPlayed: 1 },
-}).exec();
+}, { new: true }).exec();
 
 const addPlayerToGame = (joinCode, nickname) => findGameWithJoinCode(joinCode).then((game) => {
   if (game.players.find(player => player.nickname === nickname)) {
