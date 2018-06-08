@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import axios from '../../axios';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
 
@@ -26,8 +26,7 @@ class JoinGame extends PureComponent {
     const { history } = this.props;
 
     if (joinCode.length >= 7) {
-      const url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
-      axios.post(`${url}/codes`, { joinCode })
+      axios.post('/codes', { joinCode })
         .then(response => (response.data.valid
           ? history.push(`/games/${joinCode}`)
           : this.setState({ error: 'There are no games with that join code!' })

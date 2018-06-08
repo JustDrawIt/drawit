@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { connect } from 'react-redux';
 import styled from 'react-emotion';
-import axios from 'axios';
+import axios from '../axios';
 import Button from './Utils/Button';
 import Input from './Utils/Input';
 import { setGameAction, setIsAdminAction } from '../store/actions/game.actions';
