@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ClearTool from './ClearTool';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 import socket from '../../../../../sockets';
 import { clearItemsAction } from '../../../../../store/actions/game.actions';
 

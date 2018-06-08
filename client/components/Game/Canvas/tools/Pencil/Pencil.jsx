@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
 import PencilTool, { TOOL_PENCIL } from './PencilTool';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 
 class Pencil extends PureComponent {
   constructor(props) {

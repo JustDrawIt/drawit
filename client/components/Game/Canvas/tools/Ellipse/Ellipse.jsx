@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
 import EllipseTool, { TOOL_ELLIPSE } from './EllipseTool';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 
 class Ellipse extends PureComponent {
   constructor(props) {

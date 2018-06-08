@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
 import RectangleTool, { TOOL_RECTANGLE } from './RectangleTool';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 
 class Rectangle extends PureComponent {
   constructor(props) {

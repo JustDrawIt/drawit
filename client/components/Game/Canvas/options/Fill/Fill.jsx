@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled, { css } from 'react-emotion';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 import { setFillAction, setFillColorAction } from '../../../../../store/actions/game.actions';
 
 const relativeStyle = css`

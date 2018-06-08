@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setToolAction } from '../../../../../store/actions/game.actions';
 import LineTool, { TOOL_LINE } from './LineTool';
-import ToolButton from '../../../../util/ToolButton';
+import ToolButton from '../../../../Utils/ToolButton';
 
 class Line extends PureComponent {
   constructor(props) {
