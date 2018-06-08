@@ -2,12 +2,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'react-emotion';
+import Centered from '../Utils/Centered';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
 import socket from '../../sockets';
 import { setNicknameAction } from '../../store/actions/game.actions';
 
-const Container = styled('div')`
+const Container = styled(Centered)`
   text-align: center;
 `;
 
