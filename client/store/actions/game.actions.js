@@ -8,6 +8,14 @@ export const setJoinCodeAction = dispatch => joinCode => dispatch({
   type: GAME_TYPES.SET_JOIN_CODE,
   joinCode,
 });
+export const setGameAction = dispatch => game => dispatch({
+  type: GAME_TYPES.SET_GAME,
+  game,
+});
+export const setIsAdminAction = dispatch => isAdmin => dispatch({
+  type: GAME_TYPES.SET_IS_ADMIN,
+  isAdmin,
+});
 export const setContextAction = dispatch => context => dispatch({
   type: GAME_TYPES.SET_CONTEXT,
   context,

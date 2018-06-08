@@ -10,6 +10,7 @@ const initialState = {
   nickname: '',
   joinCode: '',
   game: null,
+  isAdmin: false,
   canvas: {
     context: null,
     tool: null,
@@ -30,6 +31,12 @@ export default function gameReducer(state = initialState, action) {
 
     case GAME_TYPES.SET_JOIN_CODE:
       return { ...state, joinCode: action.joinCode };
+
+    case GAME_TYPES.SET_GAME:
+      return { ...state, game: action.game };
+
+    case GAME_TYPES.SET_IS_ADMIN:
+      return { ...state, isAdmin: action.isAdmin };
 
     case GAME_TYPES.SET_CONTEXT:
       return {
