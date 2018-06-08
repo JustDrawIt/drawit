@@ -14,7 +14,7 @@ games.post('/', authenticated, (req, res) => {
     maxPlayers,
     joinCode,
   }).then(game => res.send({ game, error: null }))
-    .catch(error => res.status(500).send({ error }));
+    .catch(error => res.status(500).send({ error: error.message }));
 });
 
 module.exports = games;
