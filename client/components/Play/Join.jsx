@@ -1,16 +1,8 @@
 import React, { PureComponent } from 'react';
-import styled from 'react-emotion';
 import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
-
-const Container = styled('div')`
-  text-align: center;
-  span {
-    font-size: 18px;
-  }
-`;
 
 class JoinGame extends PureComponent {
   constructor(props) {
@@ -50,12 +42,11 @@ class JoinGame extends PureComponent {
     const { error } = this.state;
 
     return (
-      <Container>
+      <div>
         <Input onChange={this.setJoinCode} placeholder="Join code" type="text" />
         <Button onClick={this.join}>Play!</Button>
-        <span>or</span>
         {error ? <p>{error}</p> : null}
-      </Container>
+      </div>
     );
   }
 }

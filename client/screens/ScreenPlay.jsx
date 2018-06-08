@@ -21,6 +21,10 @@ const Container = styled(Centered)`
     font-size: 4rem;
     margin-bottom: 70px;
   }
+  span {
+    font-size: 19px;
+    display: block;
+  }
 `;
 
 const ScreenPlay = ({ history }) => (
@@ -28,6 +32,7 @@ const ScreenPlay = ({ history }) => (
     <Container>
       <h1>Draw It!</h1>
       <JoinGame history={history} />
+      <span>or</span>
       <CreateGame />
     </Container>
   </Background>
