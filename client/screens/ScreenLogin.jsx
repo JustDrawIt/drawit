@@ -1,5 +1,5 @@
 import React from 'react';
-import Container from '../components/util/Centered';
+import Container from '../components/Utils/Centered';
 import GoogleLogin from '../components/GoogleLogin';
 
 const ScreenLogin = () => (

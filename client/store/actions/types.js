@@ -1,5 +1,12 @@
-const actionTypes = {
+export const GAME_TYPES = {
   SET_NICKNAME: 'SET_NICKNAME',
-};
+  SET_JOIN_CODE: 'SET_JOIN_CODE',
+  SET_CONTEXT: 'SET_CONTEXT',
+  SET_TOOL: 'SET_TOOL',
+  SET_FILL: 'SET_FILL',
+  SET_FILL_COLOR: 'SET_FILL_COLOR',
 
-export default actionTypes;
+  ADD_ITEM: 'ADD_ITEM',
+
+  CLEAR_ITEMS: 'CLEAR_ITEMS',
+};

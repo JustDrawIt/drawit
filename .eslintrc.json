@@ -20,7 +20,34 @@
     "no-unused-expressions": [
       "error",
       {
-        "allowTaggedTemplates": true
+        "allowTaggedTemplates": true,
+        "allowTernary": true,
+        "allowShortCircuit": true
+      }
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "ObjectExpression": {
+          "minProperties": 5,
+          "multiline": true,
+          "consistent": true
+        },
+        "ObjectPattern": {
+          "minProperties": 5,
+          "multiline": true,
+          "consistent": true
+        },
+        "ImportDeclaration": {
+          "minProperties": 5,
+          "multiline": true,
+          "consistent": true
+        },
+        "ExportDeclaration": {
+          "minProperties": 5,
+          "multiline": true,
+          "consistent": true
+        }
       }
     ]
   }
