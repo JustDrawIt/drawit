@@ -16,7 +16,7 @@ const ToolButton = withProps({ circle: true })(styled(Button)`
   background: #f8f8f8;
 
   :hover {
-    ${activeToolButtonStyles()}
+    ${props => activeToolButtonStyles(props.activeColor)}
   }
 
   ${props => (props.active ? activeToolButtonStyles(props.activeColor) : null)};
