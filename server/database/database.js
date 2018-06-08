@@ -31,10 +31,6 @@ const gameSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  timePerRound: {
-    type: Number,
-    default: 10000,
-  },
   maxPlayers: {
     type: Number,
     default: 4,

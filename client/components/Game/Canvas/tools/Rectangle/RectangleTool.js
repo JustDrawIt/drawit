@@ -3,11 +3,7 @@ import BaseTool from '../BaseTool';
 export const TOOL_RECTANGLE = 'rectangle';
 export default class RectangleTool extends BaseTool {
   constructor(context, options = {}) {
-    super({
-      context,
-      name: TOOL_RECTANGLE,
-      options: { ...options, tool: TOOL_RECTANGLE },
-    });
+    super({ name: TOOL_RECTANGLE, context, options });
   }
 
   drawShape({ mouseX, mouseY }) {

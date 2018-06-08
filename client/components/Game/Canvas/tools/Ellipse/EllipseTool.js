@@ -3,11 +3,7 @@ import BaseTool from '../BaseTool';
 export const TOOL_ELLIPSE = 'ellipse';
 export default class EllipseTool extends BaseTool {
   constructor(context, options = {}) {
-    super({
-      context,
-      name: TOOL_ELLIPSE,
-      options: { ...options, tool: TOOL_ELLIPSE },
-    });
+    super({ name: TOOL_ELLIPSE, context, options });
   }
 
   drawShapePolyfill({ centerX, centerY, radiusX, radiusY }) {

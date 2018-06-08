@@ -43,7 +43,7 @@ class BaseTool {
     const { options, name } = this;
 
     return {
-      ...options,
+      options,
       tool: name,
       start: {
         x: mouseX,
@@ -58,13 +58,8 @@ class BaseTool {
 
   drawShape(position) { }
   drawItem(item) {
-    this.item = item;
-    this.setOptions({
-      size: item.size,
-      fill: item.fill,
-      strokeColor: item.strokeColor,
-      fillColor: item.fillColor,
-    });
+    this.setItem(item);
+    this.setOptions(item.options);
     this.draw({
       mouseX: item.end.x,
       mouseY: item.end.y,

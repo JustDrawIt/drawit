@@ -41,7 +41,7 @@ const startRound = ({ data, socket, io }) => {
                 setTimeout(() => startRound({ data, socket, io }), WAIT_AFTER_ROUND_ENDS);
               }
             })
-            .catch(error => socket.emit({ error: error.message }));
+            .catch(error => socket.emit('round:not_started', { error: error.message }));
         }, TIME_PER_ROUND);
       })
       .catch(error => socket.emit('round:not_started', { error: error.message }));
