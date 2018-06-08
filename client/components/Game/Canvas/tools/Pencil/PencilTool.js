@@ -3,11 +3,7 @@ import BaseTool from '../BaseTool';
 export const TOOL_PENCIL = 'pencil';
 export default class PencilTool extends BaseTool {
   constructor(context, options = {}) {
-    super({
-      context,
-      name: TOOL_PENCIL,
-      options: { ...options, tool: TOOL_PENCIL },
-    });
+    super({ name: TOOL_PENCIL, context, options });
 
     delete this.imageDate;
     delete this.item;
@@ -23,7 +19,8 @@ export default class PencilTool extends BaseTool {
     const { options } = this;
 
     return {
-      ...options,
+      options,
+      tool: TOOL_PENCIL,
       points: [{ mouseX, mouseY }],
     };
   }
@@ -40,10 +37,8 @@ export default class PencilTool extends BaseTool {
   drawItem(stroke) {
     const [first, ...rest] = stroke.points.slice(1);
 
-    this.stroke = {
-      ...stroke,
-      points: [first],
-    };
+    this.setItem({ ...stroke, points: [first] });
+    this.setOptions(stroke.options);
 
     rest.forEach((position) => {
       this.draw(position);

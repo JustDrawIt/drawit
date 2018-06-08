@@ -36,10 +36,9 @@ class SketchPad extends PureComponent {
     const newItem = items.slice(-1)[0];
 
     if (newItem) {
-      const { options } = this.props;
       const context = this.canvas.getContext('2d');
       const Tool = tools[newItem.tool];
-      const tool = new Tool(context, options);
+      const tool = new Tool(context, newItem.options);
 
       tool.drawItem(newItem);
     }
