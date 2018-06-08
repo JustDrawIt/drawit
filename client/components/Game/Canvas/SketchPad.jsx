@@ -1,129 +1,125 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
-import { Pencil, TOOL_PENCIL, Line, TOOL_LINE, Ellipse, TOOL_ELLIPSE, Rectangle, TOOL_RECTANGLE } from './tools';
+import { connect } from 'react-redux';
+import { css } from 'react-emotion';
+import { setContextAction, setToolAction, addItemAction } from '../../../store/actions/game.actions';
+import { DEFAULT_TOOL } from './defaults';
+import tools from './tools';
+import socket from '../../../sockets';
 
-export const toolsMap = {
-  [TOOL_PENCIL]: Pencil,
-  [TOOL_LINE]: Line,
-  [TOOL_RECTANGLE]: Rectangle,
-  [TOOL_ELLIPSE]: Ellipse,
-};
+const canvasStyle = css`
+  border: 1px solid #000;
+`;
 
-export default class SketchPad extends Component {
-  // tool = null;
-  // interval = null;
+const CANVAS_WIDTH = 500;
+const CANVAS_HEIGHT = 500;
+
+class SketchPad extends PureComponent {
   constructor(props) {
     super(props);
-    this.initTool = this.initTool.bind(this);
+
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
-    this.onDebouncedMove = this.onDebouncedMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   componentDidMount() {
-    this.canvas = findDOMNode(this.canvasRef);
-    this.ctx = this.canvas.getContext('2d');
-    this.initTool(this.props.tool);
+    const { options, dispatchContext, dispatchTool } = this.props;
+    const context = this.canvas.getContext('2d');
+    const tool = new DEFAULT_TOOL(context, options);
+
+    dispatchContext(context);
+    dispatchTool(tool);
   }
 
-  // render all items when new items recieved
-  componentWillReceiveProps({ tool, items }) {
-    items
-      .filter(item => this.props.items.indexOf(item) === -1)
-      .forEach((item) => {
-        this.initTool(item.tool);
-        this.tool.draw(item, this.props.animate);
-      });
-    this.initTool(tool);
-  }
+  componentWillReceiveProps({ items }) {
+    const newItem = items.slice(-1)[0];
 
-  onMouseDown(e) {
-    const data = this.tool.onMouseDown(...this.getCursorPosition(e), this.props.color, this.props.size, this.props.fillColor);
-    data && data[0] && this.props.onItemStart && this.props.onItemStart.apply(null, data);
-    if (this.props.onDebouncedItemChange) {
-      this.interval = setInterval(this.onDebouncedMove, this.props.debounceTime);
+    if (newItem) {
+      const { options } = this.props;
+      const context = this.canvas.getContext('2d');
+      const Tool = tools[newItem.tool];
+      const tool = new Tool(context, options);
+
+      tool.drawItem(newItem);
     }
   }
 
-  onDebouncedMove() {
-    if (typeof this.tool.onDebouncedMouseMove === 'function' && this.props.onDebouncedItemChange) {
-      this.props.onDebouncedItemChange.apply(null, this.tool.onDebouncedMouseMove());
+  onMouseDown(event) {
+    const { tool } = this.props;
+    const position = this.getCursorPosition(event);
+
+    tool.onMouseDown(position);
+  }
+
+  onMouseMove(event) {
+    const { tool } = this.props;
+    const position = this.getCursorPosition(event);
+
+    tool.onMouseMove(position);
+  }
+
+  onMouseUp(event) {
+    const { tool, joinCode, dispatchItem } = this.props;
+    const position = this.getCursorPosition(event);
+    const item = tool.onMouseUp(position);
+
+    if (item) {
+      socket.emit('round:draw', { item, joinCode });
+      dispatchItem(item);
     }
   }
 
-  onMouseMove(e) {
-    const data = this.tool.onMouseMove(...this.getCursorPosition(e));
-    data && data[0] && this.props.onEveryItemChange && this.props.onEveryItemChange.apply(null, data);
-  }
-
-  onMouseUp(e) {
-    const data = this.tool.onMouseUp(...this.getCursorPosition(e));
-    data && data[0] && this.props.onCompleteItem && this.props.onCompleteItem.apply(null, data);
-    if (this.props.onDebouncedItemChange) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
-  }
-
-  getCursorPosition(e) {
+  getCursorPosition({ clientX, clientY }) {
     const { top, left } = this.canvas.getBoundingClientRect();
-    return [
-      e.clientX - left,
-      e.clientY - top,
-    ];
-  }
 
-  initTool(tool) {
-    this.tool = this.props.toolsMap[tool](this.ctx);
+    return {
+      mouseX: clientX - left,
+      mouseY: clientY - top,
+    };
   }
-
 
   render() {
-    const { width, height, canvasClassName } = this.props;
     return (
       <canvas
-        ref={(canvas) => { this.canvasRef = canvas; }}
-        className={canvasClassName}
+        ref={(canvas) => { this.canvas = canvas; }}
+        className={canvasStyle}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseOut={this.onMouseUp}
         onMouseUp={this.onMouseUp}
-        width={width}
-        height={height}
+        onBlur={this.onMouseUp}
       />
     );
   }
 }
 
 SketchPad.defaultProps = {
-  width: 500,
-  height: 500,
-  color: '#000',
-  size: 5,
-  fillColor: '',
-  canvasClassName: 'canvas',
-  debounceTime: 1000,
-  animate: true,
-  tool: TOOL_PENCIL,
-  toolsMap,
+  tool: null,
 };
 
 SketchPad.propTypes = {
-  width: PropTypes.number,
-  height: PropTypes.number,
-  items: PropTypes.array.isRequired,
-  animate: PropTypes.bool,
-  canvasClassName: PropTypes.string,
-  color: PropTypes.string,
-  fillColor: PropTypes.string,
-  size: PropTypes.number,
-  tool: PropTypes.string,
-  toolsMap: PropTypes.object,
-  onItemStart: PropTypes.func, // function(stroke:Stroke) { ... }
-  onEveryItemChange: PropTypes.func, // function(idStroke:string, x:number, y:number) { ... }
-  onDebouncedItemChange: PropTypes.func, // function(idStroke, points:Point[]) { ... }
-  onCompleteItem: PropTypes.func, // function(stroke:Stroke) { ... }
-  debounceTime: PropTypes.number,
+  joinCode: PropTypes.string.isRequired,
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  tool: PropTypes.object,
+  options: PropTypes.object.isRequired,
+  dispatchContext: PropTypes.func.isRequired,
+  dispatchTool: PropTypes.func.isRequired,
+  dispatchItem: PropTypes.func.isRequired,
 };
+
+export default connect(
+  ({ game }) => ({
+    joinCode: game.joinCode,
+    items: game.canvas.items,
+    tool: game.canvas.tool,
+    options: game.canvas.options,
+  }),
+  dispatch => ({
+    dispatchContext: setContextAction(dispatch),
+    dispatchTool: setToolAction(dispatch),
+    dispatchItem: addItemAction(dispatch),
+  }),
+)(SketchPad);
