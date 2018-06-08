@@ -36,15 +36,15 @@ class NicknameForm extends PureComponent {
   }
 
   joinGame() {
+    const { joinCode, isAdmin } = this.props;
     const { nickname } = this.state;
-    const { joinCode } = this.props;
 
     if (!nickname) {
       this.setState({ error: 'Please enter a nickname!' });
     } else {
       this.props.dispatchNickname(nickname);
       this.verifyNickname(nickname);
-      socket.emit('game:join', { nickname, joinCode });
+      socket.emit('game:join', { nickname, joinCode, isAdmin });
     }
   }
 
@@ -67,10 +67,14 @@ class NicknameForm extends PureComponent {
 NicknameForm.propTypes = {
   dispatchNickname: PropTypes.func.isRequired,
   joinCode: PropTypes.string.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
-  dispatchNickname: setNicknameAction(dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(NicknameForm);
+export default connect(
+  ({ game }) => ({
+    isAdmin: game.isAdmin,
+  }),
+  dispatch => ({
+    dispatchNickname: setNicknameAction(dispatch),
+  }),
+)(NicknameForm);
