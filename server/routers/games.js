@@ -9,7 +9,7 @@ games.get('/', (req, res) => {
   const { joinCode } = req.query;
 
   findGameWithJoinCode(joinCode)
-    .then(game => res.send(game))
+    .then(game => res.send({ game }))
     .catch(error => res.status(500).send({ error: error.message }));
 });
 
