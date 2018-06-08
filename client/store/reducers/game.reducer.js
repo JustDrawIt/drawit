@@ -12,6 +12,7 @@ const initialState = {
   joinCode: '',
   game: null,
   isAdmin: false,
+  started: false,
   canvas: {
     context: null,
     tool: null,
@@ -100,6 +101,9 @@ export default function gameReducer(state = initialState, action) {
           items: [],
         },
       };
+
+    case GAME_TYPES.START:
+      return { ...state, started: true };
 
     default:
       return state;

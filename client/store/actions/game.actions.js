@@ -50,6 +50,10 @@ export const clearItemsAction = dispatch => () => dispatch({
   type: GAME_TYPES.CLEAR_ITEMS,
 });
 
+export const startAction = dispatch => () => dispatch({
+  type: GAME_TYPES.START,
+});
+
 
 export const updateOptions = (state, options) => {
   const newOptions = {
