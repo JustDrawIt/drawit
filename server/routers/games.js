@@ -5,8 +5,7 @@ const { createGame } = require('../database/helpers');
 
 const games = express.Router();
 
-// games.post('/', authenticated, (req, res) => {
-games.post('/', (req, res) => {
+games.post('/', authenticated, (req, res) => {
   const { maxPlayers, maxRounds } = req.body;
   const joinCode = shortid.generate();
 
