@@ -35,10 +35,13 @@ const startRound = ({ data, socket, io }) => {
           findGameWithJoinCode(joinCode)
             .then(({ roundsPlayed, maxRounds, players }) => {
               if (roundsPlayed > maxRounds) {
-                io.in(joinCode).emit('game:end', { scores: players });
+                io.in(joinCode).emit('game:end', { word, scores: players });
               } else {
-                io.in(joinCode).emit('round:end', { scores: players });
-                setTimeout(() => startRound({ data, socket, io }), WAIT_AFTER_ROUND_ENDS);
+                io.in(joinCode).emit('round:end', { word, scores: players });
+                setTimeout(() => {
+                  io.in(joinCode).emit('round:cleared');
+                  startRound({ data, socket, io });
+                }, WAIT_AFTER_ROUND_ENDS);
               }
             })
             .catch(error => socket.emit('round:not_started', { error: error.message }));
