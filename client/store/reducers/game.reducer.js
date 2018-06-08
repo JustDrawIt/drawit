@@ -1,4 +1,5 @@
 import { GAME_TYPES } from '../actions/types';
+import { updateOptions } from '../actions/game.actions';
 import {
   DEFAULT_SIZE,
   DEFAULT_FILL,
@@ -61,38 +62,25 @@ export default function gameReducer(state = initialState, action) {
         },
       };
 
-    case GAME_TYPES.SET_FILL: {
-      const newOptions = {
-        ...state.canvas.options,
+    case GAME_TYPES.SET_SIZE:
+      return updateOptions(state, {
+        size: action.size,
+      });
+
+    case GAME_TYPES.SET_STROKE_COLOR:
+      return updateOptions(state, {
+        strokeColor: action.strokeColor,
+      });
+
+    case GAME_TYPES.SET_FILL:
+      return updateOptions(state, {
         fill: action.fill,
-      };
-
-      state.canvas.tool.setOptions(newOptions);
-
-      return {
-        ...state,
-        canvas: {
-          ...state.canvas,
-          options: newOptions,
-        },
-      };
-    }
+      });
 
     case GAME_TYPES.SET_FILL_COLOR: {
-      const newOptions = {
-        ...state.canvas.options,
+      return updateOptions(state, {
         fillColor: action.fillColor,
-      };
-
-      state.canvas.tool.setOptions(newOptions);
-
-      return {
-        ...state,
-        canvas: {
-          ...state.canvas,
-          options: newOptions,
-        },
-      };
+      });
     }
 
     case GAME_TYPES.ADD_ITEM:

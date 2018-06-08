@@ -24,6 +24,14 @@ export const setToolAction = dispatch => tool => dispatch({
   type: GAME_TYPES.SET_TOOL,
   tool,
 });
+export const setSizeAction = dispatch => size => dispatch({
+  type: GAME_TYPES.SET_SIZE,
+  size,
+});
+export const setStrokeColorAction = dispatch => strokeColor => dispatch({
+  type: GAME_TYPES.SET_STROKE_COLOR,
+  strokeColor,
+});
 export const setFillAction = dispatch => fill => dispatch({
   type: GAME_TYPES.SET_FILL,
   fill,
@@ -41,3 +49,21 @@ export const addItemAction = dispatch => item => dispatch({
 export const clearItemsAction = dispatch => () => dispatch({
   type: GAME_TYPES.CLEAR_ITEMS,
 });
+
+
+export const updateOptions = (state, options) => {
+  const newOptions = {
+    ...state.canvas.options,
+    ...options,
+  };
+
+  state.canvas.tool.setOptions(newOptions);
+
+  return {
+    ...state,
+    canvas: {
+      ...state.canvas,
+      options: newOptions,
+    },
+  };
+};
