@@ -83,6 +83,7 @@ class ScreenGame extends PureComponent {
     return (nickname
       ?
         <div>
+          <h1>{joinCode}</h1>
           {roundEnded ?
             <div>
               <p>ROUND ENDED</p>
