@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
 import axios from 'axios';
 import ReactRouterPropTypes from 'react-router-prop-types';
-import Button from '../util/Button';
-import Input from '../util/Input';
+import Button from '../Utils/Button';
+import Input from '../Utils/Input';
 
 const Container = styled('div')`
   text-align: center;

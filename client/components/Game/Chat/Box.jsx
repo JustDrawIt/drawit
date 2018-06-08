@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import styled from 'react-emotion';
 import uuid from 'uuid';
 import ChatMessage from './Message';
-import Button from '../../util/Button';
-import Input from '../../util/Input';
+import Button from '../../Utils/Button';
+import Input from '../../Utils/Input';
 import socket from '../../../sockets';
 
 const ChatWindow = styled('div')`

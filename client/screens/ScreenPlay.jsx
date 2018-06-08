@@ -3,7 +3,7 @@ import styled from 'react-emotion';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import JoinGame from '../components/Play/Join';
 import CreateGame from '../components/Play/CreateGame';
-import Centered from '../components/util/Centered';
+import Centered from '../components/Utils/Centered';
 
 const Background = styled('div')`
   width: 100%;

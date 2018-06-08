@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'react-emotion';
-import Button from '../util/Button';
-import Input from '../util/Input';
+import Button from '../Utils/Button';
+import Input from '../Utils/Input';
 import socket from '../../sockets';
 import { setNicknameAction } from '../../store/actions/game.actions';
 

@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import NicknameForm from '../components/Game/NicknameForm';
 import Canvas from '../components/Game/Canvas/Canvas';
 import ChatBox from '../components/Game/Chat/Box';
-import Container from '../components/util/Centered';
-import Flex from '../components/util/Flex';
+import Container from '../components/Utils/Centered';
+import Flex from '../components/Utils/Flex';
 import { setJoinCodeAction } from '../store/actions/game.actions';
 
 class ScreenGame extends PureComponent {

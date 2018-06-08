@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import CreateGameForm from '../components/CreateGameForm';
-import Container from '../components/util/Centered';
+import Container from '../components/Utils/Centered';
 
 const ScreenCreateGame = ({ history }) => (
   <div>
