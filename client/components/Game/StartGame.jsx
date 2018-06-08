@@ -17,9 +17,10 @@ class StartGame extends PureComponent {
 
   componentDidMount() {
     socket.on('round:not_started', error => this.setState({ error }));
-    socket.on('round:started', () => {
-      this.setState({ error: null });
-    });
+  }
+
+  componentWillUnmount() {
+    socket.off('round:not_started');
   }
 
   start() {

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'react-emotion';
-import axios from 'axios';
+import axios from '../../axios';
 import Centered from '../Utils/Centered';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
@@ -53,7 +53,7 @@ class NicknameForm extends PureComponent {
             socket.emit('game:join', { nickname, joinCode, isAdmin });
           }
         })
-        .catch(error => this.setState({ error }));
+        .catch(error => this.setState({ error: error.message }));
     }
   }
 

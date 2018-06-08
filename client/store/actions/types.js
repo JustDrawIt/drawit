@@ -13,4 +13,5 @@ export const GAME_TYPES = {
   ADD_ITEM: 'ADD_ITEM',
 
   CLEAR_ITEMS: 'CLEAR_ITEMS',
+  START: 'START',
 };

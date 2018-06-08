@@ -32,7 +32,11 @@ class ChatBox extends PureComponent {
       messages: [],
     };
 
-    // listen for chat events
+    this.setMessage = this.setMessage.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+  }
+
+  componentDidMount() {
     socket.on('round:incorrect_guess', (data) => {
       this.setState({
         messages: [data, ...this.state.messages],
@@ -44,9 +48,11 @@ class ChatBox extends PureComponent {
         messages: [{ nickname: null, message: `${data.nickname} joined the game!` }, ...this.state.messages],
       });
     });
+  }
 
-    this.setMessage = this.setMessage.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
+  componentWillUnmount() {
+    socket.off('round:incorrect_guess');
+    socket.off('round:joined');
   }
 
   setMessage({ target }) {
@@ -67,6 +73,7 @@ class ChatBox extends PureComponent {
 
   render() {
     const { messages, error } = this.state;
+    const { drawing } = this.props;
 
     return (
       <ChatContainer>
@@ -79,8 +86,8 @@ class ChatBox extends PureComponent {
             />
           ))}
         </ChatWindow>
-        <Input onChange={this.setMessage} placeholder="Type a message!" type="text" />
-        <Button onClick={this.sendMessage}>Send!</Button>
+        <Input onChange={this.setMessage} disabled={drawing} placeholder="Type a message!" type="text" />
+        <Button onClick={this.sendMessage} disabled={drawing}>Send!</Button>
         {error ? <p>{error}</p> : null}
       </ChatContainer>
     );
@@ -88,6 +95,7 @@ class ChatBox extends PureComponent {
 }
 
 ChatBox.propTypes = {
+  drawing: PropTypes.bool.isRequired,
   nickname: PropTypes.string.isRequired,
   joinCode: PropTypes.string.isRequired,
 };

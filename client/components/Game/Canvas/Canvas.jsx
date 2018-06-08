@@ -6,7 +6,7 @@ import SketchPad from './SketchPad';
 import Tools from './tools/Tools';
 import Options from './options/Options';
 import socket from '../../../sockets';
-import { addItemAction } from '../../../store/actions/game.actions';
+import { addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
 import ClearTool from './tools/Clear/ClearTool';
 
 const Container = styled('div')`
@@ -15,19 +15,31 @@ const Container = styled('div')`
 
 class Canvas extends PureComponent {
   componentDidMount() {
-    const { dispatchItem } = this.props;
+    const { dispatchItem, dispatchClearItems } = this.props;
     socket.on('round:drew', ({ item }) => dispatchItem(item));
-    socket.on('round:cleared', () => ClearTool.clear(this.props.context));
+    socket.on('round:cleared', () => {
+      ClearTool.clear(this.props.context);
+      dispatchClearItems();
+    });
+  }
+
+  componentWillUnmount() {
+    socket.off('round:drew');
+    socket.off('round:cleared');
   }
 
   render() {
+    const { drawing } = this.props;
+
     return (
       <Container>
-        <SketchPad />
-        <div>
-          <Tools />
-          <Options />
-        </div>
+        <SketchPad disabled={!drawing} />
+        {drawing ?
+          <div>
+            <Tools />
+            <Options />
+          </div>
+        : null}
       </Container>
     );
   }
@@ -40,6 +52,8 @@ Canvas.defaultTypes = {
 Canvas.propTypes = {
   context: PropTypes.object,
   dispatchItem: PropTypes.func.isRequired,
+  dispatchClearItems: PropTypes.func.isRequired,
+  drawing: PropTypes.bool.isRequired,
 };
 
 export default connect(
@@ -48,5 +62,6 @@ export default connect(
   }),
   dispatch => ({
     dispatchItem: addItemAction(dispatch),
+    dispatchClearItems: clearItemsAction(dispatch),
   }),
 )(Canvas);
