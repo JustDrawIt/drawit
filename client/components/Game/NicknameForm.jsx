@@ -53,7 +53,7 @@ class NicknameForm extends PureComponent {
             socket.emit('game:join', { nickname, joinCode, isAdmin });
           }
         })
-        .catch(error => this.setState({ error }));
+        .catch(error => this.setState({ error: error.message }));
     }
   }
 
