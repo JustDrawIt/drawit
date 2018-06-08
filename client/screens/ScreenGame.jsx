@@ -2,10 +2,11 @@ import React, { PureComponent } from 'react';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import NicknameForm from '../components/Game/NicknameForm';
+import Flex from '../components/Utils/Flex';
 import Canvas from '../components/Game/Canvas/Canvas';
 import ChatBox from '../components/Game/Chat/Box';
-import Flex from '../components/Utils/Flex';
+import StartGame from '../components/Game/StartGame';
+import NicknameForm from '../components/Game/NicknameForm';
 import { setJoinCodeAction } from '../store/actions/game.actions';
 
 class ScreenGame extends PureComponent {
@@ -17,15 +18,18 @@ class ScreenGame extends PureComponent {
   }
 
   render() {
-    const { match, nickname } = this.props;
+    const { match, nickname, isAdmin } = this.props;
     const { joinCode } = match.params;
 
     return (nickname
       ?
-        <Flex>
-          <Canvas />
-          <ChatBox joinCode={joinCode} />
-        </Flex>
+        <div>
+          <Flex>
+            <Canvas />
+            <ChatBox joinCode={joinCode} />
+          </Flex>
+          {isAdmin ? <StartGame /> : null}
+        </div>
       :
         <NicknameForm joinCode={joinCode} />
     );
@@ -35,12 +39,14 @@ class ScreenGame extends PureComponent {
 ScreenGame.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
   nickname: PropTypes.string.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   dispatchJoinCode: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ game }) => ({
     nickname: game.nickname,
+    isAdmin: game.isAdmin,
   }),
   dispatch => ({
     dispatchJoinCode: setJoinCodeAction(dispatch),
