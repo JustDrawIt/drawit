@@ -1,17 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styled from 'react-emotion';
 import SketchPad from './SketchPad';
 import Tools from './tools/Tools';
 import Options from './options/Options';
 import socket from '../../../sockets';
 import { addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
 import ClearTool from './tools/Clear/ClearTool';
-
-const Container = styled('div')`
-  padding: 50px;
-`;
 
 class Canvas extends PureComponent {
   componentDidMount() {
@@ -32,7 +27,7 @@ class Canvas extends PureComponent {
     const { drawing } = this.props;
 
     return (
-      <Container>
+      <div>
         <SketchPad disabled={!drawing} />
         {drawing ?
           <div>
@@ -40,7 +35,7 @@ class Canvas extends PureComponent {
             <Options />
           </div>
         : null}
-      </Container>
+      </div>
     );
   }
 }
