@@ -11,5 +11,5 @@ module.exports = ({ data, socket, io }) => {
 
       socket.join(joinCode, () => io.in(joinCode).emit('game:joined', { nickname }));
     })
-    .catch(error => socket.emit('game:not_joined', { error }));
+    .catch(error => socket.emit('game:not_joined', { error: error.message }));
 };
