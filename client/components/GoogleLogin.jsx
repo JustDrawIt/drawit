@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'react-emotion';
 import { Link } from 'react-router-dom';
-import Button from './util/Button';
+import Button from './Utils/Button';
 
 const Container = styled('div')`
   text-align: center;
