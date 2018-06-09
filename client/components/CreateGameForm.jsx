@@ -1,10 +1,13 @@
 import 'babel-polyfill';
 import React, { PureComponent } from 'react';
-import styled from 'react-emotion';
-import axios from 'axios';
+import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import { connect } from 'react-redux';
+import styled from 'react-emotion';
+import axios from '../axios';
 import Button from './Utils/Button';
 import Input from './Utils/Input';
+import { setGameAction, setIsAdminAction } from '../store/actions/game.actions';
 
 const Container = styled('div')`
   label span {
@@ -18,15 +21,13 @@ class CreateGameForm extends PureComponent {
     super(props);
 
     this.state = {
-      maxPlayers: 0,
-      maxRounds: 0,
-      timePerRound: 0,
-      error: '',
+      maxPlayers: 5,
+      maxRounds: 5,
+      error: null,
     };
 
-    this.setTimePerRound = this.setTimePerRound.bind(this);
-    this.setMaxRounds = this.setMaxRounds.bind(this);
     this.setMaxPlayers = this.setMaxPlayers.bind(this);
+    this.setMaxRounds = this.setMaxRounds.bind(this);
     this.createGame = this.createGame.bind(this);
   }
 
@@ -51,21 +52,26 @@ class CreateGameForm extends PureComponent {
     this.setState({ maxRounds: target.value });
   }
 
-  setTimePerRound({ target }) {
-    this.setState({ timePerRound: target.value });
-  }
-
   createGame() {
-    const { maxPlayers, maxRounds, timePerRound } = this.state;
-    axios.post('/games', { maxPlayers, maxRounds, timePerRound })
-      .then(({ data }) => this.props.history.push(`/games/${data.joinCode}`))
-      .catch((err) => { console.log(`${err} ERROR`); });
+    const { maxPlayers, maxRounds } = this.state;
+    const { dispatchGame, dispatchIsAdmin } = this.props;
+
+    axios.post('/games', { maxPlayers, maxRounds })
+      .then((response) => {
+        const { game } = response.data;
+
+        dispatchGame(game);
+        dispatchIsAdmin(true);
+
+        this.props.history.push(`/games/${game.joinCode}`);
+      })
+      .catch(error => this.setState({ error: error.message }));
   }
 
 
   render() {
     const { error } = this.state;
-    const { maxPlayers, maxRounds, timePerRound } = this.state;
+    const { maxPlayers, maxRounds } = this.state;
 
     return (
       <Container>
@@ -81,12 +87,6 @@ class CreateGameForm extends PureComponent {
             <Input onChange={this.setMaxPlayers} id="max-players" placeholder={maxPlayers} type="number" />
           </label>
         </div>
-        <div>
-          <label htmlFor="time-per-round">
-            <span>Time Per Round</span>
-            <Input onChange={this.setTimePerRound} id="time-per-round" placeholder={timePerRound} type="number" />
-          </label>
-        </div>
         <Button onClick={this.createGame}>Go!</Button>
         {error ? <p>{error}</p> : null}
       </Container>
@@ -96,6 +96,14 @@ class CreateGameForm extends PureComponent {
 
 CreateGameForm.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,
+  dispatchGame: PropTypes.func.isRequired,
+  dispatchIsAdmin: PropTypes.func.isRequired,
 };
 
-export default CreateGameForm;
+export default connect(
+  null,
+  dispatch => ({
+    dispatchGame: setGameAction(dispatch),
+    dispatchIsAdmin: setIsAdminAction(dispatch),
+  }),
+)(CreateGameForm);

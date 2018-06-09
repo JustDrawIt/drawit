@@ -1,4 +1,5 @@
 import { GAME_TYPES } from '../actions/types';
+import { updateOptions } from '../actions/game.actions';
 import {
   DEFAULT_SIZE,
   DEFAULT_FILL,
@@ -10,6 +11,8 @@ const initialState = {
   nickname: '',
   joinCode: '',
   game: null,
+  isAdmin: false,
+  started: false,
   canvas: {
     context: null,
     tool: null,
@@ -30,6 +33,12 @@ export default function gameReducer(state = initialState, action) {
 
     case GAME_TYPES.SET_JOIN_CODE:
       return { ...state, joinCode: action.joinCode };
+
+    case GAME_TYPES.SET_GAME:
+      return { ...state, game: action.game };
+
+    case GAME_TYPES.SET_IS_ADMIN:
+      return { ...state, isAdmin: action.isAdmin };
 
     case GAME_TYPES.SET_CONTEXT:
       return {
@@ -54,38 +63,25 @@ export default function gameReducer(state = initialState, action) {
         },
       };
 
-    case GAME_TYPES.SET_FILL: {
-      const newOptions = {
-        ...state.canvas.options,
+    case GAME_TYPES.SET_SIZE:
+      return updateOptions(state, {
+        size: action.size,
+      });
+
+    case GAME_TYPES.SET_STROKE_COLOR:
+      return updateOptions(state, {
+        strokeColor: action.strokeColor,
+      });
+
+    case GAME_TYPES.SET_FILL:
+      return updateOptions(state, {
         fill: action.fill,
-      };
-
-      state.canvas.tool.setOptions(newOptions);
-
-      return {
-        ...state,
-        canvas: {
-          ...state.canvas,
-          options: newOptions,
-        },
-      };
-    }
+      });
 
     case GAME_TYPES.SET_FILL_COLOR: {
-      const newOptions = {
-        ...state.canvas.options,
+      return updateOptions(state, {
         fillColor: action.fillColor,
-      };
-
-      state.canvas.tool.setOptions(newOptions);
-
-      return {
-        ...state,
-        canvas: {
-          ...state.canvas,
-          options: newOptions,
-        },
-      };
+      });
     }
 
     case GAME_TYPES.ADD_ITEM:
@@ -105,6 +101,9 @@ export default function gameReducer(state = initialState, action) {
           items: [],
         },
       };
+
+    case GAME_TYPES.START:
+      return { ...state, started: true };
 
     default:
       return state;

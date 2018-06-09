@@ -1,21 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styled, { css } from 'react-emotion';
+import { css } from 'react-emotion';
 import ToolButton from '../../../../Utils/ToolButton';
+import FullInput from '../../../../Utils/FullInput';
 import { setFillAction, setFillColorAction } from '../../../../../store/actions/game.actions';
 
 const relativeStyle = css`
   position: relative;
-`;
-const FullInput = styled('input')`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  cursor: pointer;
 `;
 
 class FillOption extends PureComponent {
@@ -45,7 +37,6 @@ class FillOption extends PureComponent {
       <div>
         <ToolButton onClick={this.onClick} active={fill} className={relativeStyle}>
           <i className="fas fa-tint" />
-          <FullInput type="checkbox" />
         </ToolButton>
         {fill ? (
           <ToolButton color={fillColor} className={relativeStyle}>
