@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'react-emotion';
-import { Link } from 'react-router-dom';
 import Button from './Utils/Button';
 
 const Container = styled('div')`
@@ -14,9 +13,9 @@ const Container = styled('div')`
 
 const GoogleLogin = () => (
   <Container>
-    <Button color="primary">
-      <Link to="/create_game">Create a game</Link>
-    </Button>
+    <a href="/auth/google">
+      <Button color="primary"> Login !</Button>
+    </a>
   </Container>
 );
 
