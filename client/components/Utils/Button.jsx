@@ -3,11 +3,8 @@ import styled, { css } from 'react-emotion';
 const width = '180px';
 const fontSize = '20px';
 const padding = '8px';
-const rounded = '30px';
-const circle = '100%';
 const colors = {
   default: css`
-    color: #f8f8f8;
     background: #2f2f2f;
 
     :hover {
@@ -15,11 +12,10 @@ const colors = {
     }
   `,
   primary: css`
-    color: #f8f8f8;
-    background: blue;
+    background: #6087FF;
 
     :hover {
-      background: #0038D3;
+      background: #3567FF;
     }
   `,
 };
@@ -30,14 +26,11 @@ const Button = styled('button')`
   width: ${props => props.width || width};
   font-size: ${props => props.fontSize || fontSize};
   padding: ${props => props.padding || padding};
-  border-radius: ${(props) => {
-    if (props.rounded) return rounded;
-    else if (props.circle) return circle;
-    return '3px';
-  }};
 
   transition: background 300ms ease-out;
+  color: #f8f8f8;
   border: 0;
+  border-radius: 3px;
   margin: 5px;
   cursor: pointer;
 
