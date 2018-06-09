@@ -1,83 +1,104 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import styled from 'react-emotion';
 import uuid from 'uuid';
-import ChatMessage from './Message';
-import Button from '../../Utils/Button';
-import Input from '../../Utils/Input';
 import socket from '../../../sockets';
+import ChatMessage from './Message';
+import {
+  Container,
+  WindowStyles,
+  EnterMessage,
+  MessageInput,
+  MessageButton,
+} from './styles';
 
-const ChatWindow = styled('div')`
-  height: 400px;
-  overflow: auto;
-  background: #f9f9f9;
-`;
-
-const ChatContainer = styled('div')`
-  max-width: 600px;
-  margin: 30px auto;
-  border: 1px solid #ddd;
-  box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
-  border-radius: 2px;
-`;
+const Window = React.forwardRef((props, ref) => (
+  <div ref={ref} className={WindowStyles}>{props.children}</div>
+));
 
 class ChatBox extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      message: '',
-      error: '',
+      newMessage: '',
       messages: [],
     };
 
+    this.chatWindowRef = React.createRef();
     this.setMessage = this.setMessage.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
+    this.onGameJoined = this.onGameJoined.bind(this);
+    this.onIncorrectGuess = this.onIncorrectGuess.bind(this);
   }
 
   componentDidMount() {
-    socket.on('round:incorrect_guess', (data) => {
-      this.setState({
-        messages: [data, ...this.state.messages],
-      });
-    });
+    const { nickname } = this.props;
 
-    socket.on('game:joined', (data) => {
-      this.setState({
-        messages: [{ nickname: null, message: `${data.nickname} joined the game!` }, ...this.state.messages],
-      });
-    });
+    this.onGameJoined({ nickname });
+
+    socket.on('game:joined', this.onGameJoined);
+    socket.on('round:incorrect_guess', this.onIncorrectGuess);
   }
 
   componentWillUnmount() {
-    socket.off('round:incorrect_guess');
-    socket.off('round:joined');
+    socket.off('round:joined', this.onGameJoined);
+    socket.off('round:incorrect_guess', this.onIncorrectGuess);
+  }
+
+  onGameJoined({ nickname }) {
+    const newMessage = { message: `${nickname} joined the game`, nickname: null };
+    this.setState(
+      { messages: [...this.state.messages, newMessage] },
+      () => this.scrollChatWindowToBottom(),
+    );
+  }
+
+  onIncorrectGuess(message) {
+    this.setState(
+      { messages: [...this.state.messages, message] },
+      () => this.scrollChatWindowToBottom(),
+    );
+  }
+
+  onKeyPress({ key }) {
+    if (key === 'Enter') {
+      this.sendMessage();
+    }
   }
 
   setMessage({ target }) {
-    this.setState({ message: target.value });
+    this.setState({ newMessage: target.value });
+  }
+
+  scrollChatWindowToBottom() {
+    const chatWindow = this.chatWindowRef.current;
+    chatWindow.scrollTo(0, chatWindow.scrollHeight);
   }
 
   sendMessage() {
-    const { message } = this.state;
     const { nickname, joinCode } = this.props;
+    const { newMessage } = this.state;
 
-    if (!nickname) {
-      this.setState({ error: 'No Nickname' });
+    if (!newMessage) {
+      this.props.addNotification({
+        message: 'Please enter a message',
+        level: 'error',
+        autoDismiss: 2,
+      });
     } else {
-      this.setState({ error: '' });
-      socket.emit('round:guess', { message, nickname, joinCode });
+      this.setState({ newMessage: '' });
+      socket.emit('round:guess', { message: newMessage, nickname, joinCode });
     }
   }
 
   render() {
-    const { messages, error } = this.state;
+    const { messages, newMessage } = this.state;
     const { drawing } = this.props;
 
     return (
-      <ChatContainer>
-        <ChatWindow>
+      <Container>
+        <Window ref={this.chatWindowRef}>
           {messages.map(message => (
             <ChatMessage
               key={uuid()}
@@ -85,11 +106,21 @@ class ChatBox extends PureComponent {
               message={message.message}
             />
           ))}
-        </ChatWindow>
-        <Input onChange={this.setMessage} disabled={drawing} placeholder="Type a message!" type="text" />
-        <Button onClick={this.sendMessage} disabled={drawing}>Send!</Button>
-        {error ? <p>{error}</p> : null}
-      </ChatContainer>
+        </Window>
+        <EnterMessage>
+          <MessageInput
+            onChange={this.setMessage}
+            onKeyPress={this.onKeyPress}
+            value={newMessage}
+            disabled={drawing}
+            placeholder="Make a guess"
+            type="text"
+          />
+          <MessageButton onClick={this.sendMessage} disabled={drawing}>
+            <i className="far fa-paper-plane" />
+          </MessageButton>
+        </EnterMessage>
+      </Container>
     );
   }
 }
@@ -98,8 +129,7 @@ ChatBox.propTypes = {
   drawing: PropTypes.bool.isRequired,
   nickname: PropTypes.string.isRequired,
   joinCode: PropTypes.string.isRequired,
+  addNotification: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({ nickname: state.game.nickname });
-
-export default connect(mapStateToProps, null)(ChatBox);
+export default ChatBox;
