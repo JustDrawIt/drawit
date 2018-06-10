@@ -11,7 +11,6 @@ touch .env
 ## Variables
 ```
 MONGODB=mongo_uri
-WORKNIK_API_KEY=youre_worknik_key
 GOOGLE_CLIENT_ID=google_client_id
 GOOGLE_CLIENT_SECRET=google_client_secret
 SESSION_SECRET=youre_secret

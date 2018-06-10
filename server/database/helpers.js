@@ -9,6 +9,12 @@ const updateGameRound = (joinCode, word) => Game.findOneAndUpdate({ joinCode }, 
   $inc: { roundsPlayed: 1 },
 }, { new: true }).exec();
 
+const resetGameWord = joinCode => Game.findOneAndUpdate({ joinCode }, {
+  $set: {
+    word: null,
+  },
+}, { new: true }).exec();
+
 const addPlayerToGame = (joinCode, nickname) => findGameWithJoinCode(joinCode).then((game) => {
   if (game.players.find(player => player.nickname === nickname)) {
     return Promise.reject(new Error('Nickname is already used.'));
@@ -23,5 +29,6 @@ const createGame = data => new Game(data).save().catch(() => Promise.reject(new 
 
 exports.findGameWithJoinCode = findGameWithJoinCode;
 exports.updateGameRound = updateGameRound;
+exports.resetGameWord = resetGameWord;
 exports.addPlayerToGame = addPlayerToGame;
 exports.createGame = createGame;

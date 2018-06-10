@@ -22,21 +22,6 @@ module.exports = {
       maxAge: 86400000, // 24 hours
     },
   },
-  WORDNIK: {
-    API_KEY: process.env.WORDNIK_API_KEY,
-    QUERY: {
-      hasDictionaryDef: true,
-      includePartOfSpeech: ['noun'],
-      excludePartOfSpeech: ['noun-plural', 'proper-noun-plural', 'adjective', 'article', 'affix', 'preposition', 'suffix'],
-      minCorpusCount: 100000,
-      maxCorpusCount: -1,
-      minDictionaryCount: 2,
-      maxDictionaryCount: -1,
-      minLength: 3,
-      maxLength: -1,
-    },
-    ENDPOINT: 'https://api.wordnik.com/v4/words.json/randomWord',
-  },
   GOOGLE_KEYS: {
     CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
