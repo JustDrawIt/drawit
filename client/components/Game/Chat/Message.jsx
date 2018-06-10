@@ -3,16 +3,26 @@ import styled from 'react-emotion';
 import PropTypes from 'prop-types';
 
 const Message = styled('div')`
-  padding: 14px 0px;
-  margin: 0 20px;
-  border-bottom: 1px solid #e9e9e9;
+  padding-bottom: 14px;
   color: #555;
+  font-size: 18px;
+  b {
+    display: block;
+  }
 `;
 
 const ChatMessage = ({ nickname, message }) => (
   <Message>
-    {nickname ? <b>{nickname}</b> : null}
-    <p>{message}</p>
+    {
+      !nickname
+      ? <i>{message}</i>
+      : (
+        <div>
+          <b>{nickname}</b>
+          <span>{message}</span>
+        </div>
+      )
+    }
   </Message>
 );
 

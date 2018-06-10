@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled from 'react-emotion';
-import axios from '../../axios';
+
 import Centered from '../Utils/Centered';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
+
+import axios from '../../axios';
 import socket from '../../sockets';
 import { setGameAction, setNicknameAction } from '../../store/actions/game.actions';
 
@@ -19,53 +21,69 @@ class NicknameForm extends PureComponent {
 
     this.state = {
       nickname: '',
-      error: null,
     };
 
     this.setNickname = this.setNickname.bind(this);
     this.joinGame = this.joinGame.bind(this);
+    this.onGameNotJoined = this.onGameNotJoined.bind(this);
+  }
+
+  componentDidMount() {
+    socket.on('game:not_joined', this.onGameNotJoined);
+  }
+
+  componentWillUnmount() {
+    socket.off('game:not_joined', this.onGameNotJoined);
+  }
+
+  onGameNotJoined({ error }) {
+    this.props.addNotification({ message: error, level: 'error' });
   }
 
   setNickname({ target }) {
-    this.setState({ nickname: target.value, error: '' });
+    this.setState({ nickname: target.value });
   }
 
   joinGame() {
-    const { joinCode, isAdmin, dispatchGame, dispatchNickname } = this.props;
     const { nickname } = this.state;
+    const {
+      joinCode,
+      isAdmin,
+      dispatchGame,
+      dispatchNickname,
+      addNotification,
+    } = this.props;
 
-    if (!nickname) {
-      this.setState({ error: 'Please enter a nickname!' });
-    } else {
-      axios(`/games?joinCode=${joinCode}`)
+    !nickname
+      ? addNotification({ message: 'Please enter a nickname', level: 'error' })
+      : axios(`/games?joinCode=${joinCode}`)
         .then((response) => {
           const { game } = response.data;
           const hasNicknameAlready = game.players.find(player => player.nickname === nickname);
           const hasMaxPlayers = game.players.length >= game.maxPlayers;
 
           if (hasNicknameAlready) {
-            this.setState({ error: 'Nickname already taken.' });
+            addNotification({ message: 'Nickname already taken.', level: 'error', autoDismiss: 2 });
           } else if (hasMaxPlayers) {
-            this.setState({ error: 'This game has the maximum amount of players.' });
+            addNotification({ message: 'This game has reached the maximum amount of players.', level: 'error' });
           } else {
             dispatchGame(game);
             dispatchNickname(nickname);
             socket.emit('game:join', { nickname, joinCode, isAdmin });
           }
         })
-        .catch(error => this.setState({ error: error.message }));
-    }
+        .catch(({ response }) => {
+          const { error } = response.data;
+          addNotification({ message: error, level: 'error' });
+        });
   }
 
   render() {
-    const { error } = this.state;
-
     return (
       <Container>
         <h2>Enter A Nickname</h2>
         <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
         <Button onClick={this.joinGame}>Join!</Button>
-        {error ? <p>{error}</p> : null}
       </Container>
     );
   }
@@ -76,6 +94,7 @@ NicknameForm.propTypes = {
   dispatchNickname: PropTypes.func.isRequired,
   joinCode: PropTypes.string.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  addNotification: PropTypes.func.isRequired,
 };
 
 export default connect(

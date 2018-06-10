@@ -9,8 +9,8 @@ auth.get('/google', passport.authenticate('google', {
   scope: ['profile'],
 }));
 auth.get('/google/redirect', passport.authenticate('google', {
-  successRedirect: '/',
-  failureRedirect: '/login',
+  successRedirect: '/create_game',
+  failureRedirect: '/play',
 }));
 
 module.exports = auth;

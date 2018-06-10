@@ -1,21 +1,27 @@
 import React, { PureComponent } from 'react';
-import ReactRouterPropTypes from 'react-router-prop-types';
-import styled from 'react-emotion';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import ReactRouterPropTypes from 'react-router-prop-types';
+import NotificationSystem from 'react-notification-system';
+import styled from 'react-emotion';
 
 import Flex from '../components/Utils/Flex';
+import NicknameForm from '../components/Game/NicknameForm';
+import TopBar from '../components/Game/TopBar';
+import ScoreBoard from '../components/Game/ScoreBoard';
 import Canvas from '../components/Game/Canvas/Canvas';
 import ChatBox from '../components/Game/Chat/Box';
-import StartGame from '../components/Game/StartGame';
-import NicknameForm from '../components/Game/NicknameForm';
 
-import { setJoinCodeAction, startAction } from '../store/actions/game.actions';
 import socket from '../sockets';
+import { setJoinCodeAction, startAction } from '../store/actions/game.actions';
 
-const Word = styled('div')`
-  font-size: 18px;
+const Container = styled('div')`
   padding: 20px;
+`;
+
+const Game = styled(Flex)`
+  width: 100%;
+  position: relative;
 `;
 
 class ScreenGame extends PureComponent {
@@ -25,11 +31,21 @@ class ScreenGame extends PureComponent {
     this.state = {
       word: null,
       scores: [],
+      joined: false,
       drawing: false,
       endedWord: null,
       roundEnded: false,
       gameEnded: false,
+      showScoreBoard: false,
     };
+
+    this.onGameJoined = this.onGameJoined.bind(this);
+    this.onGameEnd = this.onGameEnd.bind(this);
+    this.onRoundStarted = this.onRoundStarted.bind(this);
+    this.onRoundChosen = this.onRoundChosen.bind(this);
+    this.onRoundEnd = this.onRoundEnd.bind(this);
+    this.addNotification = this.addNotification.bind(this);
+    this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
   }
 
   componentDidMount() {
@@ -38,69 +54,139 @@ class ScreenGame extends PureComponent {
 
     dispatchJoinCode(joinCode);
 
-    socket.on('round:started', () => {
-      this.props.dispatchStart();
-      this.setState({ roundEnded: false, endedWord: null });
-    });
-    socket.on('round:chosen', ({ word }) => this.setState({
-      word,
-      drawing: true,
-      roundEnded: true,
-    }));
-    socket.on('round:end', ({ word, scores }) => this.setState({
-      scores,
-      drawing: false,
-      roundEnded: true,
-      endedWord: word,
-    }));
-    socket.on('game:end', ({ word, scores }) => this.setState({
-      scores,
-      drawing: false,
-      gameEnded: true,
-      endedWord: word,
-    }));
+    socket.on('game:joined', this.onGameJoined);
+    socket.on('game:end', this.onGameEnd);
+    socket.on('round:started', this.onRoundStarted);
+    socket.on('round:chosen', this.onRoundChosen);
+    socket.on('round:end', this.onRoundEnd);
   }
 
   componentWillUnmount() {
-    socket.off('round:started');
-    socket.off('round:chosen');
-    socket.off('round:end');
-    socket.off('game:end');
+    socket.off('game:joined', this.onGameJoined);
+    socket.off('game:end', this.onGameEnd);
+    socket.off('round:started', this.onRoundStarted);
+    socket.off('round:chosen', this.onRoundChosen);
+    socket.off('round:end', this.onRoundEnd);
+  }
+
+  onGameJoined({ game, nickname }) {
+    this.setState({
+      scores: game.players,
+      joined: this.state.joined || nickname === this.props.nickname,
+    });
+  }
+
+  onGameEnd({ word, scores }) {
+    this.setState({
+      scores,
+      drawing: false,
+      gameEnded: true,
+      showScoreBoard: true,
+      endedWord: word,
+    });
+  }
+
+  onRoundStarted() {
+    this.props.dispatchStart();
+    this.setState({
+      roundEnded: false,
+      endedWord: null,
+      showScoreBoard: false,
+    });
+  }
+
+  onRoundChosen({ word }) {
+    this.setState({
+      word,
+      drawing: true,
+      roundEnded: true,
+      showScoreBoard: false,
+    });
+  }
+
+  onRoundEnd({ word, scores }) {
+    this.setState({
+      scores,
+      drawing: false,
+      roundEnded: true,
+      showScoreBoard: true,
+      endedWord: word,
+    });
+  }
+
+  toggleScoreBoard() {
+    this.setState({ showScoreBoard: !this.state.showScoreBoard });
+  }
+
+  addNotification(notification) {
+    this.notificationSystem.addNotification(notification);
   }
 
   render() {
-    const { match, nickname, isAdmin, started } = this.props;
+    const {
+      match,
+      nickname,
+      isAdmin,
+      started,
+    } = this.props;
     const {
       word,
       scores,
+      joined,
       drawing,
       endedWord,
       roundEnded,
       gameEnded,
+      showScoreBoard,
     } = this.state;
     const { joinCode } = match.params;
+    const ended = roundEnded || gameEnded;
+    const displayWord = (drawing && word) || (ended && endedWord);
 
-    return (nickname
-      ?
-        <div>
-          <h1>{joinCode}</h1>
-          {roundEnded ?
-            <div>
-              <p>ROUND ENDED</p>
-              <p>WORD WAS {endedWord}</p>
-            </div>
-            : null
-          }
-          {gameEnded ? 'GAME ENDED!' : null}
-          {drawing ? <Word>{word}</Word> : null}
-          <Flex>
-            <Canvas drawing={drawing} />
-            <ChatBox drawing={drawing} joinCode={joinCode} />
-          </Flex>
-          {isAdmin && !started ? <StartGame /> : null}
-        </div>
-      :
-        <NicknameForm joinCode={joinCode} />
+    return (
+      <div>
+        {
+          !joined
+          ? <NicknameForm joinCode={joinCode} addNotification={this.addNotification} />
+          : (
+            <Container>
+              <TopBar
+                isAdmin={isAdmin}
+                started={started}
+                drawing={drawing}
+                word={displayWord}
+                joinCode={joinCode}
+                showingScoreBoard={showScoreBoard}
+                addNotification={this.addNotification}
+                toggleScoreBoard={this.toggleScoreBoard}
+              />
+              <Game>
+                {
+                  showScoreBoard
+                  ? (
+                    <ScoreBoard
+                      scores={scores}
+                      roundEnded={roundEnded}
+                      gameEnded={gameEnded}
+                    />
+                  )
+                  : null
+                }
+                <Canvas drawing={drawing} />
+                <ChatBox
+                  drawing={drawing}
+                  nickname={nickname}
+                  joinCode={joinCode}
+                  addNotification={this.addNotification}
+                />
+              </Game>
+            </Container>
+          )
+        }
+        <NotificationSystem
+          ref={(notificationSystem) => { this.notificationSystem = notificationSystem; }}
+        />
+      </div>
     );
   }
 }

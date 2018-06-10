@@ -1,15 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { css } from 'react-emotion';
 import { setContextAction, setToolAction, addItemAction } from '../../../store/actions/game.actions';
 import { DEFAULT_TOOL } from './defaults';
 import tools from './tools';
 import socket from '../../../sockets';
-
-const canvasStyle = css`
-  border: 1px solid #000;
-`;
+import { BorderStyles } from '../../../styles';
 
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
@@ -88,7 +84,7 @@ class SketchPad extends PureComponent {
     return (
       <canvas
         ref={(canvas) => { this.canvas = canvas; }}
-        className={canvasStyle}
+        className={BorderStyles}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
         onMouseDown={this.onMouseDown}

@@ -1,22 +1,15 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { injectGlobal } from 'react-emotion';
 
 import store from '../store';
 import ScreeenLogin from '../screens/ScreenLogin';
 import ScreeenPlay from '../screens/ScreenPlay';
 import ScreenCreateGame from '../screens/ScreenCreateGame';
 import ScreenGame from '../screens/ScreenGame';
+import { injectGlobalStyles } from '../styles';
 
-injectGlobal`
-  html, body, #app {
-    height: 100%;
-  }
-  #app {
-    position: relative;
-  }
-`;
+injectGlobalStyles();
 
 const App = () => (
   <Provider store={store}>

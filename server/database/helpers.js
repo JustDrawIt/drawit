@@ -13,7 +13,7 @@ const addPlayerToGame = (joinCode, nickname) => findGameWithJoinCode(joinCode).t
   if (game.players.find(player => player.nickname === nickname)) {
     return Promise.reject(new Error('Nickname is already used.'));
   } else if (game.players.length >= game.maxPlayers) {
-    return Promise.reject(new Error('The maximum amount of players has been reached.'));
+    return Promise.reject(new Error('The maximum amount of players for this game has been reached.'));
   }
   game.players.push({ nickname });
   return game.save();
