@@ -13,6 +13,15 @@ const Container = styled('div')`
     display: block;
     text-align: left;
   }
+
+  button {
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+  button, input {
+    width: 100%;
+  }
 `;
 
 class CreateGameForm extends PureComponent {
@@ -66,16 +75,18 @@ class CreateGameForm extends PureComponent {
         <div>
           <label htmlFor="max-rounds">
             <span>Max Rounds</span>
-            <Input onChange={this.setMaxRounds} id="max-rounds" placeholder={maxRounds} type="number" />
+            <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
           </label>
         </div>
         <div>
           <label htmlFor="max-players">
             <span>Max Players</span>
-            <Input onChange={this.setMaxPlayers} id="max-players" placeholder={maxPlayers} type="number" />
+            <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
           </label>
         </div>
-        <Button onClick={this.createGame}>Go!</Button>
+        <div>
+          <Button onClick={this.createGame}>Go!</Button>
+        </div>
         {error ? <p>{error}</p> : null}
       </Container>
     );
