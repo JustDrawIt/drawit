@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 const { expect } = require('chai');
 const { Game } = require('../database/database');
 const { PORT } = require('../config');
@@ -10,18 +10,17 @@ describe('/games router', () => {
     const timePerRound = 300000;
     const maxPlayers = 5;
     const maxRounds = 10;
-    const json = { timePerRound, maxPlayers, maxRounds };
 
-    request.post(API, { json }, async (_, response) => {
-      expect(response.statusCode).to.equal(200);
-      expect(response.body.error).to.be.null;
-      expect(response.body.game).to.have.keys(['_id', '__v', 'roundsPlayed', 'timePerRound', 'maxPlayers', 'maxRounds', 'players', 'joinCode']);
-      expect(response.body.game.timePerRound).to.equal(timePerRound);
-      expect(response.body.game.maxPlayers).to.equal(maxPlayers);
-      expect(response.body.game.maxRounds).to.equal(maxRounds);
+    axios.post(API, { timePerRound, maxPlayers, maxRounds }).then(async ({ status, data }) => {
+      expect(status).to.equal(200);
+      expect(data.error).to.be.null;
+      expect(data.game).to.have.keys(['_id', '__v', 'roundsPlayed', 'timePerRound', 'maxPlayers', 'maxRounds', 'players', 'joinCode']);
+      expect(data.game.timePerRound).to.equal(timePerRound);
+      expect(data.game.maxPlayers).to.equal(maxPlayers);
+      expect(data.game.maxRounds).to.equal(maxRounds);
 
-      const gameQueriedById = await Game.findById(response.body.game._id);
-      const gameQueriedByJoinCode = await Game.findOne({ joinCode: response.body.game.joinCode });
+      const gameQueriedById = await Game.findById(data.game._id);
+      const gameQueriedByJoinCode = await Game.findOne({ joinCode: data.game.joinCode });
 
       expect(gameQueriedById).to.exist;
       expect(gameQueriedByJoinCode).to.exist;

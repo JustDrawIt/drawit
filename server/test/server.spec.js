@@ -1,10 +1,10 @@
-const request = require('request');
+const axios = require('axios');
 const { expect } = require('chai');
 
 describe('server', () => {
   it('should serve static files', (done) => {
-    request('http://localhost:8080', (error, response, body) => {
-      expect(body).to.include('</html>');
+    axios('http://localhost:8080').then((response) => {
+      expect(response.data).to.include('</html>');
       done();
     });
   });

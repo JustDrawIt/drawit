@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 const shortid = require('shortid');
 const { expect } = require('chai');
 const { Game } = require('../database/database');
@@ -24,24 +24,22 @@ describe('/codes router', () => {
   afterEach(async () => Game.findOneAndRemove({ joinCode }));
 
   it('should accept post requests and return if the joinCode is valid', (done) => {
-    const json = { joinCode };
-    request.post(API, { json }, (_, response) => {
-      expect(response.statusCode).to.equal(200);
-      expect(response.body.valid).to.exist;
-      expect(response.body.error).to.be.null;
-      expect(response.body.valid).to.equal(true);
+    axios.post(API, { joinCode }).then((response) => {
+      expect(response.status).to.equal(200);
+      expect(response.data.valid).to.exist;
+      expect(response.data.error).to.be.null;
+      expect(response.data.valid).to.equal(true);
 
       done();
     });
   });
 
   it('should respond with error when given an incorrect join code', (done) => {
-    const json = { joinCode: 'notajoincode' };
-    request.post(API, { json }, (_, response) => {
-      expect(response.statusCode).to.equal(500);
-      expect(response.body.valid).to.not.exist;
-      expect(response.body.error).to.not.be.null;
-      expect(response.body.error).to.be.a('string');
+    axios.post(API, { joinCode: 'notajoincode' }).catch(({ response }) => {
+      expect(response.status).to.equal(500);
+      expect(response.data.valid).to.not.exist;
+      expect(response.data.error).to.not.be.null;
+      expect(response.data.error).to.be.a('string');
 
       done();
     });
