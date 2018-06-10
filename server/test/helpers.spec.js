@@ -54,7 +54,7 @@ describe('database helpers', () => {
 
         addPlayerToGame(joinCode, 'Player').catch((error) => {
           expect(error).to.exist;
-          expect(error).to.be.a('string');
+          expect(error.message).to.be.a('string');
         });
       });
     });
