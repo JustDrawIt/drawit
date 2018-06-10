@@ -20,8 +20,8 @@ class ChatBox extends PureComponent {
     super(props);
 
     this.state = {
-      newMessage: '',
       messages: [],
+      newMessage: '',
     };
 
     this.chatWindowRef = React.createRef();
@@ -43,7 +43,7 @@ class ChatBox extends PureComponent {
 
   componentWillUnmount() {
     socket.off('game:joined', this.onGameJoined);
-    socket.off('round:incorrect_guess', this.onIncorrectGuess);
+    socket.off('round:incorrect_guess', this.onRoundIncorrectGuess);
   }
 
   onGameJoined({ nickname }) {
@@ -95,7 +95,7 @@ class ChatBox extends PureComponent {
 
   render() {
     const { messages, newMessage } = this.state;
-    const { drawing } = this.props;
+    const { canGuess } = this.props;
 
     return (
       <Container>
@@ -113,11 +113,11 @@ class ChatBox extends PureComponent {
             onChange={this.setMessage}
             onKeyPress={this.onKeyPress}
             value={newMessage}
-            disabled={drawing}
+            disabled={!canGuess}
             placeholder="Make a guess"
             type="text"
           />
-          <MessageButton onClick={this.sendMessage} disabled={drawing}>
+          <MessageButton onClick={this.sendMessage} disabled={!canGuess}>
             <i className="far fa-paper-plane" />
           </MessageButton>
         </EnterMessage>
@@ -127,7 +127,7 @@ class ChatBox extends PureComponent {
 }
 
 ChatBox.propTypes = {
-  drawing: PropTypes.bool.isRequired,
+  canGuess: PropTypes.bool.isRequired,
   nickname: PropTypes.string.isRequired,
   joinCode: PropTypes.string.isRequired,
   addNotification: PropTypes.func.isRequired,

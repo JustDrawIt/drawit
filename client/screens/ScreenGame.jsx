@@ -43,6 +43,7 @@ class ScreenGame extends PureComponent {
     this.onGameEnd = this.onGameEnd.bind(this);
     this.onRoundStarted = this.onRoundStarted.bind(this);
     this.onRoundChosen = this.onRoundChosen.bind(this);
+    this.onRoundCorrectGuess = this.onRoundCorrectGuess.bind(this);
     this.onRoundEnd = this.onRoundEnd.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
@@ -58,6 +59,7 @@ class ScreenGame extends PureComponent {
     socket.on('game:end', this.onGameEnd);
     socket.on('round:started', this.onRoundStarted);
     socket.on('round:chosen', this.onRoundChosen);
+    socket.on('round:correct_guess', this.onRoundCorrectGuess);
     socket.on('round:end', this.onRoundEnd);
   }
 
@@ -66,6 +68,7 @@ class ScreenGame extends PureComponent {
     socket.off('game:end', this.onGameEnd);
     socket.off('round:started', this.onRoundStarted);
     socket.off('round:chosen', this.onRoundChosen);
+    socket.off('round:correct_guess', this.onRoundCorrectGuess);
     socket.off('round:end', this.onRoundEnd);
   }
 
@@ -80,6 +83,7 @@ class ScreenGame extends PureComponent {
     this.setState({
       scores,
       drawing: false,
+      guessedCorrectly: false,
       gameEnded: true,
       showScoreBoard: true,
       endedWord: word,
@@ -104,10 +108,20 @@ class ScreenGame extends PureComponent {
     });
   }
 
+  onRoundCorrectGuess({ nickname, scores }) {
+    const { guessedCorrectly } = this.state;
+
+    this.setState({
+      scores,
+      guessedCorrectly: !guessedCorrectly && nickname === this.props.nickname,
+    });
+  }
+
   onRoundEnd({ word, scores }) {
     this.setState({
       scores,
       drawing: false,
+      guessedCorrectly: false,
       roundEnded: true,
       showScoreBoard: true,
       endedWord: word,
@@ -134,6 +148,7 @@ class ScreenGame extends PureComponent {
       scores,
       joined,
       drawing,
+      guessedCorrectly,
       endedWord,
       roundEnded,
       gameEnded,
@@ -142,6 +157,7 @@ class ScreenGame extends PureComponent {
     const { joinCode } = match.params;
     const ended = roundEnded || gameEnded;
     const displayWord = (drawing && word) || (ended && endedWord);
+    const canGuess = !drawing && !guessedCorrectly;
 
     return (
       <div>
@@ -174,7 +190,7 @@ class ScreenGame extends PureComponent {
                 }
                 <Canvas drawing={drawing} />
                 <ChatBox
-                  drawing={drawing}
+                  canGuess={canGuess}
                   nickname={nickname}
                   joinCode={joinCode}
                   addNotification={this.addNotification}
