@@ -1,11 +1,13 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled from 'react-emotion';
-import axios from '../../axios';
+
 import Centered from '../Utils/Centered';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
+
+import axios from '../../axios';
 import socket from '../../sockets';
 import { setGameAction, setNicknameAction } from '../../store/actions/game.actions';
 
