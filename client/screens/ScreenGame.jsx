@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import NotificationSystem from 'react-notification-system';
 import styled from 'react-emotion';
-import { connect } from 'react-redux';
 
 import Flex from '../components/Utils/Flex';
 import TopBar from '../components/Game/TopBar';
@@ -17,6 +17,7 @@ import { setJoinCodeAction, startAction } from '../store/actions/game.actions';
 const Container = styled('div')`
   padding: 20px;
 `;
+
 const Game = styled(Flex)`
   width: 100%;
 `;

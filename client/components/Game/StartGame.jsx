@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import styled from 'react-emotion';
 import Button from '../Utils/Button';
 import socket from '../../sockets';
@@ -21,20 +21,22 @@ class StartGame extends PureComponent {
     };
 
     this.start = this.start.bind(this);
+    this.onRoundNotStarted = this.onRoundNotStarted.bind(this);
   }
 
   componentDidMount() {
-    socket.on('round:not_started', ({ error }) => {
-      this.props.addNotification({
-        message: error,
-        level: 'error',
-      });
-      this.setState({ starting: false });
-    });
+    socket.on('round:not_started', this.onRoundNotStarted);
   }
 
   componentWillUnmount() {
-    socket.off('round:not_started');
+    socket.off('round:not_started', this.onRoundNotStarted);
+  }
+
+  onRoundNotStarted({ error }) {
+    const { addNotification } = this.props;
+
+    this.setState({ starting: false });
+    addNotification({ message: error, level: 'error' });
   }
 
   start() {

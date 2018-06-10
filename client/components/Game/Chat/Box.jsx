@@ -29,7 +29,7 @@ class ChatBox extends PureComponent {
     this.sendMessage = this.sendMessage.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
     this.onGameJoined = this.onGameJoined.bind(this);
-    this.onIncorrectGuess = this.onIncorrectGuess.bind(this);
+    this.onRoundIncorrectGuess = this.onRoundIncorrectGuess.bind(this);
   }
 
   componentDidMount() {
@@ -38,27 +38,21 @@ class ChatBox extends PureComponent {
     this.onGameJoined({ nickname });
 
     socket.on('game:joined', this.onGameJoined);
-    socket.on('round:incorrect_guess', this.onIncorrectGuess);
+    socket.on('round:incorrect_guess', this.onRoundIncorrectGuess);
   }
 
   componentWillUnmount() {
-    socket.off('round:joined', this.onGameJoined);
+    socket.off('game:joined', this.onGameJoined);
     socket.off('round:incorrect_guess', this.onIncorrectGuess);
   }
 
   onGameJoined({ nickname }) {
-    const newMessage = { message: `${nickname} joined the game`, nickname: null };
-    this.setState(
-      { messages: [...this.state.messages, newMessage] },
-      () => this.scrollChatWindowToBottom(),
-    );
+    const joinedMessage = `${nickname} joined the game`;
+    this.addMessage({ message: joinedMessage, nickname: null });
   }
 
-  onIncorrectGuess(message) {
-    this.setState(
-      { messages: [...this.state.messages, message] },
-      () => this.scrollChatWindowToBottom(),
-    );
+  onRoundIncorrectGuess(message) {
+    this.addMessage(message);
   }
 
   onKeyPress({ key }) {
@@ -74,6 +68,13 @@ class ChatBox extends PureComponent {
   scrollChatWindowToBottom() {
     const chatWindow = this.chatWindowRef.current;
     chatWindow.scrollTo(0, chatWindow.scrollHeight);
+  }
+
+  addMessage(message) {
+    this.setState(
+      { messages: [...this.state.messages, message] },
+      () => this.scrollChatWindowToBottom(),
+    );
   }
 
   sendMessage() {

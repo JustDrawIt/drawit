@@ -1,26 +1,43 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import SketchPad from './SketchPad';
 import Tools from './tools/Tools';
 import Options from './options/Options';
-import socket from '../../../sockets';
-import { addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
 import ClearTool from './tools/Clear/ClearTool';
 
+import socket from '../../../sockets';
+import { addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
+
 class Canvas extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.onRoundDrew = this.onRoundDrew.bind(this);
+    this.onRoundCleared = this.onRoundCleared.bind(this);
+  }
+
   componentDidMount() {
-    const { dispatchItem, dispatchClearItems } = this.props;
-    socket.on('round:drew', ({ item }) => dispatchItem(item));
-    socket.on('round:cleared', () => {
-      ClearTool.clear(this.props.context);
-      dispatchClearItems();
-    });
+    socket.on('round:drew', this.onRoundDrew);
+    socket.on('round:cleared', this.onRoundCleared);
   }
 
   componentWillUnmount() {
-    socket.off('round:drew');
-    socket.off('round:cleared');
+    socket.off('round:drew', this.onRoundDrew);
+    socket.off('round:cleared', this.onRoundCleared);
+  }
+
+  onRoundDrew({ item }) {
+    const { dispatchItem } = this.props;
+    dispatchItem(item);
+  }
+
+  onRoundCleared() {
+    const { context, dispatchClearItems } = this.props;
+
+    ClearTool.clear(context);
+    dispatchClearItems();
   }
 
   render() {
@@ -45,10 +62,10 @@ Canvas.defaultTypes = {
 };
 
 Canvas.propTypes = {
+  drawing: PropTypes.bool.isRequired,
   context: PropTypes.object,
   dispatchItem: PropTypes.func.isRequired,
   dispatchClearItems: PropTypes.func.isRequired,
-  drawing: PropTypes.bool.isRequired,
 };
 
 export default connect(
