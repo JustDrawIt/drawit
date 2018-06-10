@@ -3,6 +3,8 @@ import styled, { css } from 'react-emotion';
 const width = '180px';
 const fontSize = '20px';
 const padding = '8px';
+const borderRadius = '3px';
+const circleRadius = '100%';
 const colors = {
   default: css`
     background: #2f2f2f;
@@ -26,11 +28,11 @@ const Button = styled('button')`
   width: ${props => props.width || width};
   font-size: ${props => props.fontSize || fontSize};
   padding: ${props => props.padding || padding};
+  border-radius: ${props => (props.circle ? circleRadius : borderRadius)};
 
   transition: background 300ms ease-out;
   color: #f8f8f8;
   border: 0;
-  border-radius: 3px;
   margin: 5px;
   cursor: pointer;
 
