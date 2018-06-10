@@ -51,9 +51,11 @@ class CreateGameForm extends PureComponent {
 
         this.props.history.push(`/games/${game.joinCode}`);
       })
-      .catch(error => this.setState({ error: error.message }));
+      .catch(({ response }) => {
+        const { error } = response.data;
+        this.setState({ error });
+      });
   }
-
 
   render() {
     const { error } = this.state;
