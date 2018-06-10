@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import styled from 'react-emotion';
 import Button from './Utils/Button';
 
@@ -10,13 +10,20 @@ const Container = styled('div')`
   }
 `;
 
+class GoogleLogin extends PureComponent {
+  componentDidMount() {
+    window.location = '/auth/google';
+  }
 
-const GoogleLogin = () => (
-  <Container>
-    <a href="/auth/google">
-      <Button color="primary"> Login !</Button>
-    </a>
-  </Container>
-);
+  render() {
+    return (
+      <Container>
+        <a href="/auth/google">
+          <Button color="primary">Login with Google</Button>
+        </a>
+      </Container>
+    );
+  }
+}
 
 export default GoogleLogin;
