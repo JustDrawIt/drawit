@@ -45,7 +45,7 @@ TopBar.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
   started: PropTypes.bool.isRequired,
   drawing: PropTypes.bool.isRequired,
-  word: PropTypes.bool,
+  word: PropTypes.string,
   joinCode: PropTypes.string.isRequired,
   addNotification: PropTypes.func.isRequired,
 };
