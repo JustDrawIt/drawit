@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
@@ -30,6 +29,7 @@ class CreateGameForm extends PureComponent {
     super(props);
 
     this.state = {
+      loggedIn: false,
       maxPlayers: 5,
       maxRounds: 5,
       error: null,
@@ -41,16 +41,19 @@ class CreateGameForm extends PureComponent {
   }
 
   componentDidMount() {
-    (async () => {
-      const response = await fetch('http://localhost:8080/auth', { credentials: 'include' });
-      const json = await response.json();
-      if (json.user === null) {
-        console.log(' user not authenticated');
-        this.props.history.push('/login');
-      } else {
-        console.log(json);
-      }
-    })();
+    const { history } = this.props;
+
+    axios.get('/auth')
+      .then((response) => {
+        const { user } = response.data;
+
+        if (!user) {
+          history.push('/login');
+        } else {
+          this.setState({ loggedIn: !!user });
+        }
+      })
+      .catch(() => history.push('/login'));
   }
 
   setMaxPlayers({ target }) {
@@ -81,29 +84,31 @@ class CreateGameForm extends PureComponent {
   }
 
   render() {
-    const { error } = this.state;
+    const { loggedIn, error } = this.state;
     const { maxPlayers, maxRounds } = this.state;
 
-    return (
-      <Container>
-        <div>
-          <label htmlFor="max-rounds">
-            <span>Max Rounds</span>
-            <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="max-players">
-            <span>Max Players</span>
-            <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
-          </label>
-        </div>
-        <div>
-          <Button onClick={this.createGame}>Go!</Button>
-        </div>
-        {error ? <p>{error}</p> : null}
-      </Container>
-    );
+    return loggedIn
+      ? (
+        <Container>
+          <div>
+            <label htmlFor="max-rounds">
+              <span>Max Rounds</span>
+              <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="max-players">
+              <span>Max Players</span>
+              <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
+            </label>
+          </div>
+          <div>
+            <Button onClick={this.createGame}>Go!</Button>
+          </div>
+          {error ? <p>{error}</p> : null}
+        </Container>
+      )
+      : null;
   }
 }
 
