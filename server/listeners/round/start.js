@@ -1,5 +1,5 @@
 const randomWord = require('../../random-word');
-const { updateGameRound, findGameWithJoinCode } = require('../../database/helpers');
+const { updateGameRound, resetGameWord } = require('../../database/helpers');
 const { GAME } = require('../../config');
 
 const { TIME_PER_ROUND, WAIT_AFTER_ROUND_ENDS } = GAME;
@@ -17,7 +17,7 @@ const startRound = ({ data, socket, io }) => {
     let hasntDrawn = room.filter(playerSocket => !playerSocket.hasDrawn);
 
     if (hasntDrawn.length <= 0) {
-      room.map(playerSocket => playerSocket.hasDrawn = false);
+      room.forEach(playerSocket => playerSocket.hasDrawn = false);
       hasntDrawn = room;
     }
 
@@ -32,13 +32,14 @@ const startRound = ({ data, socket, io }) => {
         io.in(joinCode).emit('round:started');
 
         setTimeout(() => {
-          findGameWithJoinCode(joinCode)
+          resetGameWord(joinCode)
             .then(({ roundsPlayed, maxRounds, players }) => {
               if (roundsPlayed > maxRounds) {
                 io.in(joinCode).emit('game:end', { word, scores: players });
               } else {
                 io.in(joinCode).emit('round:end', { word, scores: players });
                 setTimeout(() => {
+                  room.forEach(playerSocket => playerSocket.hasGuessedCorrect = false);
                   io.in(joinCode).emit('round:cleared');
                   startRound({ data, socket, io });
                 }, WAIT_AFTER_ROUND_ENDS);
