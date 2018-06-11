@@ -36,11 +36,11 @@ class FillOption extends PureComponent {
     return (
       <div>
         <ToolButton onClick={this.onClick} active={fill} className={relativeStyle}>
-          <i className="fas fa-tint" />
+          <i className="fas fa-adjust" />
         </ToolButton>
         {fill ? (
           <ToolButton color={fillColor} className={relativeStyle}>
-            <i className="fas fa-tint" />
+            <i className="fas fa-adjust" />
             <FullInput type="color" onChange={this.setFillColor} />
           </ToolButton>
         ) : null}
