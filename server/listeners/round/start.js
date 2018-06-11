@@ -34,7 +34,7 @@ const startRound = ({ data, socket, io }) => {
         setTimeout(() => {
           resetGameWord(joinCode)
             .then(({ roundsPlayed, maxRounds, players }) => {
-              if (roundsPlayed > maxRounds) {
+              if (roundsPlayed >= maxRounds) {
                 io.in(joinCode).emit('game:end', { word, scores: players });
               } else {
                 io.in(joinCode).emit('round:end', { word, scores: players });

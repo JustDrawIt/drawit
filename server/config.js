@@ -27,7 +27,7 @@ module.exports = {
     CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   },
   GAME: {
-    TIME_PER_ROUND: 10000,
-    WAIT_AFTER_ROUND_ENDS: 10000,
+    TIME_PER_ROUND: 90000,
+    WAIT_AFTER_ROUND_ENDS: 15000,
   },
 };
