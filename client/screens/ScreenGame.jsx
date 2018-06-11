@@ -7,6 +7,7 @@ import styled from 'react-emotion';
 
 import Flex from '../components/Utils/Flex';
 import NicknameForm from '../components/Game/NicknameForm';
+import CountDown from '../components/Game/CountDown';
 import TopBar from '../components/Game/TopBar';
 import ScoreBoard from '../components/Game/ScoreBoard';
 import Canvas from '../components/Game/Canvas/Canvas';
@@ -103,7 +104,6 @@ class ScreenGame extends PureComponent {
     this.setState({
       word,
       drawing: true,
-      roundEnded: true,
       showScoreBoard: false,
     });
   }
@@ -166,6 +166,8 @@ class ScreenGame extends PureComponent {
           ? <NicknameForm joinCode={joinCode} addNotification={this.addNotification} />
           : (
             <Container>
+              {started && !roundEnded ? <CountDown date={new Date(89000)} /> : null}
+              {started && roundEnded ? <CountDown date={new Date(14000)} /> : null}
               <TopBar
                 isAdmin={isAdmin}
                 started={started}
