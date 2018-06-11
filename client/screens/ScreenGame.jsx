@@ -113,7 +113,7 @@ class ScreenGame extends PureComponent {
 
     this.setState({
       scores,
-      guessedCorrectly: !guessedCorrectly || nickname === this.props.nickname,
+      guessedCorrectly: guessedCorrectly || nickname === this.props.nickname,
     });
   }
 
