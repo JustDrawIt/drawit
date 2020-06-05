@@ -3,7 +3,8 @@
   "env": {
     "browser": true,
     "node": true,
-    "jest": true
+    "jest": true,
+    "mocha": true
   },
   "rules": {
     "jsx-a11y/anchor-is-valid": [
