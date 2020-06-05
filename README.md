@@ -33,7 +33,7 @@ See the wireframe [here](https://marvelapp.com/302b0ih/screen/43626438)
 
 ## Requirements
 
-- Node 8.x
+- Node 10.x
 - Mongo 3.x
 
 ## Development

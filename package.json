@@ -12,6 +12,10 @@
     "test:server": "mocha server/test",
     "deploy": "npm install && npm run build && npm start"
   },
+  "engineStrict": true,
+  "engines": {
+    "node": "^10"
+  },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
   },
