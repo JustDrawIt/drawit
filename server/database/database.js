@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const { MONGODB } = require('../config');
 
-mongoose.connect(MONGODB);
+mongoose.connect(MONGODB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const db = mongoose.connection;
 db.on('error', () => console.error('The connection to database could not be established.'));
