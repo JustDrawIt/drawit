@@ -1,20 +1,23 @@
 const mongoose = require('mongoose');
 const { MONGODB } = require('../config');
 
-mongoose.connect(MONGODB);
+mongoose.connect(MONGODB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const db = mongoose.connection;
 db.on('error', () => console.error('The connection to database could not be established.'));
 db.once('open', () => console.log('Connection to database established.'));
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: String,
   googleId: String,
 });
 
 const User = mongoose.model('User', userSchema);
 
-const gameSchema = mongoose.Schema({
+const gameSchema = new mongoose.Schema({
   joinCode: String,
   players: [{
     nickname: {
