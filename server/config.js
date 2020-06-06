@@ -11,6 +11,7 @@ const DEV = !PROD;
 module.exports = {
   MONGODB: process.env.MONGODB,
   PORT: process.env.PORT || 8080,
+  HOSTNAME: process.env.HOSTNAME || '0.0.0.0',
   PUBLIC_PATH: path.resolve(__dirname, '../public'),
   MORGAN_OPTS: {
     stream: PROD ? fs.createWriteStream(LOG_PATH, { flags: 'a' }) : undefined,
