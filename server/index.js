@@ -1,4 +1,4 @@
 const { server } = require('./server');
-const { PORT } = require('./config');
+const { PORT, HOSTNAME } = require('./config');
 
-server.listen(PORT, () => console.log('Server listening on %s', PORT));
+server.listen(PORT, HOSTNAME, () => console.log('Server listening on %s', PORT));
