@@ -1,0 +1,52 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: 1.10.3
+          otp-version: 22.2
+
+      - name: Load mix dependency cache
+        uses: actions/cache@v1
+        id: mix-cache
+        with:
+          path: server/deps
+          key: ${{ runner.os }}-22.0-1.10-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/server/mix.lock')) }}
+
+      - name: Install dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: mix deps.get
+        working-directory: ./server
+
+      - name: Check formatting
+        run: mix format --check-formatted
+        working-directory: ./server
+
+      - name: Run tests
+        run: mix test
+        working-directory: ./server
