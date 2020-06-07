@@ -1,0 +1,35 @@
+name: Draw It! API Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup postgres
+        uses: Daniel-Marynicz/postgresql-action@0.1.0
+        with:
+          app_user: postgres
+          app_user_password: postgres
+          app_db: draw_it_test
+
+      - name: Setup elixir
+        uses: actions/setup-elixir@v1
+        with:
+          elixir-version: 1.10.3
+          otp-version: 22.2
+
+      - name: Install dependencies
+        run: mix deps.get
+        working-directory: ./server
+
+      - name: Run tests
+        run: mix test
+        working-directory: ./server
