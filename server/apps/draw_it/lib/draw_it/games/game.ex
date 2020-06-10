@@ -2,10 +2,14 @@ defmodule DrawIt.Games.Game do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias DrawIt.Games.Player
+
   schema "games" do
     field :join_code, :string
     field :max_players, :integer, default: 3
     field :max_rounds, :integer, default: 5
+
+    has_many :players, Player, foreign_key: :id_game
 
     timestamps()
   end
