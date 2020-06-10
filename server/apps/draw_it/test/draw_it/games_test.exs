@@ -140,4 +140,77 @@ defmodule DrawIt.GamesTest do
       assert %Ecto.Changeset{} = Games.change_player(player)
     end
   end
+
+  describe "game_rounds" do
+    alias DrawIt.Games.Round
+
+    @valid_attrs %{word: "some word"}
+    @update_attrs %{word: "some updated word"}
+    @invalid_attrs %{word: nil}
+
+    def round_fixture(attrs \\ %{}) do
+      {:ok, game} =
+        Games.create_game(%{
+          join_code: "test join code",
+          max_players: 3,
+          max_rounds: 5
+        })
+
+      {:ok, player} =
+        Games.create_player(%{
+          id_game: game.id,
+          nickname: "Wendy"
+        })
+
+      {:ok, round} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Map.merge(%{id_game: game.id, id_player_drawer: player.id})
+        |> Games.create_round()
+
+      round
+    end
+
+    test "list_game_rounds/0 returns all game_rounds" do
+      round = round_fixture()
+      assert Games.list_game_rounds() == [round]
+    end
+
+    test "get_round!/1 returns the round with given id" do
+      round = round_fixture()
+      assert Games.get_round!(round.id) == round
+    end
+
+    test "create_round/1 with valid data creates a round" do
+      assert %Round{} = round = round_fixture()
+      assert round.word == "some word"
+    end
+
+    test "create_round/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Games.create_round(@invalid_attrs)
+    end
+
+    test "update_round/2 with valid data updates the round" do
+      round = round_fixture()
+      assert {:ok, %Round{} = round} = Games.update_round(round, @update_attrs)
+      assert round.word == "some updated word"
+    end
+
+    test "update_round/2 with invalid data returns error changeset" do
+      round = round_fixture()
+      assert {:error, %Ecto.Changeset{}} = Games.update_round(round, @invalid_attrs)
+      assert round == Games.get_round!(round.id)
+    end
+
+    test "delete_round/1 deletes the round" do
+      round = round_fixture()
+      assert {:ok, %Round{}} = Games.delete_round(round)
+      assert_raise Ecto.NoResultsError, fn -> Games.get_round!(round.id) end
+    end
+
+    test "change_round/1 returns a round changeset" do
+      round = round_fixture()
+      assert %Ecto.Changeset{} = Games.change_round(round)
+    end
+  end
 end
