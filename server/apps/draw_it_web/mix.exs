@@ -48,8 +48,6 @@ defmodule DrawItWeb.MixProject do
       {:phoenix, "~> 1.4.11"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
-      {:absinthe_plug, "~> 1.5"},
-      {:absinthe_phoenix, "~> 1.5"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}

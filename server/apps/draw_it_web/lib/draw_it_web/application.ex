@@ -9,8 +9,7 @@ defmodule DrawItWeb.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      DrawItWeb.Endpoint,
-      {Absinthe.Subscription, DrawItWeb.Endpoint}
+      DrawItWeb.Endpoint
       # Starts a worker by calling: DrawItWeb.Worker.start_link(arg)
       # {DrawItWeb.Worker, arg},
     ]
