@@ -38,8 +38,7 @@ defmodule DrawItApi.MixProject do
   defp deps do
     [
       {:draw_it, in_umbrella: true},
-      {:absinthe, "~> 1.5.0"},
-      {:poison, "~> 3.1"}
+      {:absinthe, "~> 1.5.0"}
     ]
   end
 end
