@@ -11,6 +11,11 @@ defmodule DrawItWeb.GameView do
   end
 
   def render("game.json", %{game: game}) do
-    %{id: game.id}
+    %{
+      id: game.id,
+      join_code: game.join_code,
+      max_players: game.max_players,
+      max_rounds: game.max_rounds
+    }
   end
 end
