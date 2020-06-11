@@ -1,4 +1,4 @@
-defmodule DrawItApi.Mixfile do
+defmodule DrawItApi.MixProject do
   use Mix.Project
 
   def project do
