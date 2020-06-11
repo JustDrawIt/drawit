@@ -50,7 +50,9 @@ defmodule DrawIt.Games do
 
   """
   def create_game(attrs \\ %{}) do
-    %Game{}
+    join_code = Nanoid.generate(7)
+
+    %Game{join_code: join_code}
     |> Game.changeset(attrs)
     |> Repo.insert()
   end
