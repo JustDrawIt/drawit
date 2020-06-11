@@ -45,7 +45,8 @@ defmodule DrawIt.MixProject do
     [
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:nanoid, "~> 2.0.2"}
     ]
   end
 
