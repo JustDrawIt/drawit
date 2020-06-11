@@ -1,6 +1,5 @@
 defmodule DrawItWeb.UserSocket do
   use Phoenix.Socket
-  use Absinthe.Phoenix.Socket
 
   ## Channels
   # channel "room:*", DrawItWeb.RoomChannel

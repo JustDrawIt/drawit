@@ -29,7 +29,5 @@ defmodule DrawIt do
 
   - `DrawItWeb`: A lightweight Phoenix application which handles HTTP and
   Websocket requests.
-
-  - `DrawItApi`: Provides a GraphQL API, which is mounted inside the `draw_it_web` app's router.
   """
 end

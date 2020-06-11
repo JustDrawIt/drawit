@@ -1,6 +1,5 @@
 defmodule DrawItWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :draw_it_web
-  use Absinthe.Phoenix.Endpoint
 
   socket "/socket", DrawItWeb.UserSocket,
     websocket: true,
@@ -14,7 +13,7 @@ defmodule DrawItWeb.Endpoint do
     at: "/",
     from: :draw_it_web,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt graphql_playground.html)
+    only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

@@ -1,7 +1,3 @@
-absinthe.plug.graphiql.assets.download
-absinthe.plug.graphiql.assets.remove
-absinthe.schema.json
-absinthe.schema.sdl
 app.start
 app.tree
 archive
