@@ -4,9 +4,9 @@ defmodule DrawItWeb.GamePlayerControllerTest do
   alias DrawIt.Games
   alias DrawIt.Games.Player
 
-  @create_attrs %{nickname: "some nickname"}
-  @update_attrs %{nickname: "some updated nickname"}
-  @invalid_attrs %{nickname: nil}
+  @create_attrs %{nickname: "some nickname", score: 0}
+  @update_attrs %{nickname: "some updated nickname", score: 2}
+  @invalid_attrs %{nickname: nil, score: nil}
 
   def fixture(:player) do
     {:ok, game} =
@@ -40,18 +40,22 @@ defmodule DrawItWeb.GamePlayerControllerTest do
 
     test "renders player when data is valid", %{conn: conn, game: game} do
       conn = post(conn, Routes.game_player_path(conn, :create, game.id), player: @create_attrs)
+
       expected_nickname = @create_attrs.nickname
+      expected_score = @create_attrs.score
 
       assert %{
                "id" => id,
-               "nickname" => ^expected_nickname
+               "nickname" => ^expected_nickname,
+               "score" => ^expected_score
              } = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.game_player_path(conn, :show, game.id, id))
 
       assert %{
                "id" => ^id,
-               "nickname" => ^expected_nickname
+               "nickname" => ^expected_nickname,
+               "score" => ^expected_score
              } = json_response(conn, 200)["data"]
     end
 
@@ -73,17 +77,20 @@ defmodule DrawItWeb.GamePlayerControllerTest do
         put(conn, Routes.game_player_path(conn, :update, game.id, player), player: @update_attrs)
 
       expected_nickname = @update_attrs.nickname
+      expected_score = @update_attrs.score
 
       assert %{
                "id" => ^id,
-               "nickname" => ^expected_nickname
+               "nickname" => ^expected_nickname,
+               "score" => ^expected_score
              } = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.game_player_path(conn, :show, game.id, id))
 
       assert %{
                "id" => ^id,
-               "nickname" => ^expected_nickname
+               "nickname" => ^expected_nickname,
+               "score" => ^expected_score
              } = json_response(conn, 200)["data"]
     end
 
