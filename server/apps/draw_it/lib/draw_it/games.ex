@@ -107,16 +107,22 @@ defmodule DrawIt.Games do
   alias DrawIt.Games.Player
 
   @doc """
-  Returns the list of game_player.
+  Returns the list of players in a game.
 
   ## Examples
 
-      iex> list_game_players()
+      iex> list_game_players(42)
       [%Player{}, ...]
 
   """
-  def list_game_players do
-    Repo.all(Player)
+  def list_game_players(game_id) do
+    query =
+      from player in Player,
+        where: player.id_game == ^game_id,
+        select: player,
+        order_by: player.id
+
+    Repo.all(query)
   end
 
   @doc """
