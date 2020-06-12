@@ -12,6 +12,7 @@ defmodule DrawItWeb.Router do
 
     resources "/games", GameController, except: [:new, :edit] do
       resources "/players", PlayerController, except: [:new, :edit]
+      resources "/rounds", RoundController, except: [:new, :edit]
     end
   end
 end
