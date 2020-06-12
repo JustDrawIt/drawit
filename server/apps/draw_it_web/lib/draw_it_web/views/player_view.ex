@@ -11,6 +11,6 @@ defmodule DrawItWeb.PlayerView do
   end
 
   def render("player.json", %{player: player}) do
-    %{id: player.id, nickname: player.nickname}
+    %{id: player.id, nickname: player.nickname, score: player.score}
   end
 end

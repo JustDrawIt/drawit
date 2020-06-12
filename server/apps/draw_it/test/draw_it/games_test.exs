@@ -77,9 +77,9 @@ defmodule DrawIt.GamesTest do
   describe "game_players" do
     alias DrawIt.Games.Player
 
-    @valid_attrs %{nickname: "some nickname"}
-    @update_attrs %{nickname: "some updated nickname"}
-    @invalid_attrs %{nickname: nil}
+    @valid_attrs %{nickname: "some nickname", score: 0}
+    @update_attrs %{nickname: "some updated nickname", score: 4}
+    @invalid_attrs %{nickname: nil, score: nil}
 
     def player_fixture(attrs \\ %{}) do
       {:ok, game} =
@@ -128,7 +128,8 @@ defmodule DrawIt.GamesTest do
     test "update_player/2 with valid data updates the player" do
       player = player_fixture()
       assert {:ok, %Player{} = player} = Games.update_player(player, @update_attrs)
-      assert player.nickname == "some updated nickname"
+      assert player.nickname == @update_attrs.nickname
+      assert player.score == @update_attrs.score
     end
 
     test "update_player/2 with invalid data returns error changeset" do
@@ -190,7 +191,7 @@ defmodule DrawIt.GamesTest do
 
     test "create_round/1 with valid data creates a round" do
       assert %Round{} = round = round_fixture()
-      assert round.word == "some word"
+      assert round.word == @valid_attrs.word
     end
 
     test "create_round/1 with invalid data returns error changeset" do
@@ -200,7 +201,7 @@ defmodule DrawIt.GamesTest do
     test "update_round/2 with valid data updates the round" do
       round = round_fixture()
       assert {:ok, %Round{} = round} = Games.update_round(round, @update_attrs)
-      assert round.word == "some updated word"
+      assert round.word == @update_attrs.word
     end
 
     test "update_round/2 with invalid data returns error changeset" do
