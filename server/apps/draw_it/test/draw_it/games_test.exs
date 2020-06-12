@@ -97,9 +97,18 @@ defmodule DrawIt.GamesTest do
       player
     end
 
-    test "list_game_players/0 returns all game_players" do
-      player = player_fixture()
-      assert Games.list_game_players() == [player]
+    test "list_game_players/1 returns all the players in a game" do
+      {:ok, game1} = Games.create_game(%{max_players: 4, max_rounds: 5})
+      {:ok, game2} = Games.create_game(%{max_players: 4, max_rounds: 5})
+
+      {:ok, game1_player1} = Games.create_player(%{id_game: game1.id, nickname: "Steven"})
+      {:ok, game1_player2} = Games.create_player(%{id_game: game1.id, nickname: "Pearl"})
+      {:ok, game1_player3} = Games.create_player(%{id_game: game1.id, nickname: "Amethyst"})
+
+      {:ok, _game2_player1} = Games.create_player(%{id_game: game2.id, nickname: "Paul"})
+      {:ok, _game2_player2} = Games.create_player(%{id_game: game2.id, nickname: "Jessica"})
+
+      assert Games.list_game_players(game1.id) == [game1_player1, game1_player2, game1_player3]
     end
 
     test "get_player!/1 returns the player with given id" do
