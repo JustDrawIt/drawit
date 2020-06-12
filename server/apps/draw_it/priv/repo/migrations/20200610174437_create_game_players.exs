@@ -5,6 +5,7 @@ defmodule DrawIt.Repo.Migrations.CreateGamePlayers do
     create table(:game_players) do
       add :id_game, references(:games, on_delete: :delete_all)
       add :nickname, :string
+      add :score, :integer
 
       timestamps()
     end
