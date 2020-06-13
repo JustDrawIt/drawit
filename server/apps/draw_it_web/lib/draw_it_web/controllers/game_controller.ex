@@ -6,6 +6,11 @@ defmodule DrawItWeb.GameController do
 
   action_fallback DrawItWeb.FallbackController
 
+  def index(conn, %{"join_code" => join_code}) do
+    game = Games.get_game_by_join_code!(join_code)
+    render(conn, "index.json", games: [game])
+  end
+
   def index(conn, _params) do
     games = Games.list_games()
     render(conn, "index.json", games: games)

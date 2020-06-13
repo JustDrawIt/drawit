@@ -5,17 +5,14 @@ defmodule DrawItWeb.GameControllerTest do
   alias DrawIt.Games.Game
 
   @create_attrs %{
-    join_code: "some join_code",
     max_players: 10,
     max_rounds: 10
   }
   @update_attrs %{
-    join_code: "some updated join_code",
     max_players: 12,
     max_rounds: 16
   }
   @invalid_attrs %{
-    join_code: nil,
     max_players: nil,
     max_rounds: nil
   }
@@ -33,6 +30,34 @@ defmodule DrawItWeb.GameControllerTest do
     test "lists all games", %{conn: conn} do
       conn = get(conn, Routes.game_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
+    end
+
+    test "lists game with join_code", %{conn: conn} do
+      {:ok, _game1} = Games.create_game(@create_attrs)
+      {:ok, game2} = Games.create_game(@create_attrs)
+      {:ok, _game3} = Games.create_game(@create_attrs)
+
+      conn = get(conn, Routes.game_path(conn, :index, join_code: game2.join_code))
+
+      %{
+        id: expected_id,
+        join_code: expected_join_code,
+        max_players: expected_max_players,
+        max_rounds: expected_max_rounds
+        # inserted_at: expected_inserted_at,
+        # updated_at: expected_updated_at
+      } = game2
+
+      assert [
+               %{
+                 "id" => ^expected_id,
+                 "join_code" => ^expected_join_code,
+                 "max_players" => ^expected_max_players,
+                 "max_rounds" => ^expected_max_rounds
+                 #  "inserted_at" => ^expected_inserted_at,
+                 #  "updated_at" => ^expected_updated_at
+               }
+             ] = json_response(conn, 200)["data"]
     end
   end
 
