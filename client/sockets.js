@@ -1,10 +1,8 @@
-import io from 'socket.io-client';
+import { Socket } from 'phoenix';
 
-const PORT = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : undefined;
-const socket = io(PORT);
+const SOCKET_SERVER = process.env.NODE_ENV === 'development' ? 'ws://localhost:4000/socket' : undefined;
+const socket = new Socket(SOCKET_SERVER);
 
-socket.on('connect', () => {
-  console.log('Client connected!');
-});
+socket.connect();
 
 export default socket;
