@@ -40,5 +40,7 @@ defmodule DrawItWeb.Endpoint do
     key: "_draw_it_web_key",
     signing_salt: "Z5tf6JnT"
 
+  plug CORSPlug
+
   plug DrawItWeb.Router
 end
