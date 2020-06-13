@@ -3,7 +3,7 @@ defmodule DrawIt.Games do
   The Games context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   alias DrawIt.Repo
 
   alias DrawIt.Games.Game
@@ -36,6 +36,31 @@ defmodule DrawIt.Games do
 
   """
   def get_game!(id), do: Repo.get!(Game, id)
+
+  @doc """
+  Gets a single game from it's join code.
+
+  Raises `Ecto.NoResultsError` if the Game does not exist.
+
+  ## Examples
+
+      iex> get_game_by_join_code!("EVsMPJF")
+      %Game{}
+
+      iex> get_game_by_join_code!("nOooOpE")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_game_by_join_code!(join_code) do
+    query =
+      from game in Game,
+        where: game.join_code == ^join_code,
+        select: game,
+        limit: 1
+
+    query
+    |> Repo.one!()
+  end
 
   @doc """
   Creates a game.

@@ -38,6 +38,11 @@ defmodule DrawIt.GamesTest do
       assert Games.get_game!(game.id) == game
     end
 
+    test "get_game_by_join_code!/1 returns the game with given join_code" do
+      game = game_fixture()
+      assert Games.get_game_by_join_code!(game.join_code) == game
+    end
+
     test "create_game/1 with valid data creates a game" do
       assert {:ok, %Game{} = game} = Games.create_game(@valid_attrs)
       assert game.join_code
