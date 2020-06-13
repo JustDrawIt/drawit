@@ -9,5 +9,7 @@ defmodule DrawIt.Repo.Migrations.CreateGames do
 
       timestamps(inserted_at: :date_inserted, updated_at: :date_updated)
     end
+
+    create index(:games, [:join_code])
   end
 end
