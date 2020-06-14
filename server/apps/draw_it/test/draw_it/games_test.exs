@@ -15,8 +15,8 @@ defmodule DrawIt.GamesTest do
       max_rounds: 16
     }
     @invalid_attrs %{
-      max_players: nil,
-      max_rounds: nil
+      max_players: -1,
+      max_rounds: "2"
     }
 
     def game_fixture(attrs \\ %{}) do
