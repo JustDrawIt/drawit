@@ -1,5 +1,5 @@
 defmodule DrawIt.Games.Round do
-  use Ecto.Schema
+  use DrawIt.Schema
   import Ecto.Changeset
 
   alias DrawIt.Games.{Game, Player}

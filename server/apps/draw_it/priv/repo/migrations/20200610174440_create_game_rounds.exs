@@ -7,7 +7,7 @@ defmodule DrawIt.Repo.Migrations.CreateGameRounds do
       add :id_player_drawer, references(:game_players, on_delete: :delete_all)
       add :word, :string
 
-      timestamps()
+      timestamps(inserted_at: :date_inserted, updated_at: :date_updated)
     end
 
     create index(:game_rounds, [:id_game])

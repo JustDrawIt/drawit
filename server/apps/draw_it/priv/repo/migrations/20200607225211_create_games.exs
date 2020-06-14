@@ -7,7 +7,7 @@ defmodule DrawIt.Repo.Migrations.CreateGames do
       add :max_players, :integer
       add :max_rounds, :integer
 
-      timestamps()
+      timestamps(inserted_at: :date_inserted, updated_at: :date_updated)
     end
   end
 end
