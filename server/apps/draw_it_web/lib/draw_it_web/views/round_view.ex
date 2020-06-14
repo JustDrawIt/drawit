@@ -11,6 +11,11 @@ defmodule DrawItWeb.RoundView do
   end
 
   def render("round.json", %{round: round}) do
-    %{id: round.id, word: round.word}
+    %{
+      id: round.id,
+      word: round.word,
+      date_inserted: round.date_inserted,
+      date_updated: round.date_updated
+    }
   end
 end
