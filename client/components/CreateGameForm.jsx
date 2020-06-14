@@ -41,19 +41,19 @@ class CreateGameForm extends PureComponent {
   }
 
   componentDidMount() {
-    const { history } = this.props;
+    // const { history } = this.props;
 
-    axios.get('/auth')
-      .then((response) => {
-        const { user } = response.data;
+    // axios.get('/auth')
+    //   .then((response) => {
+    //     const { user } = response.data;
 
-        if (!user) {
-          history.push('/login');
-        } else {
-          this.setState({ loggedIn: !!user });
-        }
-      })
-      .catch(() => history.push('/login'));
+    //     if (!user) {
+    //       history.push('/login');
+    //     } else {
+    //       this.setState({ loggedIn: !!user });
+    //     }
+    //   })
+    //   .catch(() => history.push('/login'));
   }
 
   setMaxPlayers({ target }) {
@@ -87,28 +87,26 @@ class CreateGameForm extends PureComponent {
     const { loggedIn, error } = this.state;
     const { maxPlayers, maxRounds } = this.state;
 
-    return loggedIn
-      ? (
-        <Container>
-          <div>
-            <label htmlFor="max-rounds">
-              <span>Max Rounds</span>
-              <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
-            </label>
-          </div>
-          <div>
-            <label htmlFor="max-players">
-              <span>Max Players</span>
-              <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
-            </label>
-          </div>
-          <div>
-            <Button onClick={this.createGame}>Go!</Button>
-          </div>
-          {error ? <p>{error}</p> : null}
-        </Container>
-      )
-      : null;
+    return (
+      <Container>
+        <div>
+          <label htmlFor="max-rounds">
+            <span>Max Rounds</span>
+            <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
+          </label>
+        </div>
+        <div>
+          <label htmlFor="max-players">
+            <span>Max Players</span>
+            <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
+          </label>
+        </div>
+        <div>
+          <Button onClick={this.createGame}>Go!</Button>
+        </div>
+        {error ? <p>{error}</p> : null}
+      </Container>
+    );
   }
 }
 
