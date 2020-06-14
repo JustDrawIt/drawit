@@ -15,7 +15,9 @@ defmodule DrawItWeb.GameView do
       id: game.id,
       join_code: game.join_code,
       max_players: game.max_players,
-      max_rounds: game.max_rounds
+      max_rounds: game.max_rounds,
+      date_inserted: game.date_inserted,
+      date_updated: game.date_updated
     }
   end
 end

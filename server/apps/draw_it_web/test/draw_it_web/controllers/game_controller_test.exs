@@ -44,18 +44,19 @@ defmodule DrawItWeb.GameControllerTest do
         join_code: expected_join_code,
         max_players: expected_max_players,
         max_rounds: expected_max_rounds
-        # inserted_at: expected_inserted_at,
-        # updated_at: expected_updated_at
       } = game2
+
+      expected_date_inserted = NaiveDateTime.to_iso8601(game2.date_inserted)
+      expected_date_updated = NaiveDateTime.to_iso8601(game2.date_updated)
 
       assert [
                %{
                  "id" => ^expected_id,
                  "join_code" => ^expected_join_code,
                  "max_players" => ^expected_max_players,
-                 "max_rounds" => ^expected_max_rounds
-                 #  "inserted_at" => ^expected_inserted_at,
-                 #  "updated_at" => ^expected_updated_at
+                 "max_rounds" => ^expected_max_rounds,
+                 "date_inserted" => ^expected_date_inserted,
+                 "date_updated" => ^expected_date_updated
                }
              ] = json_response(conn, 200)["data"]
     end
