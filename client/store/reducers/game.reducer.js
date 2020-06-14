@@ -8,6 +8,7 @@ import {
 } from '../../components/Game/Canvas/defaults';
 
 const initialState = {
+  socket: null,
   nickname: '',
   joinCode: '',
   game: null,
@@ -39,6 +40,9 @@ export default function gameReducer(state = initialState, action) {
 
     case GAME_TYPES.SET_IS_ADMIN:
       return { ...state, isAdmin: action.isAdmin };
+
+    case GAME_TYPES.SET_SOCKET:
+      return { ...state, socket: action.socket };
 
     case GAME_TYPES.SET_CONTEXT:
       return {
