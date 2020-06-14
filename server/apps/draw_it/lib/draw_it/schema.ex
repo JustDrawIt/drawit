@@ -14,6 +14,9 @@ defmodule DrawIt.Schema do
     quote do
       use Ecto.Schema
 
+      @timestamps_opts inserted_at: :date_inserted,
+                       updated_at: :date_updated
+
       import Ecto.Changeset, warn: false
       import DrawIt.Schema, warn: false
     end

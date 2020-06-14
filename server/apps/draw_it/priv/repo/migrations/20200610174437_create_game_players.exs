@@ -7,7 +7,7 @@ defmodule DrawIt.Repo.Migrations.CreateGamePlayers do
       add :nickname, :string
       add :score, :integer
 
-      timestamps()
+      timestamps(inserted_at: :date_inserted, updated_at: :date_updated)
     end
 
     create index(:game_players, [:id_game])
