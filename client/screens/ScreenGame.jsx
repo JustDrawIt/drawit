@@ -14,7 +14,16 @@ import Canvas from '../components/Game/Canvas/Canvas';
 import ChatBox from '../components/Game/Chat/Box';
 
 import socket from '../sockets';
-import { setJoinCodeAction, startAction } from '../store/actions/game.actions';
+import axios from '../axios';
+import {
+  setJoinCodeAction,
+  startAction,
+  setGameAction,
+  setNicknameAction,
+  setSocketAction,
+} from '../store/actions/game.actions';
+import { keysSnakeToCamelCase } from '../helpers/snakeToCamelCase';
+import { once } from '../helpers/once';
 
 const Container = styled('div')`
   padding: 20px;
@@ -46,6 +55,7 @@ class ScreenGame extends PureComponent {
     this.onRoundChosen = this.onRoundChosen.bind(this);
     this.onRoundCorrectGuess = this.onRoundCorrectGuess.bind(this);
     this.onRoundEnd = this.onRoundEnd.bind(this);
+    this.handleJoinGame = this.handleJoinGame.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
   }
@@ -56,21 +66,11 @@ class ScreenGame extends PureComponent {
 
     dispatchJoinCode(joinCode);
 
-    socket.on('game:joined', this.onGameJoined);
-    socket.on('game:end', this.onGameEnd);
-    socket.on('round:started', this.onRoundStarted);
-    socket.on('round:chosen', this.onRoundChosen);
-    socket.on('round:correct_guess', this.onRoundCorrectGuess);
-    socket.on('round:end', this.onRoundEnd);
+    // this.channel
+    //   .on('new_msg', msg => console.log('Got message', msg));
   }
 
   componentWillUnmount() {
-    socket.off('game:joined', this.onGameJoined);
-    socket.off('game:end', this.onGameEnd);
-    socket.off('round:started', this.onRoundStarted);
-    socket.off('round:chosen', this.onRoundChosen);
-    socket.off('round:correct_guess', this.onRoundCorrectGuess);
-    socket.off('round:end', this.onRoundEnd);
   }
 
   onGameJoined({ game, nickname }) {
@@ -128,6 +128,42 @@ class ScreenGame extends PureComponent {
     });
   }
 
+  async handleJoinGame(nickname) {
+    try {
+      const { match, dispatchSocket, dispatchGame, dispatchNickname } = this.props;
+      const { joinCode } = match.params;
+
+      const response = await axios(`/api/games?join_code=${joinCode}`)
+      const game = keysSnakeToCamelCase(response.data.data[0]);
+
+      this.channel = socket.channel(`game:${joinCode}`, { nickname, token: 'testtoken' });
+
+      dispatchSocket(this.channel);
+      dispatchGame(game);
+      dispatchNickname(nickname);
+
+      this.channel
+        .join()
+        .receive('ok', once(async (okResponse) => {
+          console.log('connected', okResponse);
+
+          const response = await axios(`/api/games?join_code=${joinCode}`);
+          const game = keysSnakeToCamelCase(response.data.data[0]);
+
+          this.onGameJoined({
+            game,
+            nickname,
+          });
+        }))
+        .receive('error', ({ reason }) => console.log('failed join', reason))
+        .receive('timeout', () => console.log('Networking issue. Still waiting...'));
+    } catch (error) {
+      // const { error } = error.response.data;
+      console.error(error);
+      this.addNotification({ message: 'Something went wrong!', level: 'error' });
+    }
+  }
+
   toggleScoreBoard() {
     this.setState({ showScoreBoard: !this.state.showScoreBoard });
   }
@@ -163,7 +199,13 @@ class ScreenGame extends PureComponent {
       <div>
         {
           !joined
-          ? <NicknameForm joinCode={joinCode} addNotification={this.addNotification} />
+          ? (
+            <NicknameForm
+              joinCode={joinCode}
+              onJoinGame={this.handleJoinGame}
+              addNotification={this.addNotification}
+            />
+          )
           : (
             <Container>
               {started && !roundEnded ? <CountDown date={new Date(89000)} /> : null}
@@ -216,6 +258,9 @@ ScreenGame.propTypes = {
   started: PropTypes.bool.isRequired,
   dispatchJoinCode: PropTypes.func.isRequired,
   dispatchStart: PropTypes.func.isRequired,
+  dispatchGame: PropTypes.func.isRequired,
+  dispatchNickname: PropTypes.func.isRequired,
+  dispatchSocket: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -227,6 +272,9 @@ export default connect(
   dispatch => ({
     dispatchJoinCode: setJoinCodeAction(dispatch),
     dispatchStart: startAction(dispatch),
+    dispatchGame: setGameAction(dispatch),
+    dispatchNickname: setNicknameAction(dispatch),
+    dispatchSocket: setSocketAction(dispatch),
   }),
 )(ScreenGame);
 
