@@ -16,6 +16,10 @@ export const setIsAdminAction = dispatch => isAdmin => dispatch({
   type: GAME_TYPES.SET_IS_ADMIN,
   isAdmin,
 });
+export const setSocketAction = dispatch => socket => dispatch({
+  type: GAME_TYPES.SET_SOCKET,
+  socket,
+});
 export const setContextAction = dispatch => context => dispatch({
   type: GAME_TYPES.SET_CONTEXT,
   context,
