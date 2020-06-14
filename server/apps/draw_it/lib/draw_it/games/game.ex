@@ -19,7 +19,7 @@ defmodule DrawIt.Games.Game do
   def changeset(game, attrs) do
     game
     |> cast(attrs, [:join_code, :max_players, :max_rounds])
-    |> validate_required([:join_code, :max_players, :max_rounds])
+    |> validate_required([:join_code])
     |> validate_number(:max_players, less_than_or_equal_to: 20, greater_than: 1)
     |> validate_number(:max_rounds, less_than_or_equal_to: 25, greater_than: 0)
   end
