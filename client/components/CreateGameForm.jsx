@@ -7,6 +7,7 @@ import axios from '../axios';
 import Button from './Utils/Button';
 import Input from './Utils/Input';
 import { setGameAction, setIsAdminAction } from '../store/actions/game.actions';
+import { keysSnakeToCamelCase } from '../helpers/snakeToCamelCase';
 
 const Container = styled('div')`
   label span {
@@ -68,9 +69,9 @@ class CreateGameForm extends PureComponent {
     const { maxPlayers, maxRounds } = this.state;
     const { dispatchGame, dispatchIsAdmin } = this.props;
 
-    axios.post('/games', { maxPlayers, maxRounds })
+    axios.post('/api/games', { game: { maxPlayers, maxRounds } })
       .then((response) => {
-        const { game } = response.data;
+        const game = keysSnakeToCamelCase(response.data.data);
 
         dispatchGame(game);
         dispatchIsAdmin(true);
