@@ -50,6 +50,8 @@
           "consistent": true
         }
       }
-    ]
+    ],
+    "consistent-return": "off",
+    "no-console": "off"
   }
 }
