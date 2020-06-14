@@ -13,8 +13,8 @@ defmodule DrawItWeb.GameControllerTest do
     max_rounds: 16
   }
   @invalid_attrs %{
-    max_players: nil,
-    max_rounds: nil
+    max_players: 200,
+    max_rounds: -9
   }
 
   def fixture(:game) do
