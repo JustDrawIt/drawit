@@ -7,6 +7,13 @@ config :draw_it_web,
   ecto_repos: [DrawIt.Repo],
   generators: [context_app: :draw_it]
 
+# Configures the endpoint
+config :draw_it_web, DrawItWeb.Endpoint,
+  url: [host: "localhost"],
+  secret_key_base: "i7VAZmXVLl9qndnB9mD9dyQWk37OcTeOnHkQhKsvhoICoeWzq/qUhnyqMBLg0BLk",
+  render_errors: [view: DrawItWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub: [name: DrawItWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
