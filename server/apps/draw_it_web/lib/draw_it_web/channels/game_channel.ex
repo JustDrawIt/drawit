@@ -38,4 +38,16 @@ defmodule DrawItWeb.GameChannel do
 
     {:noreply, socket}
   end
+
+  def terminate({:shutdown, :left}, socket) do
+    broadcast!(socket, "new_message", %{
+      text: "#{socket.assigns.player.nickname} left the game"
+    })
+  end
+
+  def terminate({:shutdown, :closed}, socket) do
+    broadcast!(socket, "new_message", %{
+      text: "#{socket.assigns.player.nickname} disconnected"
+    })
+  end
 end
