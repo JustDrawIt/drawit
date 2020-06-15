@@ -11,6 +11,9 @@ config :draw_it_web, DrawItWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
+  secret_key_base: "i7VAZmXVLl9qndnB9mD9dyQWk37OcTeOnHkQhKsvhoICoeWzq/qUhnyqMBLg0BLk",
+  render_errors: [view: DrawItWeb.ErrorView, accepts: ~w(json)],
+  pubsub: [name: DrawItWeb.PubSub, adapter: Phoenix.PubSub.PG2],
   watchers: []
 
 # ## SSL Support
