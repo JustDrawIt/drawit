@@ -1,6 +1,7 @@
 defmodule DrawIt.Games.Game do
   use DrawIt.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias DrawIt.Games.{Round, Player}
 
@@ -22,5 +23,17 @@ defmodule DrawIt.Games.Game do
     |> validate_required([:join_code])
     |> validate_number(:max_players, less_than_or_equal_to: 20, greater_than: 1)
     |> validate_number(:max_rounds, less_than_or_equal_to: 25, greater_than: 0)
+  end
+
+  def with_players(query) do
+    from q in query,
+      left_join: players in assoc(q, :players),
+      preload: [players: players]
+  end
+
+  def with_rounds(query) do
+    from q in query,
+      left_join: rounds in assoc(q, :rounds),
+      preload: [rounds: rounds]
   end
 end

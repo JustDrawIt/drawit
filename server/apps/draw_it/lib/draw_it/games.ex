@@ -18,7 +18,10 @@ defmodule DrawIt.Games do
 
   """
   def list_games do
-    Repo.all(Game)
+    Game
+    |> Game.with_players()
+    |> Game.with_rounds()
+    |> Repo.all()
   end
 
   @doc """
@@ -35,7 +38,12 @@ defmodule DrawIt.Games do
       ** (Ecto.NoResultsError)
 
   """
-  def get_game!(id), do: Repo.get!(Game, id)
+  def get_game!(id) do
+    Game
+    |> Game.with_players()
+    |> Game.with_rounds()
+    |> Repo.get!(id)
+  end
 
   @doc """
   Gets a single game from it's join code.
@@ -55,10 +63,11 @@ defmodule DrawIt.Games do
     query =
       from game in Game,
         where: game.join_code == ^join_code,
-        select: game,
-        limit: 1
+        select: game
 
     query
+    |> Game.with_players()
+    |> Game.with_rounds()
     |> Repo.one!()
   end
 
@@ -79,6 +88,8 @@ defmodule DrawIt.Games do
 
     %Game{join_code: join_code}
     |> Game.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:players, [])
+    |> Ecto.Changeset.put_assoc(:rounds, [])
     |> Repo.insert()
   end
 
