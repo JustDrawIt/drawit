@@ -3,6 +3,30 @@ defmodule DrawItWeb.GameChannel do
 
   alias DrawIt.Games
 
-  def join("game:" <> join_code, message, socket) do
+  def join("game:" <> join_code, %{"nickname" => nickname}, socket) do
+    game = Games.get_game_by_join_code!(join_code)
+    existing_player = Enum.find(game.players, fn player -> player.nickname == nickname end)
+
+    # TODO: confirm token
+
+    if existing_player do
+      send(self(), :after_join)
+      {:ok, assign(socket, :player, existing_player)}
+    else
+      # TODO: check max players
+
+      {:ok, player} = Games.create_player(%{id_game: game.id, nickname: nickname})
+
+      send(self(), :after_join)
+      {:ok, assign(socket, :player, player)}
+    end
+  end
+
+  def handle_info(:after_join, socket) do
+    broadcast!(socket, "new_message", %{
+      text: "#{socket.assigns.player.nickname} joined the game"
+    })
+
+    {:noreply, socket}
   end
 end
