@@ -29,4 +29,13 @@ defmodule DrawItWeb.GameChannel do
 
     {:noreply, socket}
   end
+
+  def handle_in("new_message", %{"text" => text}, socket) do
+    broadcast!(socket, "new_message", %{
+      text: text,
+      player: DrawItWeb.PlayerView.render("player.json", %{player: socket.assigns.player})
+    })
+
+    {:noreply, socket}
+  end
 end
