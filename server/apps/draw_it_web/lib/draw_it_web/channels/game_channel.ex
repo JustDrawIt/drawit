@@ -39,6 +39,18 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("round:start", message, socket) do
+    IO.inspect("-> 'round:start', #{inspect(message)} #{inspect(socket.assigns)}")
+
+    {:noreply, socket}
+  end
+
+  def handle_in("round:draw", message, socket) do
+    IO.inspect("-> 'round:draw', #{inspect(message)}")
+
+    {:noreply, socket}
+  end
+
   def terminate({:shutdown, :left}, socket) do
     broadcast!(socket, "new_message", %{
       text: "#{socket.assigns.player.nickname} left the game"
