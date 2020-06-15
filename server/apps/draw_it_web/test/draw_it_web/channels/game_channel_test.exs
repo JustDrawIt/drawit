@@ -2,7 +2,6 @@ defmodule DrawItWeb.GameChannelTest do
   use DrawItWeb.ChannelCase
 
   alias DrawIt.Games
-  alias DrawIt.Games.Game, warn: false
 
   @game_attrs %{
     max_players: 4,
@@ -31,8 +30,15 @@ defmodule DrawItWeb.GameChannelTest do
     setup [:create_and_join_game]
   end
 
-  describe "new_message" do
+  describe "'new_message'" do
     setup [:create_and_join_game]
+
+    test "broadcasts new_message", %{socket: socket, current_player: current_player} do
+      text = "Hello!"
+      player = DrawItWeb.PlayerView.render("player.json", %{player: current_player})
+      push(socket, "new_message", %{text: text})
+      assert_broadcast "new_message", %{text: ^text, player: ^player}
+    end
   end
 
   describe "round_start" do
