@@ -17,7 +17,9 @@ defmodule DrawItWeb.GameView do
       max_players: game.max_players,
       max_rounds: game.max_rounds,
       date_inserted: game.date_inserted,
-      date_updated: game.date_updated
+      date_updated: game.date_updated,
+      players: Enum.map(game.players, &DrawItWeb.PlayerView.render("player.json", %{player: &1})),
+      rounds: Enum.map(game.rounds, &DrawItWeb.RoundView.render("round.json", %{round: &1}))
     }
   end
 end
