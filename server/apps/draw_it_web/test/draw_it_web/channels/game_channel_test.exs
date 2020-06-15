@@ -28,6 +28,66 @@ defmodule DrawItWeb.GameChannelTest do
 
   describe "join 'game:<join_code>'" do
     setup [:create_and_join_game]
+
+    test "saves new player", %{game: game, current_player: current_player} do
+      assert current_player
+      assert current_player in game.players
+    end
+
+    test "assigns player to socket", %{socket: socket, current_player: current_player} do
+      assert socket.assigns.player == current_player
+    end
+
+    test "broadcasts joined message" do
+      assert_broadcast "new_message", %{text: "#{@current_player_nickname} joined the game"}
+    end
+
+    @tag skip: "not implemented"
+    test "reply with error if game has max players", %{game: game} do
+      Enum.each(@game_player_nicknames, fn nickname ->
+        {:ok, _reply, _socket} = join_game(nickname, game.join_code, %{nickname: nickname})
+      end)
+
+      new_player_nickname = "Baron Vladimir Harkonnen"
+
+      assert {:error, :max_players_reached} =
+               join_game(new_player_nickname, game.join_code, %{nickname: new_player_nickname})
+
+      updated_game = Games.get_game!(game.id)
+
+      assert updated_game.players == game.players
+    end
+
+    test "does not create duplicate player on reconnect", %{
+      socket: socket,
+      game: game,
+      current_player: original_player
+    } do
+      Process.unlink(socket.channel_pid)
+      :ok = close(socket)
+
+      {:ok, _reply, new_socket} =
+        join_game("test_user_id", game.join_code, %{
+          nickname: @current_player_nickname
+        })
+
+      updated_game = Games.get_game!(game.id)
+
+      assert new_socket.assigns.player == original_player
+      assert updated_game.players == game.players
+    end
+
+    @tag skip: "not implemented"
+    test "reply with error if token mismatch on reconnect", %{socket: socket, game: game} do
+      Process.unlink(socket.channel_pid)
+      :ok = close(socket)
+
+      assert {:error, :token_mismatch} =
+               join_game("test_user_id", game.join_code, %{
+                 nickname: @current_player_nickname,
+                 token: "invalid"
+               })
+    end
   end
 
   describe "'new_message'" do
