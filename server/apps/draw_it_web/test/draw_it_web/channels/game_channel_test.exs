@@ -101,11 +101,11 @@ defmodule DrawItWeb.GameChannelTest do
     end
   end
 
-  describe "round_start" do
+  describe "'round_start'" do
     setup [:create_and_join_game]
   end
 
-  describe "round_draw" do
+  describe "'round_draw'" do
     setup [:create_and_join_game]
   end
 
