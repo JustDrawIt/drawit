@@ -51,6 +51,20 @@ defmodule DrawItWeb.GameChannelTest do
 
   describe "terminate" do
     setup [:create_and_join_game]
+
+    test "broadcasts new_message on leave", %{socket: socket} do
+      Process.unlink(socket.channel_pid)
+      leave(socket)
+
+      assert_broadcast "new_message", %{text: "#{@current_player_nickname} left the game"}
+    end
+
+    test "brodcasts new_message on disconnect", %{socket: socket} do
+      Process.unlink(socket.channel_pid)
+      :ok = close(socket)
+
+      assert_broadcast "new_message", %{text: "#{@current_player_nickname} disconnected"}
+    end
   end
 
   defp create_and_join_game(_) do
