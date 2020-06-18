@@ -1,6 +1,7 @@
 defmodule DrawIt.Games.Round do
   use DrawIt.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias DrawIt.Games.{Game, Player}
 
@@ -18,5 +19,11 @@ defmodule DrawIt.Games.Round do
     round
     |> cast(attrs, [:id_game, :id_player_drawer, :word])
     |> validate_required([:id_game, :id_player_drawer, :word])
+  end
+
+  def with_player_drawer(query) do
+    from q in query,
+      left_join: player_drawer in assoc(q, :player_drawer),
+      preload: [player_drawer: player_drawer]
   end
 end
