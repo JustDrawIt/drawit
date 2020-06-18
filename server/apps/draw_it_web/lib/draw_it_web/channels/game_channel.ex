@@ -2,24 +2,16 @@ defmodule DrawItWeb.GameChannel do
   use Phoenix.Channel
 
   alias DrawIt.Games
+  alias DrawIt.GameServer
+
+  @end_round_timeout 5000
 
   def join("game:" <> join_code, %{"nickname" => nickname}, socket) do
-    game = Games.get_game_by_join_code!(join_code)
-    existing_player = Enum.find(game.players, fn player -> player.nickname == nickname end)
+    {:ok, player} = GameServer.join(join_code, %{nickname: nickname})
 
-    # TODO: confirm token
+    send(self(), :after_join)
 
-    if existing_player do
-      send(self(), :after_join)
-      {:ok, assign(socket, :player, existing_player)}
-    else
-      # TODO: check max players
-
-      {:ok, player} = Games.create_player(%{id_game: game.id, nickname: nickname})
-
-      send(self(), :after_join)
-      {:ok, assign(socket, :player, player)}
-    end
+    {:ok, assign(socket, :player, player)}
   end
 
   def handle_info(:after_join, socket) do
@@ -31,6 +23,8 @@ defmodule DrawItWeb.GameChannel do
   end
 
   def handle_in("new_message", %{"text" => text}, socket) do
+    IO.inspect(socket)
+
     broadcast!(socket, "new_message", %{
       text: text,
       player: DrawItWeb.PlayerView.render("player.json", %{player: socket.assigns.player})
@@ -40,7 +34,8 @@ defmodule DrawItWeb.GameChannel do
   end
 
   def handle_in("round:start", message, socket) do
-    IO.inspect("-> 'round:start', #{inspect(message)} #{inspect(socket.assigns)}")
+    IO.inspect(socket)
+    # GameServer.start_round(join_code, payload)
 
     {:noreply, socket}
   end

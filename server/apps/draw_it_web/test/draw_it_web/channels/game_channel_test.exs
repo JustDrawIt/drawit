@@ -7,15 +7,11 @@ defmodule DrawItWeb.GameChannelTest do
     max_players: 4,
     max_rounds: 4
   }
-  @game_player_nicknames ["Alia", "Ghanima", "Leto II"]
   @current_player_nickname "Chani"
+  @other_players_nicknames ["Alia", "Ghanima", "Leto II"]
 
   def fixture(:game) do
     {:ok, game} = Games.create_game(@game_attrs)
-
-    Enum.map(@game_player_nicknames, fn nickname ->
-      {:ok, _player} = Games.create_player(%{id_game: game.id, nickname: nickname})
-    end)
 
     game
   end
@@ -44,7 +40,7 @@ defmodule DrawItWeb.GameChannelTest do
 
     @tag skip: "not implemented"
     test "reply with error if game has max players", %{game: game} do
-      Enum.each(@game_player_nicknames, fn nickname ->
+      Enum.each(@other_players_nicknames, fn nickname ->
         {:ok, _reply, _socket} = join_game(nickname, game.join_code, %{nickname: nickname})
       end)
 

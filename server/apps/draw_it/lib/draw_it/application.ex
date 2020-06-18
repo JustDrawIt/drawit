@@ -7,7 +7,8 @@ defmodule DrawIt.Application do
 
   def start(_type, _args) do
     children = [
-      DrawIt.Repo
+      DrawIt.Repo,
+      {Registry, [keys: :unique, name: :game_server_registry]}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: DrawIt.Supervisor)

@@ -254,7 +254,9 @@ defmodule DrawIt.Games do
 
   """
   def list_game_rounds do
-    Repo.all(Round)
+    Round
+    |> Round.with_player_drawer()
+    |> Repo.all()
   end
 
   @doc """
@@ -271,7 +273,11 @@ defmodule DrawIt.Games do
       ** (Ecto.NoResultsError)
 
   """
-  def get_round!(id), do: Repo.get!(Round, id)
+  def get_round!(id) do
+    Round
+    |> Round.with_player_drawer()
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a round.
@@ -289,6 +295,13 @@ defmodule DrawIt.Games do
     %Round{}
     |> Round.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, round} ->
+        {:ok, Repo.preload(round, :player_drawer)}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   @doc """
