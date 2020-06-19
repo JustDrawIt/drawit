@@ -55,6 +55,24 @@ jobs:
         run: mix credo --strict
         working-directory: ./server
 
+      - name: Load PLT Cache
+        uses: actions/cache@v1
+        id: plt-cache
+        with:
+          path: server/priv/plts
+          key: ${{ runner.os }}-22.0-1.10-plts-${{ hashFiles(format('{0}{1}', github.workspace, '/server/mix.lock')) }}
+
+      - name: Create PLTs
+        if: steps.plt-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p server/priv/plts
+          mix dialyzer --plt
+        working-directory: ./server
+
+      - name: Run dialyzer
+        run: mix dialyzer --no-check --halt-exit-status
+        working-directory: ./server
+
       - name: Run tests
         run: mix test
         working-directory: ./server
