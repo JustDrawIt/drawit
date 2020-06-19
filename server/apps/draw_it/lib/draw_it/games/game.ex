@@ -14,7 +14,7 @@ defmodule DrawIt.Games.Game do
     field :join_code, :string
     field :max_players, :integer, default: 3
     field :max_rounds, :integer, default: 5
-    field :round_length_ms, :integer, default: 60000
+    field :round_length_ms, :integer, default: 60_000
 
     has_many :rounds, Round, foreign_key: :id_game
     has_many :players, Player, foreign_key: :id_game
@@ -29,7 +29,7 @@ defmodule DrawIt.Games.Game do
     |> validate_required([:join_code])
     |> validate_number(:max_players, less_than_or_equal_to: 20, greater_than: 1)
     |> validate_number(:max_rounds, less_than_or_equal_to: 25, greater_than: 0)
-    |> validate_number(:round_length_ms, less_than_or_equal_to: 60000 * 5)
+    |> validate_number(:round_length_ms, less_than_or_equal_to: 60_000 * 5)
   end
 
   def with_players(query) do
