@@ -40,7 +40,6 @@ class ScreenGame extends PureComponent {
     super(props);
 
     this.state = {
-      word: null,
       scores: [],
       joined: false,
       endedWord: null,
@@ -191,7 +190,6 @@ class ScreenGame extends PureComponent {
       currentRound,
     } = this.props;
     const {
-      word,
       scores,
       joined,
       guessedCorrectly,
@@ -203,7 +201,7 @@ class ScreenGame extends PureComponent {
     const { joinCode } = match.params;
     const ended = roundEnded || gameEnded;
     const isDrawer = !!(currentRound && currentRound.playerDrawer.nickname === nickname);
-    const displayWord = (isDrawer && word) || (ended && endedWord);
+    const displayWord = (isDrawer && currentRound && currentRound.word) || (ended && endedWord);
     const canGuess = !isDrawer && !guessedCorrectly;
 
     return (
