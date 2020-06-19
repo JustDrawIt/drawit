@@ -98,6 +98,19 @@ defmodule DrawItWeb.GameChannelTest do
       push(socket, "new_message", %{text: text})
       assert_broadcast "new_message", %{text: ^text, player: ^player}
     end
+
+    test "pushes correct_guess if message is round's word", %{
+      socket: socket,
+      game: game
+    } do
+      {:ok, round} = DrawIt.GameServer.start_round(game.join_code, %{})
+      correct_word = round.word
+
+      push(socket, "new_message", %{text: correct_word})
+
+      assert_push "correct_guess", %{}
+      refute_broadcast "new_message", %{text: ^correct_word}
+    end
   end
 
   describe "'round_start'" do

@@ -5,6 +5,7 @@ defmodule DrawItWeb.GameChannel do
 
   alias DrawIt.Games
   alias DrawIt.GameServer
+  alias DrawItWeb.PlayerView
 
   @end_round_timeout 5000
 
@@ -28,10 +29,18 @@ defmodule DrawItWeb.GameChannel do
   end
 
   def handle_in("new_message", %{"text" => text}, socket) do
-    broadcast!(socket, "new_message", %{
-      text: text,
-      player: DrawItWeb.PlayerView.render("player.json", %{player: socket.assigns.player})
-    })
+    "game:" <> join_code = socket.topic
+
+    {:ok, correct?} = GameServer.guess(join_code, %{guess: text})
+
+    if correct? do
+      push(socket, "correct_guess", %{})
+    else
+      broadcast!(socket, "new_message", %{
+        text: text,
+        player: PlayerView.render("player.json", %{player: socket.assigns.player})
+      })
+    end
 
     {:noreply, socket}
   end
