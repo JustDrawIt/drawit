@@ -4,6 +4,7 @@ defmodule DrawIt.GameServer do
   require Logger
 
   alias DrawIt.Games
+  alias DrawIt.RandomWords
 
   @server_registry_name :game_server_registry
 
@@ -97,7 +98,7 @@ defmodule DrawIt.GameServer do
       {:reply, {:error, :reached_max_rounds}, state}
     else
       id_player_drawer = Enum.random(state.player_ids_joined)
-      word = "house"
+      word = RandomWords.word(:easy)
 
       {:ok, round} =
         Games.create_round(%{
