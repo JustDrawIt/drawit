@@ -7,11 +7,34 @@ defmodule DrawItWeb.GameChannel do
   @end_round_timeout 5000
 
   def join("game:" <> join_code, %{"nickname" => nickname}, socket) do
+    server = GameServer.whereis(join_code)
+
+    if !server do
+      game = Games.get_game_by_join_code!(join_code)
+      {:ok, _pid} = GameServer.start_link(game: game)
+    end
+
     {:ok, player} = GameServer.join(join_code, %{nickname: nickname})
 
     send(self(), :after_join)
 
     {:ok, assign(socket, :player, player)}
+  end
+
+  def handle_in("new_message", %{"text" => text}, socket) do
+    broadcast!(socket, "new_message", %{
+      text: text,
+      player: DrawItWeb.PlayerView.render("player.json", %{player: socket.assigns.player})
+    })
+
+    {:noreply, socket}
+  end
+
+  def handle_in("round:start", _message, socket) do
+    "game:" <> join_code = socket.topic
+    start_round_and_schedule_end!(join_code, socket)
+
+    {:noreply, socket}
   end
 
   def handle_info(:after_join, socket) do
@@ -22,26 +45,28 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_in("new_message", %{"text" => text}, socket) do
-    IO.inspect(socket)
+  def handle_info(:round_end, socket) do
+    "game:" <> join_code = socket.topic
+    :ok = GameServer.end_round(join_code, %{})
+
+    broadcast!(socket, "round:end", %{})
 
     broadcast!(socket, "new_message", %{
-      text: text,
-      player: DrawItWeb.PlayerView.render("player.json", %{player: socket.assigns.player})
+      text: "Round ended"
     })
 
+    game = Games.get_game_by_join_code!(join_code)
+
+    if length(game.rounds) < game.max_rounds do
+      Process.send_after(self(), :next_round, @end_round_timeout)
+    end
+
     {:noreply, socket}
   end
 
-  def handle_in("round:start", message, socket) do
-    IO.inspect(socket)
-    # GameServer.start_round(join_code, payload)
-
-    {:noreply, socket}
-  end
-
-  def handle_in("round:draw", message, socket) do
-    IO.inspect("-> 'round:draw', #{inspect(message)}")
+  def handle_info(:next_round, socket) do
+    "game:" <> join_code = socket.topic
+    start_round_and_schedule_end!(join_code, socket)
 
     {:noreply, socket}
   end
@@ -56,5 +81,20 @@ defmodule DrawItWeb.GameChannel do
     broadcast!(socket, "new_message", %{
       text: "#{socket.assigns.player.nickname} disconnected"
     })
+  end
+
+  defp start_round_and_schedule_end!(join_code, socket) do
+    {:ok, round} = GameServer.start_round(join_code, %{})
+
+    broadcast!(socket, "round:start", %{
+      round: DrawItWeb.RoundView.render("round.json", %{round: round})
+    })
+
+    broadcast!(socket, "new_message", %{
+      text: "Round started, #{round.player_drawer.nickname} is drawing"
+    })
+
+    game = Games.get_game_by_join_code!(join_code)
+    Process.send_after(self(), :round_end, game.round_length_ms)
   end
 end
