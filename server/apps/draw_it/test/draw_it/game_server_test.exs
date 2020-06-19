@@ -34,7 +34,7 @@ defmodule DrawIt.GameServerTest do
     %{current_player: player, game: updated_game}
   end
 
-  defp add_players(%{game: game}) do
+  defp add_other_players(%{game: game}) do
     Enum.each(@other_players_nicknames, fn nickname ->
       {:ok, _player} =
         GameServer.join(game.join_code, %{
@@ -71,7 +71,7 @@ defmodule DrawIt.GameServerTest do
     end
 
     test "returns error if reached max players", %{game: game} do
-      add_players(%{game: game})
+      add_other_players(%{game: game})
 
       assert {:error, :reached_max_players} =
                GameServer.join(game.join_code, %{
@@ -82,7 +82,7 @@ defmodule DrawIt.GameServerTest do
   end
 
   describe "start_round/2" do
-    setup [:join_game, :add_players]
+    setup [:join_game, :add_other_players]
 
     test "saves new round", %{game: game, current_player: current_player} do
       assert {:ok, %Games.Round{} = round} =
@@ -130,7 +130,7 @@ defmodule DrawIt.GameServerTest do
   end
 
   describe "end_round/2" do
-    setup [:join_game, :add_players]
+    setup [:join_game, :add_other_players]
   end
 
   describe "guess/2" do
