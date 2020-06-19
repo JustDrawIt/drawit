@@ -68,8 +68,14 @@ class CreateGameForm extends PureComponent {
   createGame() {
     const { maxPlayers, maxRounds } = this.state;
     const { dispatchGame, dispatchIsAdmin } = this.props;
+    const newGamePayload = {
+      game: {
+        max_players: maxPlayers,
+        max_rounds: maxRounds,
+      },
+    };
 
-    axios.post('/api/games', { game: { maxPlayers, maxRounds } })
+    axios.post('/api/games', newGamePayload)
       .then((response) => {
         const game = keysSnakeToCamelCase(response.data.data);
 
