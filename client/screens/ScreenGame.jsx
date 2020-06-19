@@ -51,13 +51,10 @@ class ScreenGame extends PureComponent {
 
     this.onGameJoined = this.onGameJoined.bind(this);
     this.onGameEnd = this.onGameEnd.bind(this);
-    this.onRoundStarted = this.onRoundStarted.bind(this);
     this.onRoundCorrectGuess = this.onRoundCorrectGuess.bind(this);
-    this.onRoundEnd = this.onRoundEnd.bind(this);
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
-
     this.handleRoundStart = this.handleRoundStart.bind(this);
     this.handleRoundEnd = this.handleRoundEnd.bind(this);
 
@@ -68,7 +65,7 @@ class ScreenGame extends PureComponent {
     const { match, dispatchJoinCode } = this.props;
     const { joinCode } = match.params;
 
-    dispatchJoinCode(joinCode);;
+    dispatchJoinCode(joinCode);
   }
 
   componentWillUnmount() {
@@ -97,10 +94,6 @@ class ScreenGame extends PureComponent {
     });
   }
 
-  onRoundStarted() {
-
-  }
-
   onRoundCorrectGuess({ nickname, scores }) {
     const { guessedCorrectly } = this.state;
 
@@ -108,10 +101,6 @@ class ScreenGame extends PureComponent {
       scores,
       guessedCorrectly: guessedCorrectly || nickname === this.props.nickname,
     });
-  }
-
-  onRoundEnd({ word, scores }) {
-
   }
 
   setRoundEventListeners() {
@@ -234,7 +223,6 @@ class ScreenGame extends PureComponent {
               <TopBar
                 isAdmin={isAdmin}
                 started={started}
-                drawing={isDrawer}
                 word={displayWord}
                 joinCode={joinCode}
                 showingScoreBoard={showScoreBoard}
