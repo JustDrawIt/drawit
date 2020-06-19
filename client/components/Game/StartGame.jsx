@@ -1,9 +1,10 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'react-emotion';
 import Button from '../Utils/Button';
-import socket from '../../sockets';
+import { keysSnakeToCamelCase } from '../../helpers/snakeToCamelCase';
+import { startAction, setCurrentRoundAction } from '../../store/actions/game.actions';
 
 const StartButton = styled(Button)`
   width: fit-content;
@@ -12,61 +13,55 @@ const StartButton = styled(Button)`
   margin: 0;
 `;
 
-class StartGame extends PureComponent {
-  constructor(props) {
-    super(props);
+const StartGame = (props) => {
+  const {
+    started,
+    socket,
+    addNotification,
+    dispatchStart,
+    dispatchSetCurrentRound,
+  } = props;
 
-    this.state = {
-      starting: false,
-    };
+  const handleClick = () => {
+    dispatchStart();
 
-    this.start = this.start.bind(this);
-    this.onRoundNotStarted = this.onRoundNotStarted.bind(this);
-  }
+    socket.push('round:start')
+      .receive('ok', (payload) => {
+        const round = keysSnakeToCamelCase(payload.round);
+        dispatchSetCurrentRound(round);
+      })
+      .receive('error', (reasons) => {
+        console.error('"round:start" errored.', reasons);
+        addNotification({ message: 'Something went wrong!', level: 'error' });
+      })
+      .receive('timeout', () => {
+        console.warn('"round:start" timed out.');
+        addNotification({ message: 'Something went wrong!', level: 'error' });
+      });
+  };
 
-  componentDidMount() {
-    socket.on('round:not_started', this.onRoundNotStarted);
-  }
-
-  componentWillUnmount() {
-    socket.off('round:not_started', this.onRoundNotStarted);
-  }
-
-  onRoundNotStarted({ error }) {
-    const { addNotification } = this.props;
-
-    this.setState({ starting: false });
-    addNotification({ message: error, level: 'error' });
-  }
-
-  start() {
-    const { joinCode } = this.props;
-
-    this.setState({ starting: true });
-    socket.emit('round:start', { joinCode });
-  }
-
-  render() {
-    const { starting } = this.state;
-
-    return (
-      <div>
-        <StartButton onClick={this.start} disabled={starting} color="primary">
-          {starting ? 'Starting...' : 'Start Game'}
-        </StartButton>
-      </div>
-    );
-  }
-}
+  return (
+    <StartButton onClick={handleClick} disabled={started} color="primary">
+      {started ? 'Starting...' : 'Start Game'}
+    </StartButton>
+  );
+};
 
 StartGame.propTypes = {
-  joinCode: PropTypes.string.isRequired,
+  socket: PropTypes.object.isRequired,
+  started: PropTypes.bool.isRequired,
   addNotification: PropTypes.func.isRequired,
+  dispatchStart: PropTypes.func.isRequired,
+  dispatchSetCurrentRound: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ game }) => ({
-    joinCode: game.joinCode,
+    socket: game.socket,
+    started: game.started,
   }),
-  null,
+  dispatch => ({
+    dispatchStart: startAction(dispatch),
+    dispatchSetCurrentRound: setCurrentRoundAction(dispatch),
+  }),
 )(StartGame);
