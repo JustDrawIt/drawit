@@ -1,5 +1,10 @@
 defmodule DrawIt.Games.Player do
+  @moduledoc """
+  This module holds the schema, changeset, and any query helpers for game players.
+  """
+
   use DrawIt.Schema
+
   import Ecto.Changeset
 
   alias DrawIt.Games.Game

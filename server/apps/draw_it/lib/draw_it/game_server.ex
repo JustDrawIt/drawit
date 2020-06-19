@@ -1,4 +1,23 @@
 defmodule DrawIt.GameServer do
+  @moduledoc """
+  A `GenServer` used for managing a game's state.
+
+  To create a game server, start by passing an existing `%DrawIt.Games.Game{}`
+  into `start_link/1`.
+
+      {:ok, game} = Games.create_game(%{})
+      {:ok, server} = GameServer.start_link(game: game)
+
+  Once the server is created, you can use the returned server pid or the game's
+  join_code to interact with the game server.
+
+      {:ok, player1} = GameServer.join(server, %{nickname: "Ben"})
+      {:ok, player2} = GameServer.join(game.join_code, %{nickname: "Wendy"})
+
+      {:ok, round} = GameServer.start_round(game.join_code, %{})
+      :ok = GameServer.end_round(game.join_code, %{})
+  """
+
   use GenServer
 
   require Logger
@@ -9,6 +28,10 @@ defmodule DrawIt.GameServer do
   @server_registry_name :game_server_registry
 
   defmodule State do
+    @moduledoc """
+    This module defines a struct that represents the game state for `GameServer`.
+    """
+
     defstruct game: nil,
               current_round: nil,
               player_ids_joined: [],
