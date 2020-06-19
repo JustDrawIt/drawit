@@ -35,7 +35,7 @@ defmodule DrawItWeb.GameChannel do
   def handle_in("new_message", %{"text" => text}, socket) do
     "game:" <> join_code = socket.topic
 
-    {:ok, correct?} = GameServer.guess(join_code, %{guess: text})
+    {:ok, correct?} = GameServer.guess(join_code, %{guess: text, player: socket.assigns.player})
 
     if correct? do
       push(socket, "correct_guess", %{})
@@ -84,7 +84,7 @@ defmodule DrawItWeb.GameChannel do
 
   def handle_info(:round_end, socket) do
     "game:" <> join_code = socket.topic
-    :ok = GameServer.end_round(join_code, %{})
+    {:ok, game} = GameServer.end_round(join_code, %{})
 
     broadcast!(socket, "round:end", %{})
 
@@ -92,13 +92,13 @@ defmodule DrawItWeb.GameChannel do
       text: "Round ended"
     })
 
-    game = Games.get_game_by_join_code!(join_code)
-
     if length(game.rounds) < game.max_rounds do
       Process.send_after(self(), :next_round, @end_round_timeout)
     end
 
-    {:noreply, socket}
+    returned_game = DrawItWeb.GameView.render("game.json", %{game: game})
+
+    {:ok, %{game: returned_game}, socket}
   end
 
   def handle_info(:next_round, socket) do
