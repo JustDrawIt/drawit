@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ClearTool from './ClearTool';
 import ToolButton from '../../../../Utils/ToolButton';
-import socket from '../../../../../sockets';
 import { clearItemsAction } from '../../../../../store/actions/game.actions';
 
 class Clear extends PureComponent {
@@ -13,11 +12,11 @@ class Clear extends PureComponent {
   }
 
   onClick() {
-    const { context, dispatchClearItems, joinCode } = this.props;
+    const { context, dispatchClearItems, channel } = this.props;
 
     if (context) {
       ClearTool.clear(context);
-      socket.emit('round:clear', { joinCode });
+      channel.push('clear_drawings');
       dispatchClearItems();
     }
   }
@@ -36,6 +35,7 @@ Clear.defaultProps = {
 };
 
 Clear.propTypes = {
+  channel: PropTypes.object,
   context: PropTypes.object,
   joinCode: PropTypes.string.isRequired,
   dispatchClearItems: PropTypes.func.isRequired,
@@ -43,6 +43,7 @@ Clear.propTypes = {
 
 export default connect(
   ({ game }) => ({
+    channel: game.socket,
     context: game.canvas.context,
     joinCode: game.joinCode,
   }),
