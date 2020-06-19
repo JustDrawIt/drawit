@@ -14,11 +14,15 @@ defmodule DrawItWeb.GameChannel do
       {:ok, _pid} = GameServer.start_link(game: game)
     end
 
-    {:ok, player} = GameServer.join(join_code, %{nickname: nickname})
+    case GameServer.join(join_code, %{nickname: nickname}) do
+      {:ok, player} ->
+        send(self(), :after_join)
 
-    send(self(), :after_join)
+        {:ok, assign(socket, :player, player)}
 
-    {:ok, assign(socket, :player, player)}
+      {:error, :reached_max_players} ->
+        {:error, :reached_max_players}
+    end
   end
 
   def handle_in("new_message", %{"text" => text}, socket) do

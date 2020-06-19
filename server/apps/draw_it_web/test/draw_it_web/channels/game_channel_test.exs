@@ -38,15 +38,18 @@ defmodule DrawItWeb.GameChannelTest do
       assert_broadcast "new_message", %{text: "#{@current_player_nickname} joined the game"}
     end
 
-    @tag skip: "not implemented"
-    test "reply with error if game has max players", %{game: game} do
+    test "reply with error if game has max players", %{socket: socket, game: game} do
+      Process.unlink(socket.channel_pid)
+
       Enum.each(@other_players_nicknames, fn nickname ->
         {:ok, _reply, _socket} = join_game(nickname, game.join_code, %{nickname: nickname})
       end)
 
+      game = Games.get_game!(game.id)
+
       new_player_nickname = "Baron Vladimir Harkonnen"
 
-      assert {:error, :max_players_reached} =
+      assert {:error, :reached_max_players} =
                join_game(new_player_nickname, game.join_code, %{nickname: new_player_nickname})
 
       updated_game = Games.get_game!(game.id)
