@@ -12,6 +12,10 @@ export const setGameAction = dispatch => game => dispatch({
   type: GAME_TYPES.SET_GAME,
   game,
 });
+export const setCurrentRoundAction = dispatch => currentRound => dispatch({
+  type: GAME_TYPES.SET_CURRENT_ROUND,
+  currentRound,
+});
 export const setIsAdminAction = dispatch => isAdmin => dispatch({
   type: GAME_TYPES.SET_IS_ADMIN,
   isAdmin,
