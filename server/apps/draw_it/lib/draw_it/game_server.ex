@@ -22,7 +22,7 @@ defmodule DrawIt.GameServer do
     game = Keyword.fetch!(options, :game)
     name = via_tuple(game.join_code)
 
-    GenServer.start_link(__MODULE__, %State{game: game}, name: name)
+    GenServer.start_link(__MODULE__, options, name: name)
   end
 
   defp via_tuple(join_code), do: {:via, Registry, {@server_registry_name, join_code}}
