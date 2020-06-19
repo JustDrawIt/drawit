@@ -35,7 +35,8 @@ defmodule DrawIt.GameServer do
     defstruct game: nil,
               current_round: nil,
               player_ids_joined: [],
-              player_ids_drawn: []
+              player_ids_drawn: [],
+              player_ids_correct_guess: []
   end
 
   ##
@@ -154,7 +155,8 @@ defmodule DrawIt.GameServer do
 
     new_state = %State{
       state
-      | current_round: nil
+      | current_round: nil,
+        player_ids_correct_guess: []
     }
 
     {:reply, :ok, new_state}
@@ -173,18 +175,26 @@ defmodule DrawIt.GameServer do
         %State{current_round: current_round} = state
       ) do
     correct? = guess == current_round.word
+    already_guessed? = player.id in state.player_ids_correct_guess
 
-    if correct? do
+    Logger.info("Guess", correct_word: current_round.word, guess: guess, player_id: player.id)
+
+    if !already_guessed? && correct? do
       player = Games.get_player!(player.id)
 
       Games.update_player(player, %{
         score: player.score + 1
       })
+
+      new_state = %State{
+        state
+        | player_ids_correct_guess: [player.id | state.player_ids_correct_guess]
+      }
+
+      {:reply, {:ok, correct?}, new_state}
+    else
+      {:reply, {:ok, correct?}, state}
     end
-
-    Logger.info("Guess", correct_word: current_round.word, guess: guess)
-
-    {:reply, {:ok, correct?}, state}
   end
 
   ##
