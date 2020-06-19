@@ -167,8 +167,20 @@ defmodule DrawIt.GameServer do
     {:reply, {:ok, false}, state}
   end
 
-  def handle_call({:guess, %{guess: guess}}, _from, %State{current_round: current_round} = state) do
+  def handle_call(
+        {:guess, %{player: player, guess: guess}},
+        _from,
+        %State{current_round: current_round} = state
+      ) do
     correct? = guess == current_round.word
+
+    if correct? do
+      player = Games.get_player!(player.id)
+
+      Games.update_player(player, %{
+        score: player.score + 1
+      })
+    end
 
     Logger.info("Guess", correct_word: current_round.word, guess: guess)
 
