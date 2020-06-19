@@ -78,25 +78,29 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def handle_call({:start_round, _payload}, _from, %State{current_round: nil} = state) do
-    id_player_drawer = Enum.random(state.player_ids_joined)
-    word = "house"
+    if reached_max_rounds?(state.game) do
+      {:reply, {:error, :reached_max_rounds}, state}
+    else
+      id_player_drawer = Enum.random(state.player_ids_joined)
+      word = "house"
 
-    {:ok, round} =
-      Games.create_round(%{
-        id_game: state.game.id,
-        id_player_drawer: id_player_drawer,
-        word: word
-      })
+      {:ok, round} =
+        Games.create_round(%{
+          id_game: state.game.id,
+          id_player_drawer: id_player_drawer,
+          word: word
+        })
 
-    Logger.info("#{state.game.join_code}: round started")
+      Logger.info("#{state.game.join_code}: round started")
 
-    new_state = %State{
-      state
-      | game: Games.get_game!(state.game.id),
-        current_round: round
-    }
+      new_state = %State{
+        state
+        | game: Games.get_game!(state.game.id),
+          current_round: round
+      }
 
-    {:reply, {:ok, round}, new_state}
+      {:reply, {:ok, round}, new_state}
+    end
   end
 
   def handle_call({:start_round, _payload}, _from, %State{current_round: %Games.Round{}} = state) do
@@ -143,5 +147,9 @@ defmodule DrawIt.GameServer do
     else
       [player.id | player_ids_joined]
     end
+  end
+
+  defp reached_max_rounds?(%Games.Game{rounds: rounds, max_rounds: max_rounds}) do
+    length(rounds) >= max_rounds
   end
 end
