@@ -153,29 +153,55 @@ defmodule DrawIt.GameServerTest do
   describe "guess/2" do
     setup [:join_game, :add_other_players]
 
-    test "returns true if guess matches round's word", %{game: game} do
+    test "returns true if guess matches round's word", %{
+      game: game,
+      current_player: current_player
+    } do
       {:ok, round} = GameServer.start_round(game.join_code, %{})
 
       assert {:ok, true} =
                GameServer.guess(game.join_code, %{
+                 player: current_player,
                  guess: round.word
                })
     end
 
-    test "returns false if guess doesn't matches round's word", %{game: game} do
+    test "returns false if guess doesn't matches round's word", %{
+      game: game,
+      current_player: current_player
+    } do
       {:ok, _round} = GameServer.start_round(game.join_code, %{})
 
       assert {:ok, false} =
                GameServer.guess(game.join_code, %{
+                 player: current_player,
                  guess: "koala"
                })
     end
 
-    test "returns false if round hasn't started", %{game: game} do
+    test "returns false if round hasn't started", %{game: game, current_player: current_player} do
       assert {:ok, false} =
                GameServer.guess(game.join_code, %{
+                 player: current_player,
                  guess: "fish"
                })
+    end
+
+    test "increments the player's score if guess is correct", %{
+      game: game,
+      current_player: current_player
+    } do
+      {:ok, round} = GameServer.start_round(game.join_code, %{})
+
+      {:ok, true} =
+        GameServer.guess(game.join_code, %{
+          player: current_player,
+          guess: round.word
+        })
+
+      updated_player = Games.get_player!(current_player.id)
+
+      assert updated_player.score == current_player.score + 1
     end
   end
 
