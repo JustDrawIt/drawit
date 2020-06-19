@@ -203,6 +203,40 @@ defmodule DrawIt.GameServerTest do
 
       assert updated_player.score == current_player.score + 1
     end
+
+    test "only increments the player's score once per round", %{
+      game: game,
+      current_player: original_player
+    } do
+      {:ok, round1} = GameServer.start_round(game.join_code, %{})
+
+      {:ok, true} =
+        GameServer.guess(game.join_code, %{
+          player: original_player,
+          guess: round1.word
+        })
+
+      {:ok, true} =
+        GameServer.guess(game.join_code, %{
+          player: original_player,
+          guess: round1.word
+        })
+
+      updated_player = Games.get_player!(original_player.id)
+      assert updated_player.score == original_player.score + 1
+
+      :ok = GameServer.end_round(game.join_code, %{})
+      {:ok, round2} = GameServer.start_round(game.join_code, %{})
+
+      {:ok, true} =
+        GameServer.guess(game.join_code, %{
+          player: original_player,
+          guess: round2.word
+        })
+
+      updated_player = Games.get_player!(original_player.id)
+      assert updated_player.score == original_player.score + 2
+    end
   end
 
   # describe "draw/2" do
