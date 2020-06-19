@@ -5,7 +5,7 @@ defmodule DrawIt.GameServerTest do
   alias DrawIt.GameServer
 
   @game_attrs %{
-    max_players: 3,
+    max_players: 4,
     max_rounds: 4,
     round_length_ms: 100
   }
@@ -68,6 +68,16 @@ defmodule DrawIt.GameServerTest do
       updated_game = Games.get_game!(game.id)
 
       assert updated_game.players == game.players
+    end
+
+    test "returns error if reached max players", %{game: game} do
+      add_players(%{game: game})
+
+      assert {:error, :reached_max_players} =
+               GameServer.join(game.join_code, %{
+                 nickname: "Baron Vladimir Harkonnen",
+                 token: "test token"
+               })
     end
   end
 

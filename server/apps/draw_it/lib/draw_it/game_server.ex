@@ -61,19 +61,23 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def handle_call({:join, %{nickname: nickname}}, _from, %State{} = state) do
-    player = find_or_create_player(state.game, nickname)
-    updated_game = Games.get_game!(state.game.id)
-    player_ids_joined = add_joined_player(state.player_ids_joined, player)
+    if reached_max_players_joined?(state.game, state.player_ids_joined) do
+      {:reply, {:error, :reached_max_players}, state}
+    else
+      player = find_or_create_player(state.game, nickname)
+      updated_game = Games.get_game!(state.game.id)
+      player_ids_joined = add_joined_player(state.player_ids_joined, player)
 
-    Logger.info("#{state.game.join_code}: #{player.nickname} joined")
+      Logger.info("#{state.game.join_code}: #{player.nickname} joined")
 
-    new_state = %State{
-      state
-      | game: updated_game,
-        player_ids_joined: player_ids_joined
-    }
+      new_state = %State{
+        state
+        | game: updated_game,
+          player_ids_joined: player_ids_joined
+      }
 
-    {:reply, {:ok, player}, new_state}
+      {:reply, {:ok, player}, new_state}
+    end
   end
 
   @impl true
@@ -147,6 +151,10 @@ defmodule DrawIt.GameServer do
     else
       [player.id | player_ids_joined]
     end
+  end
+
+  defp reached_max_players_joined?(%Games.Game{max_players: max_players}, player_ids_joined) do
+    length(player_ids_joined) >= max_players
   end
 
   defp reached_max_rounds?(%Games.Game{rounds: rounds, max_rounds: max_rounds}) do
