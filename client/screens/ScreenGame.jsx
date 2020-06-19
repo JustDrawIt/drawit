@@ -51,12 +51,12 @@ class ScreenGame extends PureComponent {
 
     this.onGameJoined = this.onGameJoined.bind(this);
     this.onGameEnd = this.onGameEnd.bind(this);
-    this.onRoundCorrectGuess = this.onRoundCorrectGuess.bind(this);
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
     this.handleRoundStart = this.handleRoundStart.bind(this);
     this.handleRoundEnd = this.handleRoundEnd.bind(this);
+    this.handleCorrectGuess = this.handleCorrectGuess.bind(this);
 
     this.socketRefs = {};
   }
@@ -74,6 +74,7 @@ class ScreenGame extends PureComponent {
     if (channel) {
       channel.off('round:start', this.socketRefs.roundStart);
       channel.off('round:end', this.socketRefs.roundEnd);
+      channel.off('correct_guess', this.socketRefs.correctGuess);
     }
   }
 
@@ -94,20 +95,12 @@ class ScreenGame extends PureComponent {
     });
   }
 
-  onRoundCorrectGuess({ nickname, scores }) {
-    const { guessedCorrectly } = this.state;
-
-    this.setState({
-      scores,
-      guessedCorrectly: guessedCorrectly || nickname === this.props.nickname,
-    });
-  }
-
   setRoundEventListeners() {
     const { channel } = this.props;
 
     this.socketRefs.roundStart = channel.on('round:start', this.handleRoundStart);
     this.socketRefs.roundEnd = channel.on('round:end', this.handleRoundEnd);
+    this.socketRefs.correctGuess = channel.on('correct_guess', this.handleCorrectGuess);
   }
 
   async handleJoinGame(nickname) {
@@ -171,6 +164,14 @@ class ScreenGame extends PureComponent {
       endedWord: lastWord,
     });
   }
+
+  handleCorrectGuess() {
+    this.setState({
+      scores: [],
+      guessedCorrectly: true,
+    });
+  }
+
 
   toggleScoreBoard() {
     this.setState({ showScoreBoard: !this.state.showScoreBoard });
