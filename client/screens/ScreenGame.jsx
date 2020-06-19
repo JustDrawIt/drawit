@@ -21,6 +21,7 @@ import {
   setGameAction,
   setNicknameAction,
   setSocketAction,
+  setCurrentRoundAction,
 } from '../store/actions/game.actions';
 import { keysSnakeToCamelCase } from '../helpers/snakeToCamelCase';
 import { once } from '../helpers/once';
@@ -42,7 +43,6 @@ class ScreenGame extends PureComponent {
       word: null,
       scores: [],
       joined: false,
-      drawing: false,
       endedWord: null,
       roundEnded: false,
       gameEnded: false,
@@ -52,25 +52,32 @@ class ScreenGame extends PureComponent {
     this.onGameJoined = this.onGameJoined.bind(this);
     this.onGameEnd = this.onGameEnd.bind(this);
     this.onRoundStarted = this.onRoundStarted.bind(this);
-    this.onRoundChosen = this.onRoundChosen.bind(this);
     this.onRoundCorrectGuess = this.onRoundCorrectGuess.bind(this);
     this.onRoundEnd = this.onRoundEnd.bind(this);
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
+
+    this.handleRoundStart = this.handleRoundStart.bind(this);
+    this.handleRoundEnd = this.handleRoundEnd.bind(this);
+
+    this.socketRefs = {};
   }
 
   componentDidMount() {
     const { match, dispatchJoinCode } = this.props;
     const { joinCode } = match.params;
 
-    dispatchJoinCode(joinCode);
-
-    // this.channel
-    //   .on('new_msg', msg => console.log('Got message', msg));
+    dispatchJoinCode(joinCode);;
   }
 
   componentWillUnmount() {
+    const { channel } = this.props;
+
+    if (channel) {
+      channel.off('round:start', this.socketRefs.roundStart);
+      channel.off('round:end', this.socketRefs.roundEnd);
+    }
   }
 
   onGameJoined({ game, nickname }) {
@@ -83,7 +90,6 @@ class ScreenGame extends PureComponent {
   onGameEnd({ word, scores }) {
     this.setState({
       scores,
-      drawing: false,
       guessedCorrectly: false,
       gameEnded: true,
       showScoreBoard: true,
@@ -92,20 +98,7 @@ class ScreenGame extends PureComponent {
   }
 
   onRoundStarted() {
-    this.props.dispatchStart();
-    this.setState({
-      roundEnded: false,
-      endedWord: null,
-      showScoreBoard: false,
-    });
-  }
 
-  onRoundChosen({ word }) {
-    this.setState({
-      word,
-      drawing: true,
-      showScoreBoard: false,
-    });
   }
 
   onRoundCorrectGuess({ nickname, scores }) {
@@ -118,14 +111,14 @@ class ScreenGame extends PureComponent {
   }
 
   onRoundEnd({ word, scores }) {
-    this.setState({
-      scores,
-      drawing: false,
-      guessedCorrectly: false,
-      roundEnded: true,
-      showScoreBoard: true,
-      endedWord: word,
-    });
+
+  }
+
+  setRoundEventListeners() {
+    const { channel } = this.props;
+
+    this.socketRefs.roundStart = channel.on('round:start', this.handleRoundStart);
+    this.socketRefs.roundEnd = channel.on('round:end', this.handleRoundEnd);
   }
 
   async handleJoinGame(nickname) {
@@ -136,13 +129,15 @@ class ScreenGame extends PureComponent {
       const response = await axios(`/api/games?join_code=${joinCode}`)
       const game = keysSnakeToCamelCase(response.data.data[0]);
 
-      this.channel = socket.channel(`game:${joinCode}`, { nickname, token: 'testtoken' });
+      const channel = socket.channel(`game:${joinCode}`, { nickname, token: 'testtoken' });
 
-      dispatchSocket(this.channel);
+      dispatchSocket(channel);
       dispatchGame(game);
       dispatchNickname(nickname);
 
-      this.channel
+      this.setRoundEventListeners();
+
+      channel
         .join()
         .receive('ok', once(async (okResponse) => {
           console.log('connected', okResponse);
@@ -164,6 +159,30 @@ class ScreenGame extends PureComponent {
     }
   }
 
+  handleRoundStart(payload) {
+    const { round } = keysSnakeToCamelCase(payload);
+
+    this.props.dispatchSetCurrentRound(round);
+    this.setState({
+      roundEnded: false,
+      endedWord: null,
+      showScoreBoard: false,
+    });
+  }
+
+  handleRoundEnd(payload) {
+    const lastWord = this.props.currentRound.word;
+
+    this.props.dispatchSetCurrentRound(null);
+    this.setState({
+      scores: [],
+      guessedCorrectly: false,
+      roundEnded: true,
+      showScoreBoard: true,
+      endedWord: lastWord,
+    });
+  }
+
   toggleScoreBoard() {
     this.setState({ showScoreBoard: !this.state.showScoreBoard });
   }
@@ -178,12 +197,13 @@ class ScreenGame extends PureComponent {
       nickname,
       isAdmin,
       started,
+      game,
+      currentRound,
     } = this.props;
     const {
       word,
       scores,
       joined,
-      drawing,
       guessedCorrectly,
       endedWord,
       roundEnded,
@@ -192,8 +212,9 @@ class ScreenGame extends PureComponent {
     } = this.state;
     const { joinCode } = match.params;
     const ended = roundEnded || gameEnded;
-    const displayWord = (drawing && word) || (ended && endedWord);
-    const canGuess = !drawing && !guessedCorrectly;
+    const isDrawer = !!(currentRound && currentRound.playerDrawer.nickname === nickname);
+    const displayWord = (isDrawer && word) || (ended && endedWord);
+    const canGuess = !isDrawer && !guessedCorrectly;
 
     return (
       <div>
@@ -208,12 +229,12 @@ class ScreenGame extends PureComponent {
           )
           : (
             <Container>
-              {started && !roundEnded ? <CountDown date={new Date(89000)} /> : null}
-              {started && roundEnded ? <CountDown date={new Date(14000)} /> : null}
+              {started && !roundEnded ? <CountDown date={new Date(game.roundLengthMs)} /> : null}
+              {started && roundEnded ? <CountDown date={new Date(5000)} /> : null}
               <TopBar
                 isAdmin={isAdmin}
                 started={started}
-                drawing={drawing}
+                drawing={isDrawer}
                 word={displayWord}
                 joinCode={joinCode}
                 showingScoreBoard={showScoreBoard}
@@ -232,7 +253,7 @@ class ScreenGame extends PureComponent {
                   )
                   : null
                 }
-                <Canvas drawing={drawing} />
+                <Canvas drawing={isDrawer} />
                 <ChatBox
                   canGuess={canGuess}
                   nickname={nickname}
@@ -253,21 +274,28 @@ class ScreenGame extends PureComponent {
 
 ScreenGame.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
+  channel: PropTypes.object,
   nickname: PropTypes.string.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   started: PropTypes.bool.isRequired,
+  game: PropTypes.object,
+  currentRound: PropTypes.object,
   dispatchJoinCode: PropTypes.func.isRequired,
   dispatchStart: PropTypes.func.isRequired,
   dispatchGame: PropTypes.func.isRequired,
   dispatchNickname: PropTypes.func.isRequired,
   dispatchSocket: PropTypes.func.isRequired,
+  dispatchSetCurrentRound: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ game }) => ({
+    channel: game.socket,
     nickname: game.nickname,
     isAdmin: game.isAdmin,
     started: game.started,
+    game: game.game,
+    currentRound: game.currentRound,
   }),
   dispatch => ({
     dispatchJoinCode: setJoinCodeAction(dispatch),
@@ -275,6 +303,7 @@ export default connect(
     dispatchGame: setGameAction(dispatch),
     dispatchNickname: setNicknameAction(dispatch),
     dispatchSocket: setSocketAction(dispatch),
+    dispatchSetCurrentRound: setCurrentRoundAction(dispatch),
   }),
 )(ScreenGame);
 

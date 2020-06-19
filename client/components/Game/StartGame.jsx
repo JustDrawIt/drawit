@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'react-emotion';
 import Button from '../Utils/Button';
-import { keysSnakeToCamelCase } from '../../helpers/snakeToCamelCase';
-import { startAction, setCurrentRoundAction } from '../../store/actions/game.actions';
+import { startAction } from '../../store/actions/game.actions';
 
 const StartButton = styled(Button)`
   width: fit-content;
@@ -19,17 +18,12 @@ const StartGame = (props) => {
     socket,
     addNotification,
     dispatchStart,
-    dispatchSetCurrentRound,
   } = props;
 
   const handleClick = () => {
     dispatchStart();
 
     socket.push('round:start')
-      .receive('ok', (payload) => {
-        const round = keysSnakeToCamelCase(payload.round);
-        dispatchSetCurrentRound(round);
-      })
       .receive('error', (reasons) => {
         console.error('"round:start" errored.', reasons);
         addNotification({ message: 'Something went wrong!', level: 'error' });
@@ -52,7 +46,6 @@ StartGame.propTypes = {
   started: PropTypes.bool.isRequired,
   addNotification: PropTypes.func.isRequired,
   dispatchStart: PropTypes.func.isRequired,
-  dispatchSetCurrentRound: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -62,6 +55,5 @@ export default connect(
   }),
   dispatch => ({
     dispatchStart: startAction(dispatch),
-    dispatchSetCurrentRound: setCurrentRoundAction(dispatch),
   }),
 )(StartGame);
