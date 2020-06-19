@@ -51,6 +51,10 @@ jobs:
         run: mix format --check-formatted
         working-directory: ./server
 
+      - name: Run Credo
+        run: mix credo --strict
+        working-directory: ./server
+
       - name: Run tests
         run: mix test
         working-directory: ./server
