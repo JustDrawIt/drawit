@@ -1,6 +1,8 @@
 defmodule DrawItWeb.GameChannel do
   use Phoenix.Channel
 
+  require Logger
+
   alias DrawIt.Games
   alias DrawIt.GameServer
 
@@ -85,6 +87,10 @@ defmodule DrawItWeb.GameChannel do
     broadcast!(socket, "new_message", %{
       text: "#{socket.assigns.player.nickname} disconnected"
     })
+  end
+
+  def terminate(reason, socket) do
+    Logger.info("Socket terminating '#{socket.topic}' for reason: #{reason}")
   end
 
   defp start_round_and_schedule_end!(join_code, socket) do
