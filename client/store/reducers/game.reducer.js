@@ -12,6 +12,7 @@ const initialState = {
   nickname: '',
   joinCode: '',
   game: null,
+  currentRound: null,
   isAdmin: false,
   started: false,
   canvas: {
@@ -37,6 +38,9 @@ export default function gameReducer(state = initialState, action) {
 
     case GAME_TYPES.SET_GAME:
       return { ...state, game: action.game };
+
+    case GAME_TYPES.SET_CURRENT_ROUND:
+      return { ...state, currentRound: action.currentRound };
 
     case GAME_TYPES.SET_IS_ADMIN:
       return { ...state, isAdmin: action.isAdmin };
