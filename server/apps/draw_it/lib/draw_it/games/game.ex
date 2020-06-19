@@ -8,7 +8,7 @@ defmodule DrawIt.Games.Game do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias DrawIt.Games.{Round, Player}
+  alias DrawIt.Games.{Player, Round}
 
   schema "games" do
     field :join_code, :string

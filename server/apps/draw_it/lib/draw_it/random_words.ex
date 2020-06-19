@@ -9,7 +9,7 @@ defmodule DrawIt.RandomWords do
   @doc """
   Returns a random word of any difficulty.
   """
-  def word() do
+  def word do
     Enum.random([:easy, :medium, :hard])
     |> word()
   end
@@ -40,7 +40,7 @@ defmodule DrawIt.RandomWords do
           hard: [String.t()],
           all: [String.t()]
         }
-  def all_words() do
+  def all_words do
     easy = load_words(:easy)
     medium = load_words(:medium)
     hard = load_words(:hard)

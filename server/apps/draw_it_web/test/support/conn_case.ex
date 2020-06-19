@@ -17,6 +17,8 @@ defmodule DrawItWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -29,10 +31,10 @@ defmodule DrawItWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(DrawIt.Repo)
+    :ok = Sandbox.checkout(DrawIt.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(DrawIt.Repo, {:shared, self()})
+      Sandbox.mode(DrawIt.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

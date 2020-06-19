@@ -84,7 +84,7 @@ defmodule DrawIt.GameServerTest do
     test "returns error if reached max players that have joined", %{game: game} do
       _other_players = add_other_players(%{game: game})
 
-      # TODO: disconnect and reconnet a few players
+      # disconnect and reconnet a few players
 
       assert {:error, :reached_max_players} =
                GameServer.join(game.join_code, %{
