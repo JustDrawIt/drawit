@@ -56,19 +56,24 @@ defmodule DrawIt.GameServer do
       game: Keyword.fetch!(options, :game)
     }
 
+    Logger.metadata(join_code: state.game.join_code)
+    Logger.info("Game server created", game: state.game)
+
     {:ok, state}
   end
 
   @impl true
   def handle_call({:join, %{nickname: nickname}}, _from, %State{} = state) do
     if reached_max_players_joined?(state.game, state.player_ids_joined) do
+      Logger.info("Attempted to join, but already reached max players", nickname: nickname)
+
       {:reply, {:error, :reached_max_players}, state}
     else
       player = find_or_create_player(state.game, nickname)
       updated_game = Games.get_game!(state.game.id)
       player_ids_joined = add_joined_player(state.player_ids_joined, player)
 
-      Logger.info("#{state.game.join_code}: #{player.nickname} joined")
+      Logger.info("Player joined", player: nickname)
 
       new_state = %State{
         state
@@ -83,6 +88,8 @@ defmodule DrawIt.GameServer do
   @impl true
   def handle_call({:start_round, _payload}, _from, %State{current_round: nil} = state) do
     if reached_max_rounds?(state.game) do
+      Logger.info("Attempted to start round, but already reached max rounds")
+
       {:reply, {:error, :reached_max_rounds}, state}
     else
       id_player_drawer = Enum.random(state.player_ids_joined)
@@ -95,7 +102,7 @@ defmodule DrawIt.GameServer do
           word: word
         })
 
-      Logger.info("#{state.game.join_code}: round started")
+      Logger.info("Round started", round_id: round.id)
 
       new_state = %State{
         state
@@ -108,12 +115,14 @@ defmodule DrawIt.GameServer do
   end
 
   def handle_call({:start_round, _payload}, _from, %State{current_round: %Games.Round{}} = state) do
+    Logger.info("Attempted to start round, but a round was already started")
+
     {:reply, {:error, :already_started}, state}
   end
 
   @impl true
-  def handle_call({:end_round, _payload}, _from, %State{} = state) do
-    Logger.info("#{state.game.join_code}: round ended")
+  def handle_call({:end_round, _payload}, _from, %State{current_round: current_round} = state) do
+    Logger.info("Round ended", round_id: current_round.id)
 
     new_state = %State{
       state
