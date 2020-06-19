@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { setContextAction, setToolAction, addItemAction } from '../../../store/actions/game.actions';
 import { DEFAULT_TOOL } from './defaults';
 import tools from './tools';
-import socket from '../../../sockets';
 import { BorderStyles } from '../../../styles';
 
 const CANVAS_WIDTH = 500;
@@ -60,12 +59,12 @@ class SketchPad extends PureComponent {
 
   onMouseUp(event) {
     if (!this.props.disabled) {
-      const { tool, joinCode, dispatchItem } = this.props;
+      const { tool, channel, dispatchItem } = this.props;
       const position = this.getCursorPosition(event);
       const item = tool.onMouseUp(position);
 
       if (item) {
-        socket.emit('round:draw', { item, joinCode });
+        channel.push('draw', { drawings: [item] });
         dispatchItem(item);
       }
     }
@@ -102,6 +101,7 @@ SketchPad.defaultProps = {
 };
 
 SketchPad.propTypes = {
+  channel: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
   joinCode: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -114,6 +114,7 @@ SketchPad.propTypes = {
 
 export default connect(
   ({ game }) => ({
+    channel: game.socket,
     joinCode: game.joinCode,
     items: game.canvas.items,
     tool: game.canvas.tool,
