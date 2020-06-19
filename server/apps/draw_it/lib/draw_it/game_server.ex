@@ -65,6 +65,8 @@ defmodule DrawIt.GameServer do
     updated_game = Games.get_game!(state.game.id)
     player_ids_joined = add_joined_player(state.player_ids_joined, player)
 
+    Logger.info("#{state.game.join_code}: #{player.nickname} joined")
+
     new_state = %State{
       state
       | game: updated_game,
@@ -86,11 +88,11 @@ defmodule DrawIt.GameServer do
         word: word
       })
 
-    game = Games.get_game!(state.game.id)
+    Logger.info("#{state.game.join_code}: round started")
 
     new_state = %State{
       state
-      | game: game,
+      | game: Games.get_game!(state.game.id),
         current_round: round
     }
 
@@ -103,6 +105,8 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def handle_call({:end_round, _payload}, _from, %State{} = state) do
+    Logger.info("#{state.game.join_code}: round ended")
+
     new_state = %State{
       state
       | current_round: nil
