@@ -7,6 +7,9 @@ archive.uninstall
 clean
 cmd
 compile
+credo
+credo.gen.check
+credo.gen.config
 deps
 deps.clean
 deps.compile
@@ -14,6 +17,10 @@ deps.get
 deps.tree
 deps.unlock
 deps.update
+dialyzer
+dialyzer.build
+dialyzer.clean
+dialyzer.explain
 do
 docs
 ecto
@@ -52,6 +59,7 @@ hex.user
 loadconfig
 local
 local.hex
+local.phx
 local.public_keys
 local.rebar
 new
@@ -68,6 +76,9 @@ phx.gen.json
 phx.gen.presence
 phx.gen.schema
 phx.gen.secret
+phx.new
+phx.new.ecto
+phx.new.web
 phx.routes
 phx.server
 profile.cprof
@@ -77,4 +88,5 @@ release
 release.init
 run
 test
+test.watch
 xref
