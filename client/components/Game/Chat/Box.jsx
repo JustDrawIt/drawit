@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
+import { connect } from "react-redux";
 import PropTypes from 'prop-types';
-import uuid from 'uuid';
-import socket from '../../../sockets';
 import ChatMessage from './Message';
 import {
   Container,
@@ -30,20 +29,22 @@ class ChatBox extends PureComponent {
     this.onKeyPress = this.onKeyPress.bind(this);
     this.onGameJoined = this.onGameJoined.bind(this);
     this.onRoundIncorrectGuess = this.onRoundIncorrectGuess.bind(this);
+
+    this.socketRefs = {};
   }
 
   componentDidMount() {
-    const { nickname } = this.props;
+    const { nickname, channel } = this.props;
 
     this.onGameJoined({ nickname });
 
-    socket.on('game:joined', this.onGameJoined);
-    socket.on('round:incorrect_guess', this.onRoundIncorrectGuess);
+    this.socketRefs.handleNewMessage = channel.on('new_message', this.onRoundIncorrectGuess);
   }
 
   componentWillUnmount() {
-    socket.off('game:joined', this.onGameJoined);
-    socket.off('round:incorrect_guess', this.onRoundIncorrectGuess);
+    const { channel } = this.props;
+
+    channel.off('new_message', this.socketRefs.handleNewMessage);
   }
 
   onGameJoined({ nickname }) {
@@ -51,8 +52,11 @@ class ChatBox extends PureComponent {
     this.addMessage({ message: joinedMessage, nickname: null });
   }
 
-  onRoundIncorrectGuess(message) {
-    this.addMessage(message);
+  onRoundIncorrectGuess({ text, player }) {
+    this.addMessage({
+      message: text,
+      nickname: player && player.nickname,
+    });
   }
 
   onKeyPress({ key }) {
@@ -78,7 +82,7 @@ class ChatBox extends PureComponent {
   }
 
   sendMessage() {
-    const { nickname, joinCode } = this.props;
+    const { channel } = this.props;
     const { newMessage } = this.state;
 
     if (!newMessage) {
@@ -89,7 +93,7 @@ class ChatBox extends PureComponent {
       });
     } else {
       this.setState({ newMessage: '' });
-      socket.emit('round:guess', { message: newMessage, nickname, joinCode });
+      channel.push('new_message', { text: newMessage }, 10000);
     }
   }
 
@@ -100,9 +104,9 @@ class ChatBox extends PureComponent {
     return (
       <Container>
         <Window ref={this.chatWindowRef}>
-          {messages.map(message => (
+          {messages.map((message, index) => (
             <ChatMessage
-              key={uuid()}
+              key={index}
               nickname={message.nickname}
               message={message.message}
             />
@@ -127,10 +131,15 @@ class ChatBox extends PureComponent {
 }
 
 ChatBox.propTypes = {
+  channel: PropTypes.object.isRequired,
   canGuess: PropTypes.bool.isRequired,
   nickname: PropTypes.string.isRequired,
   joinCode: PropTypes.string.isRequired,
   addNotification: PropTypes.func.isRequired,
 };
 
-export default ChatBox;
+export default connect(
+  ({ game }) => ({
+    channel: game.socket,
+  }),
+)(ChatBox);
