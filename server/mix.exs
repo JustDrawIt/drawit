@@ -31,7 +31,8 @@ defmodule DrawIt.Umbrella.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 end
