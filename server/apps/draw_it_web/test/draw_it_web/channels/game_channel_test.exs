@@ -118,6 +118,19 @@ defmodule DrawItWeb.GameChannelTest do
     end
   end
 
+  describe "'clear_drawings'" do
+    setup [:create_and_join_game]
+
+    test "broadcasts clear_drawings", %{socket: socket} do
+      push(socket, "clear_drawings", %{})
+      assert_broadcast "clear_drawings", %{}
+    end
+
+    @tag skip: "not implemented"
+    test "returns error if not the drawer" do
+    end
+  end
+
   describe "terminate" do
     setup [:create_and_join_game]
 
