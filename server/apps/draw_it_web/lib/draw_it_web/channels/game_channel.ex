@@ -1,4 +1,8 @@
 defmodule DrawItWeb.GameChannel do
+  @moduledoc """
+  The Phoenix channel used for all game events.
+  """
+
   use Phoenix.Channel
 
   require Logger
