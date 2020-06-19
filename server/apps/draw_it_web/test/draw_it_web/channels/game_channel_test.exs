@@ -104,8 +104,18 @@ defmodule DrawItWeb.GameChannelTest do
     setup [:create_and_join_game]
   end
 
-  describe "'round_draw'" do
+  describe "'draw'" do
     setup [:create_and_join_game]
+
+    test "broadcasts draw", %{socket: socket} do
+      drawings = []
+      push(socket, "draw", %{drawings: drawings})
+      assert_broadcast "draw", %{drawings: ^drawings}
+    end
+
+    @tag skip: "not implemented"
+    test "returns error if not the drawer" do
+    end
   end
 
   describe "terminate" do

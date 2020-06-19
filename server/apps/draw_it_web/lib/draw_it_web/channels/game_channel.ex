@@ -43,6 +43,16 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("draw", %{"drawings" => drawings}, socket) do
+    broadcast!(socket, "draw", %{
+      drawings: drawings
+    })
+
+    Logger.info("Drawing received and sent", amount: length(drawings))
+
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, socket) do
     broadcast!(socket, "new_message", %{
       text: "#{socket.assigns.player.nickname} joined the game"
