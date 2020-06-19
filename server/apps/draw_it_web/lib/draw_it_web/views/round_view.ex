@@ -15,7 +15,8 @@ defmodule DrawItWeb.RoundView do
       id: round.id,
       word: round.word,
       date_inserted: round.date_inserted,
-      date_updated: round.date_updated
+      date_updated: round.date_updated,
+      player_drawer: DrawItWeb.PlayerView.render("player.json", %{player: round.player_drawer})
     }
   end
 end
