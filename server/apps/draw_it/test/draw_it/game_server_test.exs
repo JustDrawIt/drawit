@@ -79,7 +79,24 @@ defmodule DrawIt.GameServerTest do
                  token: "test token"
                })
     end
+
+    @tag skip: "not implemented until leave/2"
+    test "returns error if reached max players that have joined", %{game: game} do
+      _other_players = add_other_players(%{game: game})
+
+      # TODO: disconnect and reconnet a few players
+
+      assert {:error, :reached_max_players} =
+               GameServer.join(game.join_code, %{
+                 nickname: "Baron Vladimir Harkonnen",
+                 token: "test token"
+               })
+    end
   end
+
+  # describe "leave/2" do
+  #   setup [:join_game]
+  # end
 
   describe "start_round/2" do
     setup [:join_game, :add_other_players]
@@ -129,13 +146,13 @@ defmodule DrawIt.GameServerTest do
     end
   end
 
-  describe "end_round/2" do
-    setup [:join_game, :add_other_players]
-  end
+  # describe "end_round/2" do
+  #   setup [:join_game, :add_other_players]
+  # end
 
-  describe "guess/2" do
-  end
+  # describe "guess/2" do
+  # end
 
-  describe "draw/2" do
-  end
+  # describe "draw/2" do
+  # end
 end
