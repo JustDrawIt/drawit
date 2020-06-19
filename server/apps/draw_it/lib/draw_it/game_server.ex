@@ -39,6 +39,10 @@ defmodule DrawIt.GameServer do
     GenServer.call(via_tuple(join_code), {:end_round, payload})
   end
 
+  def guess(join_code, payload) do
+    GenServer.call(via_tuple(join_code), {:guess, payload})
+  end
+
   def whereis(join_code) do
     case Registry.lookup(@server_registry_name, join_code) do
       [{pid, _}] -> pid
@@ -130,6 +134,21 @@ defmodule DrawIt.GameServer do
     }
 
     {:reply, :ok, new_state}
+  end
+
+  @impl true
+  def handle_call({:guess, _payload}, _from, %State{current_round: nil} = state) do
+    Logger.info("Guess made, but round not started")
+
+    {:reply, {:ok, false}, state}
+  end
+
+  def handle_call({:guess, %{guess: guess}}, _from, %State{current_round: current_round} = state) do
+    correct? = guess == current_round.word
+
+    Logger.info("Guess", correct_word: current_round.word, guess: guess)
+
+    {:reply, {:ok, correct?}, state}
   end
 
   ##

@@ -150,8 +150,34 @@ defmodule DrawIt.GameServerTest do
   #   setup [:join_game, :add_other_players]
   # end
 
-  # describe "guess/2" do
-  # end
+  describe "guess/2" do
+    setup [:join_game, :add_other_players]
+
+    test "returns true if guess matches round's word", %{game: game} do
+      {:ok, round} = GameServer.start_round(game.join_code, %{})
+
+      assert {:ok, true} =
+               GameServer.guess(game.join_code, %{
+                 guess: round.word
+               })
+    end
+
+    test "returns false if guess doesn't matches round's word", %{game: game} do
+      {:ok, _round} = GameServer.start_round(game.join_code, %{})
+
+      assert {:ok, false} =
+               GameServer.guess(game.join_code, %{
+                 guess: "koala"
+               })
+    end
+
+    test "returns false if round hasn't started", %{game: game} do
+      assert {:ok, false} =
+               GameServer.guess(game.join_code, %{
+                 guess: "fish"
+               })
+    end
+  end
 
   # describe "draw/2" do
   # end
