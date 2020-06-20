@@ -13,11 +13,11 @@ const StartButton = styled(Button)`
 `;
 
 const StartGame = (props) => {
-  const { started, socket, dispatchStart } = props;
+  const { started, channel, dispatchStart } = props;
 
   const handleClick = () => {
     dispatchStart();
-    socket.push('round:start');
+    channel.push('round:start');
   };
 
   return (
@@ -28,14 +28,14 @@ const StartGame = (props) => {
 };
 
 StartGame.propTypes = {
-  socket: PropTypes.object.isRequired,
+  channel: PropTypes.object.isRequired,
   started: PropTypes.bool.isRequired,
   dispatchStart: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ game }) => ({
-    socket: game.socket,
+    channel: game.channel,
     started: game.started,
   }),
   dispatch => ({
