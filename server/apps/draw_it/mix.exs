@@ -10,7 +10,7 @@ defmodule DrawIt.MixProject do
       deps_path: "../../deps",
       docs: docs(),
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -46,7 +46,8 @@ defmodule DrawIt.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
-      {:nanoid, "~> 2.0.2"}
+      {:nanoid, "~> 2.0.2"},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end
 
