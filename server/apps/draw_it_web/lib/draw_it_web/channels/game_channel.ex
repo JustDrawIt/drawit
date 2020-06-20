@@ -85,8 +85,11 @@ defmodule DrawItWeb.GameChannel do
   def handle_info(:round_end, socket) do
     "game:" <> join_code = socket.topic
     {:ok, game} = GameServer.end_round(join_code, %{})
+    returned_game = DrawItWeb.GameView.render("game.json", %{game: game})
 
-    broadcast!(socket, "round:end", %{})
+    broadcast!(socket, "round:end", %{
+      game: returned_game
+    })
 
     broadcast!(socket, "new_message", %{
       text: "Round ended"
@@ -96,9 +99,7 @@ defmodule DrawItWeb.GameChannel do
       Process.send_after(self(), :next_round, @end_round_timeout)
     end
 
-    returned_game = DrawItWeb.GameView.render("game.json", %{game: game})
-
-    {:ok, %{game: returned_game}, socket}
+    {:noreply, socket}
   end
 
   def handle_info(:next_round, socket) do

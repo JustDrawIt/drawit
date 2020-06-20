@@ -133,7 +133,7 @@ defmodule DrawIt.GameServerTest do
             player: current_player
           })
 
-        :ok =
+        {:ok, _game} =
           GameServer.end_round(game.join_code, %{
             player: current_player
           })
@@ -225,7 +225,7 @@ defmodule DrawIt.GameServerTest do
       updated_player = Games.get_player!(original_player.id)
       assert updated_player.score == original_player.score + 1
 
-      :ok = GameServer.end_round(game.join_code, %{})
+      {:ok, _game} = GameServer.end_round(game.join_code, %{})
       {:ok, round2} = GameServer.start_round(game.join_code, %{})
 
       {:ok, true} =
