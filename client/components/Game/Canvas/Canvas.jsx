@@ -24,6 +24,7 @@ class Canvas extends PureComponent {
 
     this.socketRefs.handleDraw = channel.on('draw', this.handleDraw);
     this.socketRefs.clearDrawings = channel.on('clear_drawings', this.handleClearDrawings);
+    this.socketRefs.roundStart = channel.on('round:start', this.handleClearDrawings);
   }
 
   componentWillUnmount() {
@@ -31,6 +32,7 @@ class Canvas extends PureComponent {
 
     channel.off('draw', this.socketRefs.roundDrew);
     channel.off('clear_drawings', this.socketRefs.roundClear);
+    channel.off('round:start', this.socketRefs.roundStart);
   }
 
   handleDraw({ drawings: [drawing] }) {
