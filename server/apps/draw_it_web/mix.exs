@@ -10,7 +10,7 @@ defmodule DrawItWeb.MixProject do
       deps_path: "../../deps",
       docs: docs(),
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,

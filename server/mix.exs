@@ -5,15 +5,9 @@ defmodule DrawIt.Umbrella.MixProject do
     [
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
-      docs: docs(),
       dialyzer: dialyzer()
-    ]
-  end
-
-  defp docs do
-    [
-      main: DrawIt
     ]
   end
 
@@ -38,10 +32,15 @@ defmodule DrawIt.Umbrella.MixProject do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      docs: ["cmd mix docs && mv doc/ '../../../docs/server/${PWD##*/}'"]
     ]
   end
 end
