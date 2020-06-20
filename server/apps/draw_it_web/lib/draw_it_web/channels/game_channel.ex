@@ -122,7 +122,7 @@ defmodule DrawItWeb.GameChannel do
   end
 
   def terminate(reason, socket) do
-    Logger.info("Socket terminating '#{socket.topic}' for reason: #{reason}")
+    Logger.info("Socket terminating '#{socket.topic}' for reason: #{inspect(reason)}")
   end
 
   defp start_round_and_schedule_end!(join_code, socket) do
