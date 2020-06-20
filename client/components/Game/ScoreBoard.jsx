@@ -52,10 +52,7 @@ const LeaveGame = styled(Button)`
   }
 `;
 
-const sortByScore = (playerA, playerB) => {
-  if (playerA.score === playerB.score) return 0;
-  return playerA.score > playerB.score ? -1 : 1;
-};
+const sortByScore = (playerA, playerB) => playerB.score - playerA.score;
 
 const ScoreBoard = ({ roundEnded, gameEnded, scores }) => (
   <Container>
@@ -73,8 +70,8 @@ const ScoreBoard = ({ roundEnded, gameEnded, scores }) => (
       )
       : null
     }
-    {scores.sort(sortByScore).map((player, index) => (
-      <Score winner={gameEnded && index === 0} place={player.score} key={player._id}>
+    {scores.slice().sort(sortByScore).map((player, index) => (
+      <Score winner={gameEnded && index === 0} place={player.score} key={player.id}>
         <b>{player.nickname}</b>
         <span>{player.score}</span>
       </Score>
