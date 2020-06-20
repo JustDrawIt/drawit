@@ -16,23 +16,23 @@ class Canvas extends PureComponent {
     this.handleDraw = this.handleDraw.bind(this);
     this.handleClearDrawings = this.handleClearDrawings.bind(this);
 
-    this.socketRefs = {};
+    this.channelEventRefs = {};
   }
 
   componentDidMount() {
     const { channel } = this.props;
 
-    this.socketRefs.handleDraw = channel.on('draw', this.handleDraw);
-    this.socketRefs.clearDrawings = channel.on('clear_drawings', this.handleClearDrawings);
-    this.socketRefs.roundStart = channel.on('round:start', this.handleClearDrawings);
+    this.channelEventRefs.handleDraw = channel.on('draw', this.handleDraw);
+    this.channelEventRefs.clearDrawings = channel.on('clear_drawings', this.handleClearDrawings);
+    this.channelEventRefs.roundStart = channel.on('round:start', this.handleClearDrawings);
   }
 
   componentWillUnmount() {
     const { channel } = this.props;
 
-    channel.off('draw', this.socketRefs.roundDrew);
-    channel.off('clear_drawings', this.socketRefs.roundClear);
-    channel.off('round:start', this.socketRefs.roundStart);
+    channel.off('draw', this.channelEventRefs.roundDrew);
+    channel.off('clear_drawings', this.channelEventRefs.roundClear);
+    channel.off('round:start', this.channelEventRefs.roundStart);
   }
 
   handleDraw({ drawings: [drawing] }) {
@@ -78,7 +78,7 @@ Canvas.propTypes = {
 
 export default connect(
   ({ game }) => ({
-    channel: game.socket,
+    channel: game.channel,
     context: game.canvas.context,
   }),
   dispatch => ({

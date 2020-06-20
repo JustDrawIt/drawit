@@ -30,7 +30,7 @@ class ChatBox extends PureComponent {
     this.onGameJoined = this.onGameJoined.bind(this);
     this.onRoundIncorrectGuess = this.onRoundIncorrectGuess.bind(this);
 
-    this.socketRefs = {};
+    this.channelEventRefs = {};
   }
 
   componentDidMount() {
@@ -38,13 +38,13 @@ class ChatBox extends PureComponent {
 
     this.onGameJoined({ nickname });
 
-    this.socketRefs.handleNewMessage = channel.on('new_message', this.onRoundIncorrectGuess);
+    this.channelEventRefs.handleNewMessage = channel.on('new_message', this.onRoundIncorrectGuess);
   }
 
   componentWillUnmount() {
     const { channel } = this.props;
 
-    channel.off('new_message', this.socketRefs.handleNewMessage);
+    channel.off('new_message', this.channelEventRefs.handleNewMessage);
   }
 
   onGameJoined({ nickname }) {
@@ -140,6 +140,6 @@ ChatBox.propTypes = {
 
 export default connect(
   ({ game }) => ({
-    channel: game.socket,
+    channel: game.channel,
   }),
 )(ChatBox);

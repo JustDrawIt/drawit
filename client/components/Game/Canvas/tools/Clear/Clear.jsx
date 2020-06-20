@@ -43,7 +43,7 @@ Clear.propTypes = {
 
 export default connect(
   ({ game }) => ({
-    channel: game.socket,
+    channel: game.channel,
     context: game.canvas.context,
     joinCode: game.joinCode,
   }),

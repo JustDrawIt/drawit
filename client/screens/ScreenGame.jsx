@@ -20,7 +20,7 @@ import {
   startAction,
   setGameAction,
   setNicknameAction,
-  setSocketAction,
+  setChannelAction,
   setCurrentRoundAction,
 } from '../store/actions/game.actions';
 import { keysSnakeToCamelCase } from '../helpers/snakeToCamelCase';
@@ -56,7 +56,7 @@ class ScreenGame extends PureComponent {
     this.handleRoundEnd = this.handleRoundEnd.bind(this);
     this.handleCorrectGuess = this.handleCorrectGuess.bind(this);
 
-    this.socketRefs = {};
+    this.channelEventRefs = {};
   }
 
   componentDidMount() {
@@ -70,9 +70,9 @@ class ScreenGame extends PureComponent {
     const { channel } = this.props;
 
     if (channel) {
-      channel.off('round:start', this.socketRefs.roundStart);
-      channel.off('round:end', this.socketRefs.roundEnd);
-      channel.off('correct_guess', this.socketRefs.correctGuess);
+      channel.off('round:start', this.channelEventRefs.roundStart);
+      channel.off('round:end', this.channelEventRefs.roundEnd);
+      channel.off('correct_guess', this.channelEventRefs.correctGuess);
     }
   }
 
@@ -95,14 +95,14 @@ class ScreenGame extends PureComponent {
   setRoundEventListeners() {
     const { channel } = this.props;
 
-    this.socketRefs.roundStart = channel.on('round:start', this.handleRoundStart);
-    this.socketRefs.roundEnd = channel.on('round:end', this.handleRoundEnd);
-    this.socketRefs.correctGuess = channel.on('correct_guess', this.handleCorrectGuess);
+    this.channelEventRefs.roundStart = channel.on('round:start', this.handleRoundStart);
+    this.channelEventRefs.roundEnd = channel.on('round:end', this.handleRoundEnd);
+    this.channelEventRefs.correctGuess = channel.on('correct_guess', this.handleCorrectGuess);
   }
 
   async handleJoinGame(nickname) {
     try {
-      const { match, dispatchSocket, dispatchGame, dispatchNickname } = this.props;
+      const { match, dispatchChannel, dispatchGame, dispatchNickname } = this.props;
       const { joinCode } = match.params;
 
       const response = await axios(`/api/games?join_code=${joinCode}`)
@@ -110,7 +110,7 @@ class ScreenGame extends PureComponent {
 
       const channel = socket.channel(`game:${joinCode}`, { nickname, token: 'testtoken' });
 
-      dispatchSocket(channel);
+      dispatchChannel(channel);
       dispatchGame(game);
       dispatchNickname(nickname);
 
@@ -275,13 +275,13 @@ ScreenGame.propTypes = {
   dispatchStart: PropTypes.func.isRequired,
   dispatchGame: PropTypes.func.isRequired,
   dispatchNickname: PropTypes.func.isRequired,
-  dispatchSocket: PropTypes.func.isRequired,
+  dispatchChannel: PropTypes.func.isRequired,
   dispatchSetCurrentRound: PropTypes.func.isRequired,
 };
 
 export default connect(
   ({ game }) => ({
-    channel: game.socket,
+    channel: game.channel,
     nickname: game.nickname,
     isAdmin: game.isAdmin,
     started: game.started,
@@ -293,7 +293,7 @@ export default connect(
     dispatchStart: startAction(dispatch),
     dispatchGame: setGameAction(dispatch),
     dispatchNickname: setNicknameAction(dispatch),
-    dispatchSocket: setSocketAction(dispatch),
+    dispatchChannel: setChannelAction(dispatch),
     dispatchSetCurrentRound: setCurrentRoundAction(dispatch),
   }),
 )(ScreenGame);

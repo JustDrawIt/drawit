@@ -114,7 +114,7 @@ SketchPad.propTypes = {
 
 export default connect(
   ({ game }) => ({
-    channel: game.socket,
+    channel: game.channel,
     joinCode: game.joinCode,
     items: game.canvas.items,
     tool: game.canvas.tool,
