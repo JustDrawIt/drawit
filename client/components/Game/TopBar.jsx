@@ -43,7 +43,7 @@ const JoinCode = styled('div')`
 
 const TopBar = props => (
   <Container>
-    {props.isAdmin && !props.started ? <StartGame addNotification={props.addNotification} /> : null}
+    {props.isAdmin && !props.started ? <StartGame /> : null}
     {props.word ? <Word>{props.word}</Word> : null}
     <ToggleScoreBoard onClick={props.toggleScoreBoard} active={props.showingScoreBoard}>
       <i className="fas fa-trophy" />
@@ -64,7 +64,6 @@ TopBar.propTypes = {
   word: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   joinCode: PropTypes.string.isRequired,
   showingScoreBoard: PropTypes.bool.isRequired,
-  addNotification: PropTypes.func.isRequired,
   toggleScoreBoard: PropTypes.func.isRequired,
 };
 

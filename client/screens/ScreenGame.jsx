@@ -116,6 +116,8 @@ class ScreenGame extends PureComponent {
 
       this.setRoundEventListeners();
 
+      channel.onError(this.handleChannelError);
+
       channel
         .join()
         .receive('ok', once(async (okResponse) => {
@@ -128,14 +130,18 @@ class ScreenGame extends PureComponent {
             game,
             nickname,
           });
-        }))
-        .receive('error', ({ reason }) => console.log('failed join', reason))
-        .receive('timeout', () => console.log('Networking issue. Still waiting...'));
+        }));
+
     } catch (error) {
       // const { error } = error.response.data;
       console.error(error);
       this.addNotification({ message: 'Something went wrong!', level: 'error' });
     }
+  }
+
+  handleChannelError(payload) {
+    console.error(payload);
+    this.addNotification({ message: 'Something went wrong!', level: 'error' });
   }
 
   handleRoundStart(payload) {
@@ -224,7 +230,6 @@ class ScreenGame extends PureComponent {
                 word={displayWord}
                 joinCode={joinCode}
                 showingScoreBoard={showScoreBoard}
-                addNotification={this.addNotification}
                 toggleScoreBoard={this.toggleScoreBoard}
               />
               <Game>
