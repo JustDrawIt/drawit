@@ -40,7 +40,6 @@ class ScreenGame extends PureComponent {
     super(props);
 
     this.state = {
-      scores: [],
       joined: false,
       endedWord: null,
       roundEnded: false,
@@ -84,9 +83,8 @@ class ScreenGame extends PureComponent {
     });
   }
 
-  onGameEnd({ word, scores }) {
+  onGameEnd({ word }) {
     this.setState({
-      scores,
       guessedCorrectly: false,
       gameEnded: true,
       showScoreBoard: true,
@@ -152,11 +150,14 @@ class ScreenGame extends PureComponent {
   }
 
   handleRoundEnd(payload) {
-    const lastWord = this.props.currentRound.word;
+    const { game } = keysSnakeToCamelCase(payload);
+    const { currentRound, dispatchSetCurrentRound, dispatchGame } = this.props;
+    const lastWord = currentRound.word;
 
-    this.props.dispatchSetCurrentRound(null);
+    dispatchSetCurrentRound(null);
+    dispatchGame(game);
+
     this.setState({
-      scores: [],
       guessedCorrectly: false,
       roundEnded: true,
       showScoreBoard: true,
@@ -166,7 +167,6 @@ class ScreenGame extends PureComponent {
 
   handleCorrectGuess() {
     this.setState({
-      scores: [],
       guessedCorrectly: true,
     });
   }
@@ -190,7 +190,6 @@ class ScreenGame extends PureComponent {
       currentRound,
     } = this.props;
     const {
-      scores,
       joined,
       guessedCorrectly,
       endedWord,
@@ -217,7 +216,7 @@ class ScreenGame extends PureComponent {
           )
           : (
             <Container>
-              {started && !roundEnded ? <CountDown date={new Date(game.roundLengthMs)} /> : null}
+              {game && started && !roundEnded ? <CountDown date={new Date(game.roundLengthMs)} /> : null}
               {started && roundEnded ? <CountDown date={new Date(5000)} /> : null}
               <TopBar
                 isAdmin={isAdmin}
@@ -233,7 +232,7 @@ class ScreenGame extends PureComponent {
                   showScoreBoard
                   ? (
                     <ScoreBoard
-                      scores={scores}
+                      scores={(game && game.players) || []}
                       roundEnded={roundEnded}
                       gameEnded={gameEnded}
                     />
