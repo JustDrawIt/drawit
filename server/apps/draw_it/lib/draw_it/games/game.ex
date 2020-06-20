@@ -41,6 +41,7 @@ defmodule DrawIt.Games.Game do
   def with_rounds(query) do
     from q in query,
       left_join: rounds in assoc(q, :rounds),
-      preload: [rounds: rounds]
+      left_join: player_drawer in assoc(rounds, :player_drawer),
+      preload: [rounds: {rounds, player_drawer: player_drawer}]
   end
 end

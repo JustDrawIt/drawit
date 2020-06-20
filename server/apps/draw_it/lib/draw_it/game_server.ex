@@ -153,13 +153,16 @@ defmodule DrawIt.GameServer do
   def handle_call({:end_round, _payload}, _from, %State{current_round: current_round} = state) do
     Logger.info("Round ended", round_id: current_round.id)
 
+    game = Games.get_game!(state.game.id)
+
     new_state = %State{
       state
-      | current_round: nil,
+      | game: game,
+        current_round: nil,
         player_ids_correct_guess: []
     }
 
-    {:reply, :ok, new_state}
+    {:reply, {:ok, game}, new_state}
   end
 
   @impl true
