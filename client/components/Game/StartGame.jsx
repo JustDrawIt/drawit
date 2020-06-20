@@ -13,25 +13,11 @@ const StartButton = styled(Button)`
 `;
 
 const StartGame = (props) => {
-  const {
-    started,
-    socket,
-    addNotification,
-    dispatchStart,
-  } = props;
+  const { started, socket, dispatchStart } = props;
 
   const handleClick = () => {
     dispatchStart();
-
-    socket.push('round:start')
-      .receive('error', (reasons) => {
-        console.error('"round:start" errored.', reasons);
-        addNotification({ message: 'Something went wrong!', level: 'error' });
-      })
-      .receive('timeout', () => {
-        console.warn('"round:start" timed out.');
-        addNotification({ message: 'Something went wrong!', level: 'error' });
-      });
+    socket.push('round:start');
   };
 
   return (
@@ -44,7 +30,6 @@ const StartGame = (props) => {
 StartGame.propTypes = {
   socket: PropTypes.object.isRequired,
   started: PropTypes.bool.isRequired,
-  addNotification: PropTypes.func.isRequired,
   dispatchStart: PropTypes.func.isRequired,
 };
 
