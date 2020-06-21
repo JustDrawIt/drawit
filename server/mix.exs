@@ -5,7 +5,6 @@ defmodule DrawIt.Umbrella.MixProject do
     [
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
       deps: deps(),
       dialyzer: dialyzer()
     ]
@@ -35,12 +34,6 @@ defmodule DrawIt.Umbrella.MixProject do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
-    ]
-  end
-
-  defp aliases do
-    [
-      docs: ["cmd mix docs && mv doc/ '../../../docs/server/${PWD##*/}'"]
     ]
   end
 end
