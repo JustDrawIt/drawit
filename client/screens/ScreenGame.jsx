@@ -52,8 +52,8 @@ class ScreenGame extends PureComponent {
     this.handleJoinGame = this.handleJoinGame.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
-    this.handleRoundStart = this.handleRoundStart.bind(this);
-    this.handleRoundEnd = this.handleRoundEnd.bind(this);
+    this.handleStartRound = this.handleStartRound.bind(this);
+    this.handleEndRound = this.handleEndRound.bind(this);
     this.handleCorrectGuess = this.handleCorrectGuess.bind(this);
 
     this.channelEventRefs = {};
@@ -70,15 +70,14 @@ class ScreenGame extends PureComponent {
     const { channel } = this.props;
 
     if (channel) {
-      channel.off('round:start', this.channelEventRefs.roundStart);
-      channel.off('round:end', this.channelEventRefs.roundEnd);
+      channel.off('start_round', this.channelEventRefs.startRound);
+      channel.off('end_round', this.channelEventRefs.endRound);
       channel.off('correct_guess', this.channelEventRefs.correctGuess);
     }
   }
 
   onGameJoined({ game, nickname }) {
     this.setState({
-      scores: game.players,
       joined: this.state.joined || nickname === this.props.nickname,
     });
   }
@@ -95,8 +94,8 @@ class ScreenGame extends PureComponent {
   setRoundEventListeners() {
     const { channel } = this.props;
 
-    this.channelEventRefs.roundStart = channel.on('round:start', this.handleRoundStart);
-    this.channelEventRefs.roundEnd = channel.on('round:end', this.handleRoundEnd);
+    this.channelEventRefs.startRound = channel.on('start_round', this.handleStartRound);
+    this.channelEventRefs.endRound = channel.on('end_round', this.handleEndRound);
     this.channelEventRefs.correctGuess = channel.on('correct_guess', this.handleCorrectGuess);
   }
 
@@ -144,7 +143,7 @@ class ScreenGame extends PureComponent {
     this.addNotification({ message: 'Something went wrong!', level: 'error' });
   }
 
-  handleRoundStart(payload) {
+  handleStartRound(payload) {
     const { round } = keysSnakeToCamelCase(payload);
 
     this.props.dispatchSetCurrentRound(round);
@@ -155,7 +154,7 @@ class ScreenGame extends PureComponent {
     });
   }
 
-  handleRoundEnd(payload) {
+  handleEndRound(payload) {
     const { game } = keysSnakeToCamelCase(payload);
     const { currentRound, dispatchSetCurrentRound, dispatchGame } = this.props;
     const lastWord = currentRound.word;
@@ -176,7 +175,6 @@ class ScreenGame extends PureComponent {
       guessedCorrectly: true,
     });
   }
-
 
   toggleScoreBoard() {
     this.setState({ showScoreBoard: !this.state.showScoreBoard });

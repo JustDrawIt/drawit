@@ -49,7 +49,7 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_in("round:start", _message, socket) do
+  def handle_in("start_round", _message, socket) do
     "game:" <> join_code = socket.topic
     start_round_and_schedule_end!(join_code, socket)
 
@@ -82,12 +82,12 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_info(:round_end, socket) do
+  def handle_info(:end_round, socket) do
     "game:" <> join_code = socket.topic
     {:ok, game} = GameServer.end_round(join_code, %{})
     returned_game = DrawItWeb.GameView.render("game.json", %{game: game})
 
-    broadcast!(socket, "round:end", %{
+    broadcast!(socket, "end_round", %{
       game: returned_game
     })
 
@@ -128,7 +128,7 @@ defmodule DrawItWeb.GameChannel do
   defp start_round_and_schedule_end!(join_code, socket) do
     {:ok, round} = GameServer.start_round(join_code, %{})
 
-    broadcast!(socket, "round:start", %{
+    broadcast!(socket, "start_round", %{
       round: DrawItWeb.RoundView.render("round.json", %{round: round})
     })
 
@@ -137,6 +137,6 @@ defmodule DrawItWeb.GameChannel do
     })
 
     game = Games.get_game_by_join_code!(join_code)
-    Process.send_after(self(), :round_end, game.round_length_ms)
+    Process.send_after(self(), :end_round, game.round_length_ms)
   end
 end

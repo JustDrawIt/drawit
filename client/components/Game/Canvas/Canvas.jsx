@@ -24,7 +24,7 @@ class Canvas extends PureComponent {
 
     this.channelEventRefs.handleDraw = channel.on('draw', this.handleDraw);
     this.channelEventRefs.clearDrawings = channel.on('clear_drawings', this.handleClearDrawings);
-    this.channelEventRefs.roundStart = channel.on('round:start', this.handleClearDrawings);
+    this.channelEventRefs.startRound = channel.on('start_round', this.handleClearDrawings);
   }
 
   componentWillUnmount() {
@@ -32,7 +32,7 @@ class Canvas extends PureComponent {
 
     channel.off('draw', this.channelEventRefs.roundDrew);
     channel.off('clear_drawings', this.channelEventRefs.roundClear);
-    channel.off('round:start', this.channelEventRefs.roundStart);
+    channel.off('start_round', this.channelEventRefs.startRound);
   }
 
   handleDraw({ drawings: [drawing] }) {
