@@ -1,10 +1,10 @@
-node_modules/
-bower_components/
-*.log
+/node_modules/
+/bower_components/
+/*.log
 
-build/
-dist/
-public/index.html
-public/main.min.js
-.env
-.vscode
+/build/
+/dist/
+/public/index.html
+/public/main.min.js
+/.env
+/.vscode
