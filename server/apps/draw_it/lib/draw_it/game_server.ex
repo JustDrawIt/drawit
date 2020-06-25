@@ -85,16 +85,18 @@ defmodule DrawIt.GameServer do
       game: Keyword.fetch!(options, :game)
     }
 
-    Logger.metadata(join_code: state.game.join_code)
-    Logger.info("Game server created", game: state.game)
+    set_logger_metadata(state)
+    Logger.info("Game server created")
 
     {:ok, state}
   end
 
   @impl true
   def handle_call({:join, %{nickname: nickname}}, _from, %State{} = state) do
+    set_logger_metadata(state)
+
     if reached_max_players_joined?(state.game, state.player_ids_joined) do
-      Logger.info("Attempted to join, but already reached max players", nickname: nickname)
+      Logger.info("Attempted to join, but already reached max players", player: nickname)
 
       {:reply, {:error, :reached_max_players}, state}
     else
@@ -116,6 +118,8 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def handle_call({:start_round, _payload}, _from, %State{current_round: nil} = state) do
+    set_logger_metadata(state)
+
     if reached_max_rounds?(state.game) do
       Logger.info("Attempted to start round, but already reached max rounds")
 
@@ -147,6 +151,7 @@ defmodule DrawIt.GameServer do
   end
 
   def handle_call({:start_round, _payload}, _from, %State{current_round: %Games.Round{}} = state) do
+    set_logger_metadata(state)
     Logger.info("Attempted to start round, but a round was already started")
 
     {:reply, {:error, :already_started}, state}
@@ -154,6 +159,7 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def handle_call({:end_round, _payload}, _from, %State{current_round: current_round} = state) do
+    set_logger_metadata(state)
     Logger.info("Round ended", round_id: current_round.id)
 
     game = Games.get_game!(state.game.id)
@@ -169,8 +175,9 @@ defmodule DrawIt.GameServer do
   end
 
   @impl true
-  def handle_call({:guess, _payload}, _from, %State{current_round: nil} = state) do
-    Logger.info("Guess made, but round not started")
+  def handle_call({:guess, %{player: player}}, _from, %State{current_round: nil} = state) do
+    set_logger_metadata(state)
+    Logger.info("Guess made, but round not started", player: player.nickname)
 
     {:reply, {:ok, false}, state}
   end
@@ -180,10 +187,11 @@ defmodule DrawIt.GameServer do
         _from,
         %State{current_round: current_round} = state
       ) do
+    set_logger_metadata(state)
+    Logger.info("Guess", correct_word: current_round.word, guess: guess, player_id: player.id)
+
     correct? = guess == current_round.word
     already_guessed? = player.id in state.player_ids_correct_guess
-
-    Logger.info("Guess", correct_word: current_round.word, guess: guess, player_id: player.id)
 
     if !already_guessed? && correct? do
       player = Games.get_player!(player.id)
@@ -206,6 +214,10 @@ defmodule DrawIt.GameServer do
   ##
   # Server Helpers
   ##
+
+  defp set_logger_metadata(%State{game: game}) do
+    Logger.metadata(join_code: game.join_code)
+  end
 
   defp find_or_create_player(game, nickname) do
     existing_player = Enum.find(game.players, &(&1.nickname == nickname))
