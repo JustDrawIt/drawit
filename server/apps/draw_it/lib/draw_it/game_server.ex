@@ -121,7 +121,9 @@ defmodule DrawIt.GameServer do
 
       {:reply, {:error, :reached_max_rounds}, state}
     else
-      id_player_drawer = Enum.random(state.player_ids_joined)
+      {id_player_drawer, player_ids_joined} =
+        select_drawer(state.player_ids_drawn, state.player_ids_joined)
+
       word = RandomWords.word(:easy)
 
       {:ok, round} =
@@ -136,7 +138,8 @@ defmodule DrawIt.GameServer do
       new_state = %State{
         state
         | game: Games.get_game!(state.game.id),
-          current_round: round
+          current_round: round,
+          player_ids_drawn: player_ids_joined
       }
 
       {:reply, {:ok, round}, new_state}
@@ -236,5 +239,20 @@ defmodule DrawIt.GameServer do
 
   defp reached_max_rounds?(%Games.Game{rounds: rounds, max_rounds: max_rounds}) do
     length(rounds) >= max_rounds
+  end
+
+  # Reset once everyone has drawn
+  defp select_drawer(drawn, joined) when length(drawn) >= length(joined) do
+    drawer = Enum.random(joined)
+    {drawer, [drawer]}
+  end
+
+  defp select_drawer(drawn, joined) do
+    drawer =
+      joined
+      |> Enum.reject(&(&1 in drawn))
+      |> Enum.random()
+
+    {drawer, [drawer | drawn]}
   end
 end
