@@ -42,6 +42,10 @@ defmodule DrawIt.GameServerTest do
           token: "test token"
         })
     end)
+
+    updated_game = Games.get_game!(game.id)
+
+    %{game: updated_game}
   end
 
   setup do
@@ -143,6 +147,28 @@ defmodule DrawIt.GameServerTest do
                GameServer.start_round(game.join_code, %{
                  player: current_player
                })
+    end
+
+    test "selects players to draw that haven't drawn yet", %{
+      game: game,
+      current_player: current_player
+    } do
+      1..length(game.players)
+      |> Enum.reduce([], fn _, drawn_players ->
+        {:ok, round} =
+          GameServer.start_round(game.join_code, %{
+            player: current_player
+          })
+
+        assert round.player_drawer not in drawn_players
+
+        {:ok, _game} =
+          GameServer.end_round(game.join_code, %{
+            player: current_player
+          })
+
+        [round.player_drawer | drawn_players]
+      end)
     end
   end
 
