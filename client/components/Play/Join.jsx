@@ -14,11 +14,18 @@ class JoinGame extends PureComponent {
     };
 
     this.setJoinCode = this.setJoinCode.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.join = this.join.bind(this);
   }
 
   setJoinCode({ target }) {
     this.setState({ joinCode: target.value });
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.join();
+    }
   }
 
   join() {
@@ -42,7 +49,7 @@ class JoinGame extends PureComponent {
 
     return (
       <div>
-        <Input onChange={this.setJoinCode} placeholder="Join code" type="text" />
+        <Input onChange={this.setJoinCode} onKeyPress={this.handleKeyPress} placeholder="Join code" type="text" />
         <Button onClick={this.join}>Play!</Button>
         {error ? <p>{error}</p> : null}
       </div>

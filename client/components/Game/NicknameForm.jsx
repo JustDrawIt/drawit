@@ -19,12 +19,19 @@ class NicknameForm extends PureComponent {
       nickname: '',
     };
 
-    this.setNickname = this.setNickname.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.joinGame = this.joinGame.bind(this);
+    this.setNickname = this.setNickname.bind(this);
   }
 
   setNickname({ target }) {
     this.setState({ nickname: target.value });
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.joinGame();
+    }
   }
 
   joinGame() {
@@ -42,7 +49,7 @@ class NicknameForm extends PureComponent {
     return (
       <Container>
         <h2>Enter A Nickname</h2>
-        <Input onChange={this.setNickname} placeholder="Nickname" type="text" />
+        <Input onChange={this.setNickname} onKeyPress={this.handleKeyPress} placeholder="Nickname" type="text" />
         <Button onClick={this.joinGame}>Join!</Button>
       </Container>
     );
