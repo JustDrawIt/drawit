@@ -26,8 +26,8 @@ class JoinGame extends PureComponent {
     const { history } = this.props;
 
     if (joinCode.length >= 7) {
-      axios.post('/codes', { joinCode })
-        .then(response => (response.data.valid
+      axios.get('/api/games', { params: { join_code: joinCode } })
+        .then(response => (response.data.data[0]
           ? history.push(`/games/${joinCode}`)
           : this.setState({ error: 'There are no games with that join code!' })
         ))
