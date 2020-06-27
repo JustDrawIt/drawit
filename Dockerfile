@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM node:12-slim as client_build
 
 RUN mkdir /opt/app
 WORKDIR /opt/app
@@ -7,17 +7,18 @@ COPY package*.json ./
 
 RUN npm ci
 
-COPY . .
+COPY webpack.config.js .babelrc  ./
+COPY client ./client
 
 RUN npm run build
 
-FROM elixir:1.10.3
+FROM elixir:1.10.3 as server_build
 
-WORKDIR /opt/app
-
-COPY . .
+COPY --from=client_build /opt/app /opt/app
 
 WORKDIR /opt/app/server
+
+COPY server/ ./
 
 ARG APP_NAME=drawit
 ARG APP_VSN=0.1.0
@@ -27,19 +28,17 @@ ENV MIX_ENV=${MIX_ENV} \
     APP_NAME=${APP_NAME} \
     APP_VSN=${APP_VSN}
 
-RUN mix local.rebar --force
-RUN mix local.hex --if-missing --force
-RUN mix deps.get
-RUN mix compile
+RUN mix do local.rebar --force, local.hex --if-missing --force
+RUN mix do deps.get --only $MIX_ENV, deps.compile
 RUN mix distillery.release --verbose && \
-  mkdir -p /opt/built && \
-  cp _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/${APP_NAME}.tar.gz /opt/built && \
-  cd /opt/built && \
+  cd _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN} && \
   tar -xzf ${APP_NAME}.tar.gz && \
   rm ${APP_NAME}.tar.gz
 
+WORKDIR /opt/app
+
 RUN useradd -d /home/drawit -m -s /bin/bash drawit
-RUN chown -R drawit:drawit /opt/built
+RUN chown -R drawit:drawit /opt/app/server
 USER drawit
 
-CMD trap 'exit' INT; /opt/built/${APP_NAME} foreground
+CMD trap 'exit' INT; server/_build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/bin/${APP_NAME} foreground

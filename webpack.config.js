@@ -32,7 +32,7 @@ module.exports = {
   plugins: [
     new HtmlWebPackPlugin({
       template: './client/index.html',
-      filename: '../public/index.html',
+      filename: 'index.html',
     }),
   ],
 };

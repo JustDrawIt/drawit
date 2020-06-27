@@ -11,7 +11,7 @@ defmodule DrawItWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: "../public",
+    from: :draw_it_web,
     gzip: false,
     only: ~w(favicon.ico robots.txt index.html main.min.js main.min.js.map)
 
