@@ -29,4 +29,11 @@ defmodule DrawItWeb.Router do
       resources "/rounds", RoundController, except: [:new, :edit]
     end
   end
+
+  # History fallback
+  scope "/", DrawItWeb do
+    pipe_through :browser
+
+    get "/*path", PageController, :index
+  end
 end
