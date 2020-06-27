@@ -1,4 +1,5 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
   module: {
@@ -27,7 +28,7 @@ module.exports = {
   output: {
     publicPath: '/',
   },
-  devtool: 'source-map',
+  devtool: isProd ? 'source-map' : 'inline-source-map',
   plugins: [
     new HtmlWebPackPlugin({
       template: './client/index.html',
