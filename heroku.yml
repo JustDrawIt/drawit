@@ -4,7 +4,9 @@ setup:
       as: DATABASE
 build:
   docker:
-    web: Dockerfile
+    release:
+      dockerfile: Dockerfile
+      target: server_build
   config:
     MIX_ENV: prod
     SECRET_KEY_BASE: $SECRET_KEY_BASE

@@ -21,8 +21,8 @@
   "scripts": {
     "start": "npm run dev",
     "test": "jest client/",
-    "dev": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output ./public/main.js",
-    "build": "webpack --mode production ./client/index.jsx --output ./public/main.min.js"
+    "dev": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output public/main.js",
+    "build": "webpack --mode production ./client/index.jsx --output ./server/apps/draw_it_web/priv/static/main.min.js"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
