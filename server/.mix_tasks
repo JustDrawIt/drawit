@@ -21,6 +21,10 @@ dialyzer
 dialyzer.build
 dialyzer.clean
 dialyzer.explain
+distillery.gen.appup
+distillery.init
+distillery.release
+distillery.release.clean
 do
 docs
 ecto

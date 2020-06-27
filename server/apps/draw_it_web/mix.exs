@@ -46,6 +46,7 @@ defmodule DrawItWeb.MixProject do
     [
       {:draw_it, in_umbrella: true},
       {:phoenix, "~> 1.4.11"},
+      {:phoenix_html, "~> 2.11"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:gettext, "~> 0.11"},
