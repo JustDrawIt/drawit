@@ -33,7 +33,8 @@ defmodule DrawIt.Umbrella.MixProject do
     [
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:distillery, "~> 2.1"}
     ]
   end
 end

@@ -2,7 +2,7 @@ defmodule DrawItWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :draw_it_web
 
   socket "/socket", DrawItWeb.UserSocket,
-    websocket: true,
+    websocket: [timeout: 45_000],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -11,9 +11,9 @@ defmodule DrawItWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :draw_it_web,
+    from: "../public",
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(favicon.ico robots.txt index.html main.min.js main.min.js.map)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

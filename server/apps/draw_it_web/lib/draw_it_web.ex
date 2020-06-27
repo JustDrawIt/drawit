@@ -32,8 +32,15 @@ defmodule DrawItWeb do
         root: "lib/draw_it_web/templates",
         namespace: DrawItWeb
 
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+
+      # Import basic rendering functionality (render, render_layout, etc)
+      import Phoenix.View
+
       # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
+      import Phoenix.Controller,
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
       import DrawItWeb.ErrorHelpers
       import DrawItWeb.Gettext
