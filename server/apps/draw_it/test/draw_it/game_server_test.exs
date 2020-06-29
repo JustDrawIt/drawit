@@ -218,6 +218,19 @@ defmodule DrawIt.GameServerTest do
                })
     end
 
+    test "returns true if guess doesn't match casing", %{
+      game: game,
+      current_player: current_player
+    } do
+      {:ok, round} = GameServer.start_round(game.join_code, %{})
+
+      assert {:ok, true} =
+               GameServer.guess(game.join_code, %{
+                 player: current_player,
+                 guess: String.upcase(round.word)
+               })
+    end
+
     test "returns false if round hasn't started", %{game: game, current_player: current_player} do
       assert {:ok, false} =
                GameServer.guess(game.join_code, %{
