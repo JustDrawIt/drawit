@@ -190,7 +190,7 @@ defmodule DrawIt.GameServer do
     set_logger_metadata(state)
     Logger.info("Guess", correct_word: current_round.word, guess: guess, player_id: player.id)
 
-    correct? = guess == current_round.word
+    correct? = correct_guess?(guess, current_round.word)
     already_guessed? = player.id in state.player_ids_correct_guess
 
     if !already_guessed? && correct? do
@@ -266,5 +266,10 @@ defmodule DrawIt.GameServer do
       |> Enum.random()
 
     {drawer, [drawer | drawn]}
+  end
+
+  defp correct_guess?(guess, word) do
+    guess
+    |> String.contains?(word)
   end
 end
