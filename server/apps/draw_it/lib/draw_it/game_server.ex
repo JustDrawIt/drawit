@@ -269,7 +269,10 @@ defmodule DrawIt.GameServer do
   end
 
   defp correct_guess?(guess, word) do
+    word = String.downcase(word)
+
     guess
+    |> String.downcase()
     |> String.contains?(word)
   end
 end
