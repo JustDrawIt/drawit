@@ -21,7 +21,7 @@ WORKDIR /opt/app/server
 COPY server/ ./
 
 ARG APP_NAME=drawit
-ARG APP_VSN=0.1.0
+ARG APP_VSN=2.3.0
 ARG MIX_ENV=prod
 
 ENV MIX_ENV=${MIX_ENV} \
