@@ -17,7 +17,7 @@ const StartGame = (props) => {
 
   const handleClick = () => {
     dispatchStart();
-    channel.push('start_round');
+    channel.push('start');
   };
 
   return (

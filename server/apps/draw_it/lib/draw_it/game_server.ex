@@ -36,7 +36,10 @@ defmodule DrawIt.GameServer do
               current_round: nil,
               player_ids_joined: [],
               player_ids_drawn: [],
-              player_ids_correct_guess: []
+              player_ids_correct_guess: [],
+              start_round_ref: nil,
+              end_round_ref: nil,
+              end_round_timeout: 5000
   end
 
   ##
@@ -56,12 +59,9 @@ defmodule DrawIt.GameServer do
     GenServer.call(via_tuple(join_code), {:join, payload})
   end
 
-  def start_round(join_code, payload) do
-    GenServer.call(via_tuple(join_code), {:start_round, payload})
-  end
-
-  def end_round(join_code, payload) do
-    GenServer.call(via_tuple(join_code), {:end_round, payload})
+  def start(join_code, payload) do
+    send(whereis(join_code), {:start_round, payload})
+    :ok
   end
 
   def guess(join_code, payload) do
@@ -81,8 +81,12 @@ defmodule DrawIt.GameServer do
 
   @impl true
   def init(options \\ []) do
+    config = Application.get_env(:draw_it, __MODULE__, [])
+    end_round_timeout = Keyword.get(config, :end_round_timeout, 5000)
+
     state = %State{
-      game: Keyword.fetch!(options, :game)
+      game: Keyword.fetch!(options, :game),
+      end_round_timeout: end_round_timeout
     }
 
     set_logger_metadata(state)
@@ -97,7 +101,6 @@ defmodule DrawIt.GameServer do
 
     if reached_max_players_joined?(state.game, state.player_ids_joined) do
       Logger.info("Attempted to join, but already reached max players", player: nickname)
-
       {:reply, {:error, :reached_max_players}, state}
     else
       player = find_or_create_player(state.game, nickname)
@@ -116,65 +119,6 @@ defmodule DrawIt.GameServer do
     end
   end
 
-  @impl true
-  def handle_call({:start_round, _payload}, _from, %State{current_round: nil} = state) do
-    set_logger_metadata(state)
-
-    if reached_max_rounds?(state.game) do
-      Logger.info("Attempted to start round, but already reached max rounds")
-
-      {:reply, {:error, :reached_max_rounds}, state}
-    else
-      {id_player_drawer, player_ids_joined} =
-        select_drawer(state.player_ids_drawn, state.player_ids_joined)
-
-      word = RandomWords.word(:easy)
-
-      {:ok, round} =
-        Games.create_round(%{
-          id_game: state.game.id,
-          id_player_drawer: id_player_drawer,
-          word: word
-        })
-
-      Logger.info("Round started", round_id: round.id)
-
-      new_state = %State{
-        state
-        | game: Games.get_game!(state.game.id),
-          current_round: round,
-          player_ids_drawn: player_ids_joined
-      }
-
-      {:reply, {:ok, round}, new_state}
-    end
-  end
-
-  def handle_call({:start_round, _payload}, _from, %State{current_round: %Games.Round{}} = state) do
-    set_logger_metadata(state)
-    Logger.info("Attempted to start round, but a round was already started")
-
-    {:reply, {:error, :already_started}, state}
-  end
-
-  @impl true
-  def handle_call({:end_round, _payload}, _from, %State{current_round: current_round} = state) do
-    set_logger_metadata(state)
-    Logger.info("Round ended", round_id: current_round.id)
-
-    game = Games.get_game!(state.game.id)
-
-    new_state = %State{
-      state
-      | game: game,
-        current_round: nil,
-        player_ids_correct_guess: []
-    }
-
-    {:reply, {:ok, game}, new_state}
-  end
-
-  @impl true
   def handle_call({:guess, %{player: player}}, _from, %State{current_round: nil} = state) do
     set_logger_metadata(state)
     Logger.info("Guess made, but round not started", player: player.nickname)
@@ -184,7 +128,7 @@ defmodule DrawIt.GameServer do
 
   def handle_call(
         {:guess, %{player: player, guess: guess}},
-        _from,
+        {from_pid, _from_tag},
         %State{current_round: current_round} = state
       ) do
     set_logger_metadata(state)
@@ -200,15 +144,99 @@ defmodule DrawIt.GameServer do
         score: player.score + 1
       })
 
-      new_state = %State{
-        state
-        | player_ids_correct_guess: [player.id | state.player_ids_correct_guess]
-      }
+      player_ids_correct_guess = [player.id | state.player_ids_correct_guess]
 
-      {:reply, {:ok, correct?}, new_state}
+      # Subtract 1 to discard drawer
+      everyone_guessed_correct? =
+        length(player_ids_correct_guess) == length(state.player_ids_joined) - 1
+
+      end_round_ref =
+        if everyone_guessed_correct? do
+          :ok = Process.cancel_timer(state.end_round_ref, info: false)
+          send(self(), {:end_round, %{from_pid: from_pid}})
+          nil
+        else
+          state.end_round_ref
+        end
+
+      {:reply, {:ok, correct?},
+       %State{
+         state
+         | player_ids_correct_guess: player_ids_correct_guess,
+           end_round_ref: end_round_ref
+       }}
     else
       {:reply, {:ok, correct?}, state}
     end
+  end
+
+  @impl true
+  def handle_info({:start_round, _payload}, %State{current_round: %Games.Round{}} = state) do
+    set_logger_metadata(state)
+    Logger.info("Attempted to start round, but a round was already started")
+    {:noreply, state}
+  end
+
+  def handle_info({:start_round, payload}, %State{current_round: nil} = state) do
+    set_logger_metadata(state)
+
+    if reached_max_rounds?(state.game) do
+      Logger.info("Attempted to start round, but already reached max rounds")
+      {:noreply, state}
+    else
+      {id_player_drawer, player_ids_joined} =
+        select_drawer(state.player_ids_drawn, state.player_ids_joined)
+
+      word = RandomWords.word(:easy)
+
+      {:ok, round} =
+        Games.create_round(%{
+          id_game: state.game.id,
+          id_player_drawer: id_player_drawer,
+          word: word
+        })
+
+      send(payload.from_pid, {:round_started, %{round: round}})
+
+      end_round_ref =
+        Process.send_after(self(), {:end_round, payload}, state.game.round_length_ms)
+
+      Logger.info("Round started #{inspect(self())}", round_id: round.id)
+
+      {:noreply,
+       %State{
+         state
+         | game: Games.get_game!(state.game.id),
+           current_round: round,
+           player_ids_drawn: player_ids_joined,
+           end_round_ref: end_round_ref,
+           start_round_ref: nil
+       }}
+    end
+  end
+
+  def handle_info({:end_round, payload}, %State{current_round: %Games.Round{}} = state) do
+    set_logger_metadata(state)
+
+    game = Games.get_game!(state.game.id)
+    ended? = reached_max_rounds?(game)
+    send(payload.from_pid, {:round_ended, %{game: game, ended?: ended?}})
+
+    start_round_ref =
+      if ended?,
+        do: nil,
+        else: Process.send_after(self(), {:start_round, payload}, state.end_round_timeout)
+
+    Logger.info("Round ended", round_id: state.current_round.id)
+
+    {:noreply,
+     %State{
+       state
+       | game: game,
+         current_round: nil,
+         player_ids_correct_guess: [],
+         start_round_ref: start_round_ref
+     }}
   end
 
   ##
