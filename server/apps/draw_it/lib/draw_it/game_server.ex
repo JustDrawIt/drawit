@@ -14,8 +14,7 @@ defmodule DrawIt.GameServer do
       {:ok, player1} = GameServer.join(server, %{nickname: "Ben"})
       {:ok, player2} = GameServer.join(game.join_code, %{nickname: "Wendy"})
 
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-      :ok = GameServer.end_round(game.join_code, %{})
+  Check the docs for `start/2` for starting the game.
   """
 
   use GenServer
@@ -59,6 +58,34 @@ defmodule DrawIt.GameServer do
     GenServer.call(via_tuple(join_code), {:join, payload})
   end
 
+  @doc """
+  Starts the game by creating the first round and scheduling ending it (ending
+  will schedule the next round, and so on until the max rounds are reached).
+
+  Expects to be given a PID as the `:from_pid` key in the payload map. This PID is
+  used to receive the `{:round_started, payload}` and `{:round_ended, payload}` events.
+
+  ## Examples
+
+      :ok = GameServer.start(game.join_code, %{from_pid: self()})
+
+      # Basic receive:
+      receive do
+        {:round_started, %{round: round} -> ...
+        {:round_ended, %{game: game, ended?: ended?}} -> ...
+      end
+
+      # Receive from GenServer (for example a Phoenix Channel):
+      def handle_info({:round_started, %{round: round}}, socket) do
+        ...
+        {:noreply, socket}
+      end
+
+      def handle_info({:round_ended, %{game: game, ended?: ended?}}, socket) do
+        ...
+        {:noreply, socket}
+      end
+  """
   def start(join_code, payload) do
     send(whereis(join_code), {:start_round, payload})
     :ok
