@@ -103,7 +103,9 @@ defmodule DrawItWeb.GameChannelTest do
       socket: socket,
       game: game
     } do
-      {:ok, round} = DrawIt.GameServer.start_round(game.join_code, %{})
+      :ok = DrawIt.GameServer.start(game.join_code, %{from_pid: self()})
+      assert_receive {:round_started, %{round: %Games.Round{} = round}}
+
       correct_word = round.word
 
       push(socket, "new_message", %{text: correct_word})
