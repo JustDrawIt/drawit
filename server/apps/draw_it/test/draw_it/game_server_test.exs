@@ -7,11 +7,15 @@ defmodule DrawIt.GameServerTest do
   @game_attrs %{
     max_players: 4,
     max_rounds: 4,
-    round_length_ms: 100
+    round_length_ms: 20
   }
   @current_player_nickname "Chani"
   @other_players_nicknames ["Alia", "Ghanima", "Leto II"]
   @players_nicknames [@current_player_nickname | @other_players_nicknames]
+  @end_round_timeout Keyword.get(
+                       Application.get_env(:draw_it, DrawIt.GameServer),
+                       :end_round_timeout
+                     )
 
   def game_fixture(attrs \\ %{}) do
     {:ok, game} =
@@ -46,6 +50,13 @@ defmodule DrawIt.GameServerTest do
     updated_game = Games.get_game!(game.id)
 
     %{game: updated_game}
+  end
+
+  defp start_round(%{game: game}) do
+    :ok = GameServer.start(game.join_code, %{from_pid: self()})
+    assert_receive {:round_started, %{round: %Games.Round{} = round}}, game.round_length_ms + 10
+
+    %{round: round}
   end
 
   setup do
@@ -102,89 +113,95 @@ defmodule DrawIt.GameServerTest do
   #   setup [:join_game]
   # end
 
-  describe "start_round/2" do
+  describe "start/2" do
     setup [:join_game, :add_other_players]
 
-    test "saves new round", %{game: game, current_player: current_player} do
-      assert {:ok, %Games.Round{} = round} =
-               GameServer.start_round(game.join_code, %{
-                 player: current_player,
-                 on_end_callback: fn -> nil end
-               })
-
-      assert round.player_drawer.nickname in @players_nicknames
-    end
-
-    test "returns error if round is already in progress", %{
+    test "sends :round_started to process", %{
       game: game,
       current_player: current_player
     } do
-      {:ok, _round} =
-        GameServer.start_round(game.join_code, %{
-          player: current_player
+      :ok =
+        GameServer.start(game.join_code, %{
+          player: current_player,
+          from_pid: self()
         })
 
-      assert {:error, :already_started} =
-               GameServer.start_round(game.join_code, %{
-                 player: current_player
-               })
+      assert_receive {:round_started, %{round: %Games.Round{}}}, game.round_length_ms + 10
     end
 
-    test "returns error if reached max rounds", %{game: game, current_player: current_player} do
-      Enum.each(1..@game_attrs.max_rounds, fn _ ->
-        {:ok, _round} =
-          GameServer.start_round(game.join_code, %{
-            player: current_player
-          })
-
-        {:ok, _game} =
-          GameServer.end_round(game.join_code, %{
-            player: current_player
-          })
-      end)
-
-      assert {:error, :reached_max_rounds} =
-               GameServer.start_round(game.join_code, %{
-                 player: current_player
+    test "saves new round", %{game: game, current_player: current_player} do
+      assert :ok =
+               GameServer.start(game.join_code, %{
+                 player: current_player,
+                 from_pid: self()
                })
+
+      assert_receive {:round_started, %{round: round}}, game.round_length_ms + 10
+      assert round.player_drawer.nickname in @players_nicknames
     end
 
     test "selects players to draw that haven't drawn yet", %{
       game: game,
       current_player: current_player
     } do
-      1..length(game.players)
-      |> Enum.reduce([], fn _, drawn_players ->
-        {:ok, round} =
-          GameServer.start_round(game.join_code, %{
-            player: current_player
-          })
+      :ok =
+        GameServer.start(game.join_code, %{
+          player: current_player,
+          from_pid: self()
+        })
 
-        assert round.player_drawer not in drawn_players
+      1..@game_attrs.max_players
+      |> Enum.reduce([], fn num, players_drawn ->
+        assert_receive {:round_started, %{round: round}}, num * game.round_length_ms
 
-        {:ok, _game} =
-          GameServer.end_round(game.join_code, %{
-            player: current_player
-          })
+        assert_receive {:round_ended, _payload},
+                       num * game.round_length_ms + @end_round_timeout
 
-        [round.player_drawer | drawn_players]
+        assert round.player_drawer not in players_drawn
+
+        [round.player_drawer | players_drawn]
+      end)
+    end
+
+    test "sends :round_ended to process after round time", %{
+      game: game,
+      current_player: current_player
+    } do
+      :ok =
+        GameServer.start(game.join_code, %{
+          player: current_player,
+          from_pid: self()
+        })
+
+      assert_receive {:round_ended, _payload}, game.round_length_ms + 10
+    end
+
+    test "sends :round_started for every round", %{
+      game: game,
+      current_player: current_player
+    } do
+      :ok =
+        GameServer.start(game.join_code, %{
+          player: current_player,
+          from_pid: self()
+        })
+
+      1..@game_attrs.max_rounds
+      |> Enum.each(fn round_num ->
+        expected_timeout = round_num * game.round_length_ms
+        assert_receive {:round_started, _payload}, expected_timeout
       end)
     end
   end
 
-  # describe "end_round/2" do
-  #   setup [:join_game, :add_other_players]
-  # end
-
   describe "guess/2" do
-    setup [:join_game, :add_other_players]
+    setup [:join_game, :add_other_players, :start_round]
 
     test "returns true if guess matches round's word", %{
       game: game,
-      current_player: current_player
+      current_player: current_player,
+      round: round
     } do
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-
       assert {:ok, true} =
                GameServer.guess(game.join_code, %{
                  player: current_player,
@@ -196,8 +213,6 @@ defmodule DrawIt.GameServerTest do
       game: game,
       current_player: current_player
     } do
-      {:ok, _round} = GameServer.start_round(game.join_code, %{})
-
       assert {:ok, false} =
                GameServer.guess(game.join_code, %{
                  player: current_player,
@@ -207,10 +222,9 @@ defmodule DrawIt.GameServerTest do
 
     test "returns true if guess is substring of round's word", %{
       game: game,
-      current_player: current_player
+      current_player: current_player,
+      round: round
     } do
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-
       assert {:ok, true} =
                GameServer.guess(game.join_code, %{
                  player: current_player,
@@ -220,10 +234,9 @@ defmodule DrawIt.GameServerTest do
 
     test "returns true if guess doesn't match casing", %{
       game: game,
-      current_player: current_player
+      current_player: current_player,
+      round: round
     } do
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-
       assert {:ok, true} =
                GameServer.guess(game.join_code, %{
                  player: current_player,
@@ -231,7 +244,10 @@ defmodule DrawIt.GameServerTest do
                })
     end
 
-    test "returns false if round hasn't started", %{game: game, current_player: current_player} do
+    test "returns false if round hasn't started", %{
+      game: game,
+      current_player: current_player
+    } do
       assert {:ok, false} =
                GameServer.guess(game.join_code, %{
                  player: current_player,
@@ -241,10 +257,9 @@ defmodule DrawIt.GameServerTest do
 
     test "increments the player's score if guess is correct", %{
       game: game,
-      current_player: current_player
+      current_player: current_player,
+      round: round
     } do
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-
       {:ok, true} =
         GameServer.guess(game.join_code, %{
           player: current_player,
@@ -256,12 +271,12 @@ defmodule DrawIt.GameServerTest do
       assert updated_player.score == current_player.score + 1
     end
 
+    @tag skip: true
     test "only increments the player's score once per round", %{
       game: game,
-      current_player: original_player
+      current_player: original_player,
+      round: round1
     } do
-      {:ok, round1} = GameServer.start_round(game.join_code, %{})
-
       {:ok, true} =
         GameServer.guess(game.join_code, %{
           player: original_player,
@@ -277,8 +292,9 @@ defmodule DrawIt.GameServerTest do
       updated_player = Games.get_player!(original_player.id)
       assert updated_player.score == original_player.score + 1
 
-      {:ok, _game} = GameServer.end_round(game.join_code, %{})
-      {:ok, round2} = GameServer.start_round(game.join_code, %{})
+      # assert_receive {:end_round, }
+      # {:ok, _game} = GameServer.end_round(game.join_code, %{})
+      {:ok, round2} = GameServer.start(game.join_code, %{})
 
       {:ok, true} =
         GameServer.guess(game.join_code, %{
@@ -292,10 +308,9 @@ defmodule DrawIt.GameServerTest do
 
     test "only increments the player's score by 1", %{
       game: game,
-      current_player: original_player
+      current_player: original_player,
+      round: round
     } do
-      {:ok, round} = GameServer.start_round(game.join_code, %{})
-
       {:ok, true} =
         GameServer.guess(game.join_code, %{
           player: %Games.Player{original_player | score: 500},
@@ -305,8 +320,26 @@ defmodule DrawIt.GameServerTest do
       updated_player = Games.get_player!(original_player.id)
       assert updated_player.score == original_player.score + 1
     end
-  end
 
-  # describe "draw/2" do
-  # end
+    test "ends the round if all players have guessed correctly", %{game: game, round: round} do
+      updated_game = Games.get_game!(game.id)
+      assert length(updated_game.rounds) == 1
+
+      game.players
+      |> Enum.filter(fn player -> player != round.player_drawer end)
+      |> Enum.each(fn player ->
+        {:ok, true} =
+          GameServer.guess(game.join_code, %{
+            player: player,
+            guess: round.word
+          })
+      end)
+
+      assert_receive {:round_ended, _payload}
+      assert_receive {:round_started, _payload}
+
+      updated_game = Games.get_game!(game.id)
+      assert length(updated_game.rounds) == 2
+    end
+  end
 end

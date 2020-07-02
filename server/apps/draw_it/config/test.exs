@@ -8,3 +8,5 @@ config :draw_it, DrawIt.Repo,
   hostname: System.get_env("POSTGRES_HOST", "localhost"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
+
+config :draw_it, DrawIt.GameServer, end_round_timeout: 10
