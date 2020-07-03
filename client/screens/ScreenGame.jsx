@@ -55,6 +55,7 @@ class ScreenGame extends PureComponent {
     this.handleStartRound = this.handleStartRound.bind(this);
     this.handleEndRound = this.handleEndRound.bind(this);
     this.handleCorrectGuess = this.handleCorrectGuess.bind(this);
+    this.handleChannelError = this.handleChannelError.bind(this);
 
     this.channelEventRefs = {};
   }
@@ -129,18 +130,23 @@ class ScreenGame extends PureComponent {
             game,
             nickname,
           });
-        }));
-
+        }))
+        .receive('error', once(this.handleChannelError));
     } catch (error) {
-      // const { error } = error.response.data;
-      console.error(error);
-      this.addNotification({ message: 'Something went wrong!', level: 'error' });
+      this.handleChannelError(error);
     }
   }
 
   handleChannelError(payload) {
     console.error(payload);
-    this.addNotification({ message: 'Something went wrong!', level: 'error' });
+
+    let message = 'Something went wrong!';
+
+    if (payload === 'nickname_taken') {
+      message = 'Nickname taken.';
+    }
+
+    this.addNotification({ message, level: 'error' });
   }
 
   handleStartRound(payload) {
