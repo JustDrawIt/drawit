@@ -73,7 +73,12 @@ defmodule DrawIt.GameServerTest do
       assert current_player
     end
 
-    test "only saves player with nickname once", %{game: game} do
+    test "only saves player with nickname once", %{game: game, current_player: current_player} do
+      :ok =
+        GameServer.leave(game.join_code, %{
+          player: current_player
+        })
+
       {:ok, _player} =
         GameServer.join(game.join_code, %{
           nickname: @current_player_nickname,
@@ -95,6 +100,14 @@ defmodule DrawIt.GameServerTest do
                })
     end
 
+    test "returns error if nickname was already taken", %{game: game} do
+      assert {:error, :nickname_taken} =
+               GameServer.join(game.join_code, %{
+                 nickname: @current_player_nickname,
+                 token: "test token"
+               })
+    end
+
     @tag skip: "not implemented until leave/2"
     test "returns error if reached max players that have joined", %{game: game} do
       _other_players = add_other_players(%{game: game})
@@ -109,9 +122,25 @@ defmodule DrawIt.GameServerTest do
     end
   end
 
-  # describe "leave/2" do
-  #   setup [:join_game]
-  # end
+  describe "leave/2" do
+    test "returns error if not joined", %{game: game} do
+      {:ok, player} =
+        GameServer.join(game.join_code, %{
+          nickname: @current_player_nickname,
+          token: "test token"
+        })
+
+      :ok =
+        GameServer.leave(game.join_code, %{
+          player: player
+        })
+
+      assert {:error, :not_joined} =
+               GameServer.leave(game.join_code, %{
+                 player: player
+               })
+    end
+  end
 
   describe "start/2" do
     setup [:join_game, :add_other_players]

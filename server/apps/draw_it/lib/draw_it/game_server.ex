@@ -58,6 +58,10 @@ defmodule DrawIt.GameServer do
     GenServer.call(via_tuple(join_code), {:join, payload})
   end
 
+  def leave(join_code, payload) do
+    GenServer.call(via_tuple(join_code), {:leave, payload})
+  end
+
   @doc """
   Starts the game by creating the first round and scheduling ending it (ending
   will schedule the next round, and so on until the max rounds are reached).
@@ -130,19 +134,42 @@ defmodule DrawIt.GameServer do
       Logger.info("Attempted to join, but already reached max players", player: nickname)
       {:reply, {:error, :reached_max_players}, state}
     else
-      player = find_or_create_player(state.game, nickname)
-      updated_game = Games.get_game!(state.game.id)
-      player_ids_joined = add_joined_player(state.player_ids_joined, player)
+      if nickname_taken?(nickname, state) do
+        Logger.info("Attempted to join, but nickname was taken", player: nickname)
+        {:reply, {:error, :nickname_taken}, state}
+      else
+        player = find_or_create_player(state.game, nickname)
+        updated_game = Games.get_game!(state.game.id)
+        player_ids_joined = add_joined_player(state.player_ids_joined, player)
 
-      Logger.info("Player joined", player: nickname)
+        Logger.info("Player joined", player: nickname)
 
-      new_state = %State{
-        state
-        | game: updated_game,
-          player_ids_joined: player_ids_joined
-      }
+        {:reply, {:ok, player},
+         %State{
+           state
+           | game: updated_game,
+             player_ids_joined: player_ids_joined
+         }}
+      end
+    end
+  end
 
-      {:reply, {:ok, player}, new_state}
+  def handle_call({:leave, %{player: player}}, _from, %State{} = state) do
+    set_logger_metadata(state)
+
+    joined? = player.id in state.player_ids_joined
+
+    if !joined? do
+      Logger.info("Attempted to leave, but player wasn't joined", player: player.nickname)
+      {:reply, {:error, :not_joined}, state}
+    else
+      Logger.info("Player left", player: player.nickname)
+
+      {:reply, :ok,
+       %State{
+         state
+         | player_ids_joined: Enum.reject(state.player_ids_joined, &(&1 == player.id))
+       }}
     end
   end
 
@@ -306,6 +333,12 @@ defmodule DrawIt.GameServer do
 
   defp reached_max_rounds?(%Games.Game{rounds: rounds, max_rounds: max_rounds}) do
     length(rounds) >= max_rounds
+  end
+
+  defp nickname_taken?(nickname, %State{game: game, player_ids_joined: player_ids_joined}) do
+    game.players
+    |> Enum.filter(fn player -> player.id in player_ids_joined end)
+    |> Enum.any?(fn player -> player.nickname == nickname end)
   end
 
   # Reset once everyone has drawn
