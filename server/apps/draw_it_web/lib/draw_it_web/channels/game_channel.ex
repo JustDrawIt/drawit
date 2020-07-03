@@ -25,8 +25,8 @@ defmodule DrawItWeb.GameChannel do
 
         {:ok, assign(socket, :player, player)}
 
-      {:error, :reached_max_players} ->
-        {:error, :reached_max_players}
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -111,15 +111,20 @@ defmodule DrawItWeb.GameChannel do
     {:noreply, socket}
   end
 
-  def terminate({:shutdown, :left}, socket) do
-    broadcast!(socket, "new_message", %{
-      text: "#{socket.assigns.player.nickname} left the game"
-    })
-  end
+  def terminate({:shutdown, reason}, socket) do
+    "game:" <> join_code = socket.topic
+    player = socket.assigns.player
 
-  def terminate({:shutdown, :closed}, socket) do
+    GameServer.leave(join_code, %{player: player})
+
+    message =
+      case reason do
+        :left -> "#{player.nickname} left the game"
+        :closed -> "#{player.nickname} disconnected"
+      end
+
     broadcast!(socket, "new_message", %{
-      text: "#{socket.assigns.player.nickname} disconnected"
+      text: message
     })
   end
 
