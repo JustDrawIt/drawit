@@ -57,6 +57,16 @@ defmodule DrawItWeb.GameChannelTest do
       assert updated_game.players == game.players
     end
 
+    test "reply with error if nickname is taken", %{socket: socket, game: game} do
+      Process.unlink(socket.channel_pid)
+
+      assert {:error, :nickname_taken} =
+               join_game(@current_player_nickname, game.join_code, %{
+                 nickname: @current_player_nickname
+               })
+    end
+
+    @tag skip: true
     test "does not create duplicate player on reconnect", %{
       socket: socket,
       game: game,
