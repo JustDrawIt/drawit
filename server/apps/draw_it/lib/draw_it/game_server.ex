@@ -159,10 +159,7 @@ defmodule DrawIt.GameServer do
 
     joined? = player.id in state.player_ids_joined
 
-    if !joined? do
-      Logger.info("Attempted to leave, but player wasn't joined", player: player.nickname)
-      {:reply, {:error, :not_joined}, state}
-    else
+    if joined? do
       Logger.info("Player left", player: player.nickname)
 
       {:reply, :ok,
@@ -170,6 +167,9 @@ defmodule DrawIt.GameServer do
          state
          | player_ids_joined: Enum.reject(state.player_ids_joined, &(&1 == player.id))
        }}
+    else
+      Logger.info("Attempted to leave, but player wasn't joined", player: player.nickname)
+      {:reply, {:error, :not_joined}, state}
     end
   end
 
