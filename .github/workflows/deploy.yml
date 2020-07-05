@@ -1,0 +1,45 @@
+name: Create tag and deploy
+
+on:
+  push:
+    branches: [test]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check new version
+        id: check-new-version
+        run: |
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          LATEST_TAG_VSN=${LATEST_TAG:1}
+          APP_VSN=$(sed -rn 's/.*version: "([[:digit:]]\.[[:digit:]]\.[[:digit:]])".*/\1/p' server/apps/draw_it/mix.exs)
+          if [ "$LATEST_TAG_VSN" = "$APP_VSN" ]; then
+            echo "::set-output name=is-new-version::true"
+            echo "::set-env name=APP_VSN::$APP_VSN"
+            echo "::set-env name=GIT_REFS_URL::https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs"
+          fi
+
+      - name: Create Tag
+        if: steps.check-new-version.outputs.is-new-version
+        run: |
+          curl -s -X POST $GIT_REFS_URL \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          -d @- << EOF
+          {
+            "ref": "refs/tags/v$APP_VSN",
+            "sha": "$GITHUB_SHA"
+          }
+          EOF
+
+      - name: Build, Push and Deploy to Heroku
+        id: heroku
+        if: steps.check-new-version.outputs.is-new-version
+        uses: jctaveras/heroku-deploy@v1.0.0
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }}
+          app_name: ${{ secrets.HEROKU_APP_NAME }}
+          options: '--build-arg APP_VSN=$APP_VSN'
