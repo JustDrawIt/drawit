@@ -21,7 +21,7 @@ WORKDIR /opt/app/server
 COPY server/ ./
 
 ARG APP_NAME=drawit
-ARG APP_VSN=2.3.0
+ARG APP_VSN=
 ARG MIX_ENV=prod
 
 ENV MIX_ENV=${MIX_ENV} \
@@ -31,9 +31,9 @@ ENV MIX_ENV=${MIX_ENV} \
 RUN mix do local.rebar --force, local.hex --if-missing --force
 RUN mix do deps.get --only $MIX_ENV, deps.compile
 RUN mix distillery.release --verbose && \
-  cd _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN} && \
-  tar -xzf ${APP_NAME}.tar.gz && \
-  rm ${APP_NAME}.tar.gz
+  cd _build/${MIX_ENV}/rel/$APP_NAME/releases/$APP_VSN && \
+  tar -xzf $APP_NAME.tar.gz && \
+  rm $APP_NAME.tar.gz
 
 WORKDIR /opt/app
 
@@ -41,4 +41,4 @@ RUN useradd -d /home/drawit -m -s /bin/bash drawit
 RUN chown -R drawit:drawit /opt/app/server
 USER drawit
 
-CMD trap 'exit' INT; server/_build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/bin/${APP_NAME} foreground
+CMD trap 'exit' INT; server/_build/$MIX_ENV/rel/$APP_NAME/releases/$APP_VSN/bin/$APP_NAME foreground
