@@ -47,6 +47,7 @@ defmodule DrawIt.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:nanoid, "~> 2.0.2"},
+      {:puid, "~> 1.0"},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end
