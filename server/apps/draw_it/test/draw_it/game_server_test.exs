@@ -82,7 +82,7 @@ defmodule DrawIt.GameServerTest do
       {:ok, _player} =
         GameServer.join(game.join_code, %{
           nickname: @current_player_nickname,
-          token: "test token"
+          token: current_player.token
         })
 
       updated_game = Games.get_game!(game.id)
