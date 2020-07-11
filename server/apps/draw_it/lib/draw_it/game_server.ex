@@ -127,7 +127,7 @@ defmodule DrawIt.GameServer do
   end
 
   @impl true
-  def handle_call({:join, %{nickname: nickname}}, _from, %State{} = state) do
+  def handle_call({:join, %{nickname: nickname} = join_params}, _from, %State{} = state) do
     set_logger_metadata(state)
 
     if reached_max_players_joined?(state.game, state.player_ids_joined) do
@@ -139,17 +139,25 @@ defmodule DrawIt.GameServer do
         {:reply, {:error, :nickname_taken}, state}
       else
         player = find_or_create_player(state.game, nickname)
-        updated_game = Games.get_game!(state.game.id)
-        player_ids_joined = add_joined_player(state.player_ids_joined, player)
 
-        Logger.info("Player joined", player: nickname)
+        rejoining? = Enum.any?(state.game.players, &(&1.nickname == nickname))
+        valid_rejoin_token? = Map.get(join_params, :token) == player.token
 
-        {:reply, {:ok, player},
-         %State{
-           state
-           | game: updated_game,
-             player_ids_joined: player_ids_joined
-         }}
+        if rejoining? && !valid_rejoin_token? do
+          {:reply, {:error, :invalid_token}, state}
+        else
+          Logger.info("Player joined", player: nickname)
+
+          updated_game = Games.get_game!(state.game.id)
+          player_ids_joined = add_joined_player(state.player_ids_joined, player)
+
+          {:reply, {:ok, player},
+           %State{
+             state
+             | game: updated_game,
+               player_ids_joined: player_ids_joined
+           }}
+        end
       end
     end
   end
