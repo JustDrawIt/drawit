@@ -90,6 +90,22 @@ defmodule DrawIt.GameServerTest do
       assert updated_game.players == game.players
     end
 
+    test "returns error if given wrong token on reconnect", %{
+      game: game,
+      current_player: current_player
+    } do
+      :ok =
+        GameServer.leave(game.join_code, %{
+          player: current_player
+        })
+
+      assert {:error, :invalid_token} =
+               GameServer.join(game.join_code, %{
+                 nickname: current_player.nickname,
+                 token: "invalid token"
+               })
+    end
+
     test "returns error if reached max players", %{game: game} do
       add_other_players(%{game: game})
 
