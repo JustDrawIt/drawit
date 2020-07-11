@@ -15,6 +15,7 @@ defmodule DrawItWeb.PlayerView do
       id: player.id,
       nickname: player.nickname,
       score: player.score,
+      token: player.token,
       date_inserted: player.date_inserted,
       date_updated: player.date_updated
     }
