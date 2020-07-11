@@ -79,6 +79,7 @@ class ScreenGame extends PureComponent {
   }
 
   onGameJoined({ game, player }) {
+    localStorage.setItem(`game:${game.joinCode}:token`, player.token);
     this.setState({
       joined: this.state.joined || player.nickname === this.props.nickname,
       currentPlayer: player,
@@ -110,7 +111,8 @@ class ScreenGame extends PureComponent {
       const response = await axios(`/api/games?join_code=${joinCode}`)
       const game = keysSnakeToCamelCase(response.data.data[0]);
 
-      const channel = socket.channel(`game:${joinCode}`, { nickname, token: 'testtoken' });
+      const token = localStorage.getItem(`game:${joinCode}:token`) || undefined;
+      const channel = socket.channel(`game:${joinCode}`, { nickname, token });
 
       dispatchChannel(channel);
       dispatchGame(game);
@@ -305,4 +307,3 @@ export default connect(
     dispatchSetCurrentRound: setCurrentRoundAction(dispatch),
   }),
 )(ScreenGame);
-
