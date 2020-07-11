@@ -23,7 +23,7 @@ defmodule DrawItWeb.GameChannel do
       {:ok, player} ->
         send(self(), :after_join)
 
-        {:ok, assign(socket, :player, player)}
+        {:ok, %{player: render_player(player)}, assign(socket, :player, player)}
 
       {:error, reason} ->
         {:error, reason}
@@ -131,4 +131,6 @@ defmodule DrawItWeb.GameChannel do
   def terminate(reason, socket) do
     Logger.info("Socket terminating '#{socket.topic}' for reason: #{inspect(reason)}")
   end
+
+  defp render_player(player), do: PlayerView.render("player.json", %{player: player})
 end
