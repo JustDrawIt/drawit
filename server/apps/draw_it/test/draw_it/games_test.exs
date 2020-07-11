@@ -121,6 +121,15 @@ defmodule DrawIt.GamesTest do
       assert Games.get_player!(player.id) == player
     end
 
+    test "get_player_by_token!/1 returns the player with given token" do
+      player = player_fixture()
+      assert Games.get_player_by_token!(player.token) == player
+    end
+
+    test "get_player_by_token!/1 raises Ecto.NoResultsError if no player has token" do
+      assert_raise Ecto.NoResultsError, fn -> Games.get_player_by_token!("invalid_token") end
+    end
+
     test "create_player/1 with valid data creates a player" do
       assert %Player{} = player = player_fixture()
       assert player.nickname == "some nickname"
