@@ -45,6 +45,7 @@ class ScreenGame extends PureComponent {
       roundEnded: false,
       gameEnded: false,
       showScoreBoard: false,
+      currentPlayer: null,
     };
 
     this.onGameJoined = this.onGameJoined.bind(this);
@@ -77,9 +78,10 @@ class ScreenGame extends PureComponent {
     }
   }
 
-  onGameJoined({ game, nickname }) {
+  onGameJoined({ game, player }) {
     this.setState({
-      joined: this.state.joined || nickname === this.props.nickname,
+      joined: this.state.joined || player.nickname === this.props.nickname,
+      currentPlayer: player,
     });
   }
 
@@ -121,6 +123,7 @@ class ScreenGame extends PureComponent {
       channel
         .join()
         .receive('ok', once(async (okResponse) => {
+          const { player } = keysSnakeToCamelCase(okResponse);
           console.log('connected', okResponse);
 
           const response = await axios(`/api/games?join_code=${joinCode}`);
@@ -128,7 +131,7 @@ class ScreenGame extends PureComponent {
 
           this.onGameJoined({
             game,
-            nickname,
+            player,
           });
         }))
         .receive('error', once(this.handleChannelError));
@@ -206,6 +209,7 @@ class ScreenGame extends PureComponent {
       roundEnded,
       gameEnded,
       showScoreBoard,
+      currentPlayer,
     } = this.state;
     const { joinCode } = match.params;
     const ended = roundEnded || gameEnded;
