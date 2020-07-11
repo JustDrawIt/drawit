@@ -5,6 +5,7 @@ defmodule DrawIt.Games do
 
   import Ecto.Query
   alias DrawIt.Repo
+  alias DrawIt.Id
 
   alias DrawIt.Games.Game
 
@@ -190,7 +191,9 @@ defmodule DrawIt.Games do
 
   """
   def create_player(attrs \\ %{}) do
-    %Player{}
+    token = Id.generate()
+
+    %Player{token: token}
     |> Player.changeset(attrs)
     |> Repo.insert()
   end
