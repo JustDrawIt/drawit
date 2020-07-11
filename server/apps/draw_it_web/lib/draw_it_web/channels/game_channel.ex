@@ -11,7 +11,7 @@ defmodule DrawItWeb.GameChannel do
   alias DrawIt.GameServer
   alias DrawItWeb.PlayerView
 
-  def join("game:" <> join_code, %{"nickname" => nickname}, socket) do
+  def join("game:" <> join_code, join_params, socket) do
     server = GameServer.whereis(join_code)
 
     if !server do
@@ -19,7 +19,12 @@ defmodule DrawItWeb.GameChannel do
       {:ok, _pid} = GameServer.start_link(game: game)
     end
 
-    case GameServer.join(join_code, %{nickname: nickname}) do
+    join_params = %{
+      nickname: Map.get(join_params, "nickname"),
+      token: Map.get(join_params, "token")
+    }
+
+    case GameServer.join(join_code, join_params) do
       {:ok, player} ->
         send(self(), :after_join)
 
