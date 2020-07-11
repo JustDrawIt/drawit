@@ -179,6 +179,22 @@ defmodule DrawIt.Games do
   def get_player!(id), do: Repo.get!(Player, id)
 
   @doc """
+  Gets a single player by their token.
+
+  Raises `Ecto.NoResultsError` if the Player does not exist.
+
+  ## Examples
+
+      iex> get_player_by_token!("aia243fjadosf")
+      %Player{}
+
+      iex> get_player_by_token!("invalid_token")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_player_by_token!(token), do: Repo.get_by!(Player, token: token)
+
+  @doc """
   Creates a player.
 
   ## Examples
