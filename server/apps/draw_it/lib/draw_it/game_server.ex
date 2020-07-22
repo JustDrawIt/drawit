@@ -144,6 +144,7 @@ defmodule DrawIt.GameServer do
         valid_rejoin_token? = Map.get(join_params, :token) == player.token
 
         if rejoining? && !valid_rejoin_token? do
+          Logger.info("Attempted to join, but given invalid token", player: nickname)
           {:reply, {:error, :invalid_token}, state}
         else
           Logger.info("Player joined", player: nickname)
