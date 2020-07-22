@@ -4,10 +4,10 @@ defmodule DrawIt.Games do
   """
 
   import Ecto.Query
-  alias DrawIt.Repo
-  alias DrawIt.Id
 
   alias DrawIt.Games.Game
+  alias DrawIt.Id
+  alias DrawIt.Repo
 
   @doc """
   Returns the list of games.
@@ -62,9 +62,10 @@ defmodule DrawIt.Games do
   """
   def get_game_by_join_code!(join_code) do
     query =
-      from game in Game,
+      from(game in Game,
         where: game.join_code == ^join_code,
         select: game
+      )
 
     query
     |> Game.with_players()
@@ -154,10 +155,11 @@ defmodule DrawIt.Games do
   """
   def list_game_players(game_id) do
     query =
-      from player in Player,
+      from(player in Player,
         where: player.id_game == ^game_id,
         select: player,
         order_by: player.id
+      )
 
     Repo.all(query)
   end
