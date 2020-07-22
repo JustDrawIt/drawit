@@ -136,7 +136,10 @@ class ScreenGame extends PureComponent {
             player,
           });
         }))
-        .receive('error', once(this.handleChannelError));
+        .receive('error', once((error) => {
+          channel.leave();
+          this.handleChannelError(error);
+        }));
     } catch (error) {
       this.handleChannelError(error);
     }
