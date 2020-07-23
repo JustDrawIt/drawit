@@ -25,6 +25,7 @@ defmodule DrawIt.GameServer do
   alias DrawIt.RandomWords
 
   @server_registry_name :game_server_registry
+  @public_state_keys [:player_ids_correct_guess]
 
   defmodule State do
     @moduledoc """
@@ -60,6 +61,10 @@ defmodule DrawIt.GameServer do
 
   def leave(join_code, payload) do
     GenServer.call(via_tuple(join_code), {:leave, payload})
+  end
+
+  def state(join_code, key, payload) do
+    GenServer.call(via_tuple(join_code), {:state, key, payload})
   end
 
   @doc """
@@ -230,6 +235,26 @@ defmodule DrawIt.GameServer do
        }}
     else
       {:reply, {:ok, correct?}, state}
+    end
+  end
+
+  def handle_call({:state, key, %{player: player}}, _from, %State{} = state)
+      when key in @public_state_keys do
+    joined? = player.id in state.player_ids_joined
+    valid_token? = Games.get_player!(player.id).token == player.token
+
+    if joined? && valid_token? do
+      {:reply, {:ok, Map.get(state, key)}, state}
+    else
+      {:reply, {:error, :invalid_player}, state}
+    end
+  end
+
+  def handle_call({:state, _key, payload}, _from, %State{} = state) do
+    if Map.has_key?(payload, :player) do
+      {:reply, {:error, :invalid_key}, state}
+    else
+      {:reply, {:error, :invalid_player}, state}
     end
   end
 
