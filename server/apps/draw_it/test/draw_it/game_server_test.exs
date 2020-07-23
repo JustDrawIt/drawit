@@ -387,4 +387,49 @@ defmodule DrawIt.GameServerTest do
       assert length(updated_game.rounds) == 2
     end
   end
+
+  describe "state/3" do
+    setup [:join_game, :add_other_players]
+
+    test "returns error if given invalid player", %{game: game} do
+      assert {:error, :invalid_player} =
+               GameServer.state(game.join_code, :player_ids_correct_guess, %{})
+    end
+
+    test "returns error if given invalid key", %{game: game, current_player: player} do
+      assert {:error, :invalid_key} =
+               GameServer.state(game.join_code, :some_key, %{player: player})
+
+      assert {:error, :invalid_key} =
+               GameServer.state(game.join_code, :current_round, %{player: player})
+    end
+  end
+
+  describe "state/3 :player_ids_correct_guess" do
+    setup [:join_game, :add_other_players, :start_round]
+
+    test "returns player ids that guessed correct", %{
+      game: game,
+      round: round,
+      current_player: player
+    } do
+      assert {:ok, []} =
+               GameServer.state(game.join_code, :player_ids_correct_guess, %{
+                 player: player
+               })
+
+      {:ok, true} =
+        GameServer.guess(game.join_code, %{
+          player: player,
+          guess: round.word
+        })
+
+      player_id = player.id
+
+      assert {:ok, [^player_id]} =
+               GameServer.state(game.join_code, :player_ids_correct_guess, %{
+                 player: player
+               })
+    end
+  end
 end
