@@ -8,6 +8,17 @@ import App from './App';
 import store from '../store';
 
 describe('<App />', () => {
+  test('matches snapshot', () => {
+    const history = createMemoryHistory();
+    const { container } = render(
+      <Router history={history}>
+        <App />
+      </Router>
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
   describe('<ScreenPlay', () => {
     // TODO: Need to implement server mock. "Mock Service Worker" could work.
     test.skip('displays join game form', async () => {
@@ -41,5 +52,5 @@ describe('<App />', () => {
 
       expect(screen.getByRole('heading')).toHaveTextContent('Create Game');
     });
-  })
+  });
 });
