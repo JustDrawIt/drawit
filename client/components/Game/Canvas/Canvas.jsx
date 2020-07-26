@@ -1,68 +1,60 @@
-import React, { PureComponent } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import SketchPad from './SketchPad';
 import Tools from './tools/Tools';
-import Options from './options/Options';
 import ClearTool from './tools/Clear/ClearTool';
-
+import Options from './options/Options';
 import { addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
 
-class Canvas extends PureComponent {
-  constructor(props) {
-    super(props);
+const Canvas = (props) => {
+  const {
+    channel,
+    context,
+    dispatchClearItems,
+    dispatchItem,
+    drawing: isDrawing,
+  } = props;
 
-    this.handleDraw = this.handleDraw.bind(this);
-    this.handleClearDrawings = this.handleClearDrawings.bind(this);
-
-    this.channelEventRefs = {};
-  }
-
-  componentDidMount() {
-    const { channel } = this.props;
-
-    this.channelEventRefs.handleDraw = channel.on('draw', this.handleDraw);
-    this.channelEventRefs.clearDrawings = channel.on('clear_drawings', this.handleClearDrawings);
-    this.channelEventRefs.startRound = channel.on('start_round', this.handleClearDrawings);
-  }
-
-  componentWillUnmount() {
-    const { channel } = this.props;
-
-    channel.off('draw', this.channelEventRefs.roundDrew);
-    channel.off('clear_drawings', this.channelEventRefs.roundClear);
-    channel.off('start_round', this.channelEventRefs.startRound);
-  }
-
-  handleDraw({ drawings: [drawing] }) {
-    const { dispatchItem } = this.props;
+  const handleDraw = (payload) => {
+    const { drawings: [drawing] } = payload;
     dispatchItem(drawing);
-  }
-
-  handleClearDrawings() {
-    const { context, dispatchClearItems } = this.props;
-
+  };
+  const handleClearDrawings = () => {
     ClearTool.clear(context);
     dispatchClearItems();
-  }
+  };
 
-  render() {
-    const { drawing } = this.props;
+  const channelEventRefs = useRef({
+    draw: null,
+    clearDrawings: null,
+    startRound: null,
+  });
 
-    return (
-      <div>
-        <SketchPad disabled={!drawing} />
-        {drawing ?
-          <div>
-            <Tools />
-            <Options />
-          </div>
-        : null}
-      </div>
-    );
-  }
-}
+  useEffect(() => {
+    channelEventRefs.current.draw = channel.on('draw', handleDraw);
+    channelEventRefs.current.clearDrawings = channel.on('clear_drawings', handleClearDrawings);
+    channelEventRefs.current.startRound = channel.on('start_round', handleClearDrawings);
+
+    return () => {
+      channel.off('draw', channelEventRefs.current.draw);
+      channel.off('clear_drawings', channelEventRefs.current.clearDrawings);
+      channel.off('start_round', channelEventRefs.current.startRound);
+    };
+  }, []);
+
+  return (
+    <div>
+      <SketchPad disabled={!isDrawing} />
+      {isDrawing ?
+        <div>
+          <Tools />
+          <Options />
+        </div>
+      : null}
+    </div>
+  );
+};
 
 Canvas.defaultTypes = {
   context: null,
