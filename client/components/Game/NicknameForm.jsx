@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'react-emotion';
 
@@ -61,8 +60,4 @@ NicknameForm.propTypes = {
   onJoinGame: PropTypes.func.isRequired,
 };
 
-export default connect(
-  ({ game }) => ({
-    isAdmin: game.isAdmin,
-  }),
-)(NicknameForm);
+export default NicknameForm;
