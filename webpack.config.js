@@ -2,10 +2,14 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  entry: [
+    '@babel/polyfill',
+    './client/index.jsx',
+  ],
   module: {
     rules: [
       {
-        test: /\.jsx$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
