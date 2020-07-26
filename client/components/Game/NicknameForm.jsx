@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'react-emotion';
 
@@ -10,50 +10,37 @@ const Container = styled(Centered)`
   text-align: center;
 `;
 
-class NicknameForm extends PureComponent {
-  constructor(props) {
-    super(props);
+const NicknameForm = (props) => {
+  const { addNotification, onJoinGame } = props;
 
-    this.state = {
-      nickname: '',
-    };
+  const [nickname, setNickname] = useState('');
 
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.joinGame = this.joinGame.bind(this);
-    this.setNickname = this.setNickname.bind(this);
-  }
-
-  setNickname({ target }) {
-    this.setState({ nickname: target.value });
-  }
-
-  handleKeyPress(event) {
+  const handleChangeNickname = event => setNickname(event.target.value);
+  const handleInputKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.joinGame();
     }
-  }
-
-  joinGame() {
-    const { nickname } = this.state;
-    const { addNotification, onJoinGame } = this.props;
-
+  };
+  const handleJoinGame = () => {
     if (!nickname) {
       return addNotification({ message: 'Please enter a nickname', level: 'error' });
     }
-
     return onJoinGame(nickname);
-  }
+  };
 
-  render() {
-    return (
-      <Container>
-        <h2>Enter A Nickname</h2>
-        <Input onChange={this.setNickname} onKeyPress={this.handleKeyPress} placeholder="Nickname" type="text" />
-        <Button onClick={this.joinGame}>Join!</Button>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container>
+      <h2>Enter A Nickname</h2>
+      <Input
+        onChange={handleChangeNickname}
+        onKeyPress={handleInputKeyPress}
+        placeholder="Nickname"
+        type="text"
+      />
+      <Button onClick={handleJoinGame}>Join!</Button>
+    </Container>
+  );
+};
 
 NicknameForm.propTypes = {
   addNotification: PropTypes.func.isRequired,
