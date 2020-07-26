@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> matches snapshot 1`] = `
+<div>
+  <div
+    class="css-1kwl4wt"
+  >
+    <div
+      class="css-17ijup6"
+    >
+      <h1>
+        Draw It!
+      </h1>
+      <div>
+        <input
+          class="css-112ujqv"
+          placeholder="Join code"
+          type="text"
+        />
+        <button
+          class="css-hk4u7l"
+        >
+          Play!
+        </button>
+      </div>
+      <span>
+        or
+      </span>
+      <div
+        class="css-hl79y"
+      >
+        <button
+          class="css-9c6b8o"
+          color="primary"
+        >
+          <a
+            href="/create_game"
+          >
+            Create a game
+          </a>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
