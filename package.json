@@ -21,22 +21,17 @@
   "scripts": {
     "start": "npm run dev",
     "test": "jest client/",
-    "dev": "webpack-dev-server --mode development --open --hot --history-api-fallback ./client/index.jsx --output public/main.js",
+    "dev": "webpack-dev-server --mode development --open --hot --history-api-fallback --output public/main.js",
     "build": "webpack --mode production ./client/index.jsx --output ./server/apps/draw_it_web/priv/static/main.min.js"
   },
-  "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/client/setupTests.js"
-  },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
+    "@babel/core": "^7.0.0",
+    "@babel/polyfill": "^7.10.4",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@testing-library/react": "^10.4.7",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "^8.0.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.12.0",
