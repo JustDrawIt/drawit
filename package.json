@@ -18,6 +18,9 @@
   "engines": {
     "node": "^10"
   },
+  "jest": {
+    "setupFiles": ["./client/setupJest.js"]
+  },
   "scripts": {
     "start": "npm run dev",
     "test": "jest client/",
