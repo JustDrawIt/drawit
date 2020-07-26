@@ -1,45 +1,38 @@
-import React, { PureComponent } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-class CountDown extends PureComponent {
-  constructor(props) {
-    super(props);
+const CountDown = (props) => {
+  const { date } = props;
 
-    this.state = {
-      minutes: props.date.getMinutes(),
-      seconds: props.date.getSeconds(),
-    };
+  const [minutes, setMinutes] = useState(date.getMinutes());
+  const [seconds, setSeconds] = useState(date.getSeconds());
 
-    this.interval = null;
-  }
-
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      const { minutes, seconds } = this.state;
-
-      if (seconds - 1 < 0) {
-        if (minutes - 1 < 0) {
-          clearInterval(this.interval);
-        } else {
-          this.setState({ minutes: minutes - 1, seconds: 59 });
-        }
+  const interval = useRef(null);
+  const handleTick = () => {
+    if (seconds - 1 < 0) {
+      if (minutes - 1 < 0) {
+        clearInterval(interval.current);
       } else {
-        this.setState({ seconds: seconds - 1 });
+        setMinutes(currMinutes => currMinutes - 1);
+        setSeconds(59);
       }
-    }, 1000);
-  }
+    } else {
+      setSeconds(currSeconds => currSeconds - 1);
+    }
+  };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+  useEffect(() => {
+    interval.current = setInterval(handleTick, 1000);
 
-  render() {
-    const { minutes, seconds } = this.state;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+    return () => {
+      clearInterval(interval.current);
+    };
+  }, []);
 
-    return <div>{minutes}:{formattedSeconds}</div>;
-  }
-}
+  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  return <div>{minutes}:{formattedSeconds}</div>;
+};
 
 CountDown.propTypes = {
   date: PropTypes.object.isRequired,
