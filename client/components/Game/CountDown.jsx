@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 const CountDown = (props) => {
@@ -8,7 +8,7 @@ const CountDown = (props) => {
   const [seconds, setSeconds] = useState(date.getSeconds());
 
   const interval = useRef(null);
-  const handleTick = () => {
+  const handleTick = useCallback(() => {
     if (seconds - 1 < 0) {
       if (minutes - 1 < 0) {
         clearInterval(interval.current);
@@ -19,7 +19,7 @@ const CountDown = (props) => {
     } else {
       setSeconds(currSeconds => currSeconds - 1);
     }
-  };
+  }, [minutes, seconds]);
 
   useEffect(() => {
     interval.current = setInterval(handleTick, 1000);
