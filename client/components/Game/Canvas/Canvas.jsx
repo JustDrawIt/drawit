@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import SketchPad from './SketchPad';
 import Tools from './tools/Tools';
@@ -10,22 +10,22 @@ import { addItemAction, clearItemsAction } from '../../../store/actions/game.act
 const Canvas = (props) => {
   const {
     channel,
-    context,
     dispatchClearItems,
     dispatchItem,
     drawing: isDrawing,
   } = props;
+  const context = useSelector(state => state.game.canvas.context);
 
   const handleDraw = (payload) => {
     const { drawings: [drawing] } = payload;
     dispatchItem(drawing);
   };
-  const handleClearDrawings = () => {
+  const handleClearDrawings = useCallback(() => {
     if (context) {
       ClearTool.clear(context);
       dispatchClearItems();
     }
-  };
+  }, [context]);
 
   const channelEventRefs = useRef({
     draw: null,
@@ -43,7 +43,7 @@ const Canvas = (props) => {
       channel.off('clear_drawings', channelEventRefs.current.clearDrawings);
       channel.off('start_round', channelEventRefs.current.startRound);
     };
-  }, []);
+  }, [channel, channelEventRefs, handleDraw, handleClearDrawings]);
 
   return (
     <div>
@@ -65,7 +65,6 @@ Canvas.defaultTypes = {
 Canvas.propTypes = {
   channel: PropTypes.object.isRequired,
   drawing: PropTypes.bool.isRequired,
-  context: PropTypes.object,
   dispatchItem: PropTypes.func.isRequired,
   dispatchClearItems: PropTypes.func.isRequired,
 };
@@ -73,7 +72,6 @@ Canvas.propTypes = {
 export default connect(
   ({ game }) => ({
     channel: game.channel,
-    context: game.canvas.context,
   }),
   dispatch => ({
     dispatchItem: addItemAction(dispatch),

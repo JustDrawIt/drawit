@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setContextAction, setToolAction, addItemAction } from '../../../store/actions/game.actions';
+import { setContextAction, setToolAction, addItemAction, clearItemsAction } from '../../../store/actions/game.actions';
 import { DEFAULT_TOOL } from './defaults';
 import tools from './tools';
 import { BorderStyles } from '../../../styles';
+import ClearTool from './tools/Clear/ClearTool';
 
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
@@ -25,8 +26,9 @@ const SketchPad = (props) => {
     channel,
     options,
     dispatchContext,
-    dispatchItem,
     dispatchTool,
+    dispatchItem,
+    dispatchClearItems,
     disabled: isDisabled,
   } = props;
 
@@ -38,6 +40,9 @@ const SketchPad = (props) => {
 
     dispatchContext(context);
     dispatchTool(initialTool);
+    dispatchClearItems();
+
+    ClearTool.clear(context);
   }, [canvas]);
 
   useEffect(() => {
@@ -106,6 +111,7 @@ SketchPad.propTypes = {
   dispatchContext: PropTypes.func.isRequired,
   dispatchTool: PropTypes.func.isRequired,
   dispatchItem: PropTypes.func.isRequired,
+  dispatchClearItems: PropTypes.func.isRequired,
 };
 
 export default connect(
@@ -119,5 +125,6 @@ export default connect(
     dispatchContext: setContextAction(dispatch),
     dispatchTool: setToolAction(dispatch),
     dispatchItem: addItemAction(dispatch),
+    dispatchClearItems: clearItemsAction(dispatch),
   }),
 )(SketchPad);
