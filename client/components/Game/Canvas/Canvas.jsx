@@ -21,8 +21,10 @@ const Canvas = (props) => {
     dispatchItem(drawing);
   };
   const handleClearDrawings = () => {
-    ClearTool.clear(context);
-    dispatchClearItems();
+    if (context) {
+      ClearTool.clear(context);
+      dispatchClearItems();
+    }
   };
 
   const channelEventRefs = useRef({
