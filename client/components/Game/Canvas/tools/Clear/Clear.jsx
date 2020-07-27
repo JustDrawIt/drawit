@@ -1,52 +1,37 @@
-import React, { PureComponent } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import ClearTool from './ClearTool';
 import ToolButton from '../../../../Utils/ToolButton';
 import { clearItemsAction } from '../../../../../store/actions/game.actions';
 
-class Clear extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-  }
+const Clear = (props) => {
+  const { dispatchClearItems } = props;
 
-  onClick() {
-    const { context, dispatchClearItems, channel } = this.props;
+  const channel = useSelector(state => state.game.channel);
+  const context = useSelector(state => state.game.canvas.context);
 
+  const handleClick = useCallback(() => {
     if (context) {
       ClearTool.clear(context);
       channel.push('clear_drawings');
       dispatchClearItems();
     }
-  }
+  }, [context, channel, dispatchClearItems]);
 
-  render() {
-    return (
-      <ToolButton onClick={this.onClick}>
-        <i className="fas fa-trash-alt" />
-      </ToolButton>
-    );
-  }
-}
-
-Clear.defaultProps = {
-  context: null,
+  return (
+    <ToolButton onClick={handleClick}>
+      <i className="fas fa-trash-alt" />
+    </ToolButton>
+  );
 };
 
 Clear.propTypes = {
-  channel: PropTypes.object,
-  context: PropTypes.object,
-  joinCode: PropTypes.string.isRequired,
   dispatchClearItems: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({ game }) => ({
-    channel: game.channel,
-    context: game.canvas.context,
-    joinCode: game.joinCode,
-  }),
+  null,
   dispatch => ({
     dispatchClearItems: clearItemsAction(dispatch),
   }),
