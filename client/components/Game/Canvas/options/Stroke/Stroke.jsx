@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { css } from 'react-emotion';
 import ToolButton from '../../../../Utils/ToolButton';
 import FullInput from '../../../../Utils/FullInput';
@@ -14,63 +14,46 @@ const MIN_SIZE = 2;
 const MAX_SIZE = 18;
 const STEP = 2;
 
-class StrokeOption extends PureComponent {
-  constructor(props) {
-    super(props);
+const StrokeOption = (props) => {
+  const { dispatchSize, dispatchStrokeColor } = props;
 
-    this.changeSize = this.changeSize.bind(this);
-    this.changeColor = this.changeColor.bind(this);
-  }
+  const size = useSelector(state => state.game.canvas.options.size);
+  const strokeColor = useSelector(state => state.game.canvas.options.strokeColor);
 
-  changeSize(event) {
-    const { dispatchSize } = this.props;
-    const { value } = event.target;
-    const size = Number(value);
+  const handleChangeSize = useCallback((event) => {
+    const newSize = Number.parseInt(event.target.value, 10);
+    dispatchSize(newSize);
+  }, [dispatchSize]);
 
-    dispatchSize(size);
-  }
+  const handleChangeColor = useCallback((event) => {
+    dispatchStrokeColor(event.target.value);
+  }, [dispatchStrokeColor]);
 
-  changeColor(event) {
-    const { dispatchStrokeColor } = this.props;
-    const { value } = event.target;
-
-    dispatchStrokeColor(value);
-  }
-
-  render() {
-    const { size, strokeColor } = this.props;
-
-    return (
-      <div>
-        <ToolButton color={strokeColor} activeColor={strokeColor} className={relativeStyle}>
-          <i className="fas fa-tint" />
-          <FullInput onChange={this.changeColor} type="color" />
-        </ToolButton>
-        <input
-          onChange={this.changeSize}
-          value={size}
-          step={STEP}
-          min={MIN_SIZE}
-          max={MAX_SIZE}
-          type="range"
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <ToolButton color={strokeColor} activeColor={strokeColor} className={relativeStyle}>
+        <i className="fas fa-tint" />
+        <FullInput onChange={handleChangeColor} type="color" />
+      </ToolButton>
+      <input
+        onChange={handleChangeSize}
+        value={size}
+        step={STEP}
+        min={MIN_SIZE}
+        max={MAX_SIZE}
+        type="range"
+      />
+    </div>
+  );
+};
 
 StrokeOption.propTypes = {
-  size: PropTypes.number.isRequired,
-  strokeColor: PropTypes.string.isRequired,
   dispatchSize: PropTypes.func.isRequired,
   dispatchStrokeColor: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({ game }) => ({
-    size: game.canvas.options.size,
-    strokeColor: game.canvas.options.strokeColor,
-  }),
+  null,
   dispatch => ({
     dispatchSize: setSizeAction(dispatch),
     dispatchStrokeColor: setStrokeColorAction(dispatch),
