@@ -10,12 +10,6 @@ const JoinGame = (props) => {
   const [joinCode, setJoinCode] = useState('');
   const [error, setError] = useState('');
 
-  const handleChangeJoinCode = event => setJoinCode(event.target.value);
-  const handleInputKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleJoin();
-    }
-  };
   const handleJoin = () => {
     if (joinCode.length < 7) {
       return setError('Join code must be at least 7 chars long.');
@@ -27,6 +21,13 @@ const JoinGame = (props) => {
         : setError('There are no games with that join code!')
       ))
       .catch(() => setError('There are no games with that join code!'));
+  };
+
+  const handleChangeJoinCode = event => setJoinCode(event.target.value);
+  const handleInputKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleJoin();
+    }
   };
 
   return (

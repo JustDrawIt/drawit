@@ -16,16 +16,16 @@ const Canvas = (props) => {
   } = props;
   const context = useSelector(state => state.game.canvas.context);
 
-  const handleDraw = (payload) => {
+  const handleDraw = useCallback((payload) => {
     const { drawings: [drawing] } = payload;
     dispatchItem(drawing);
-  };
+  }, [dispatchItem]);
   const handleClearDrawings = useCallback(() => {
     if (context) {
       ClearTool.clear(context);
       dispatchClearItems();
     }
-  }, [context]);
+  }, [context, dispatchClearItems]);
 
   const channelEventRefs = useRef({
     draw: null,

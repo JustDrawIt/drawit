@@ -56,7 +56,9 @@ class BaseTool {
     };
   }
 
-  drawShape(position) { }
+  // eslint-disable-next-line class-methods-use-this
+  drawShape(_position) { }
+
   drawItem(item) {
     this.setItem(item);
     this.setOptions(item.options);
