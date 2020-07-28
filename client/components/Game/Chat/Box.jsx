@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { connect } from "react-redux";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import ChatMessage from './Message';
 import {
@@ -10,136 +10,103 @@ import {
   MessageButton,
 } from './styles';
 
-const Window = React.forwardRef((props, ref) => (
-  <div ref={ref} className={WindowStyles}>{props.children}</div>
-));
+const scrollToBottom = element => element.scrollTo(0, element.scrollHeight);
 
-class ChatBox extends PureComponent {
-  constructor(props) {
-    super(props);
+const ChatBox = (props) => {
+  const { nickname, canGuess, addNotification } = props;
 
-    this.state = {
-      messages: [],
-      newMessage: '',
-    };
+  const channel = useSelector(state => state.game.channel);
 
-    this.chatWindowRef = React.createRef();
-    this.setMessage = this.setMessage.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
-    this.onKeyPress = this.onKeyPress.bind(this);
-    this.onGameJoined = this.onGameJoined.bind(this);
-    this.onRoundIncorrectGuess = this.onRoundIncorrectGuess.bind(this);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
-    this.channelEventRefs = {};
-  }
+  const pushMessage = message => setMessages(currentMessages => [
+    ...currentMessages,
+    message,
+  ]);
 
-  componentDidMount() {
-    const { nickname, channel } = this.props;
+  const chatWindow = useRef(null);
+  const channelEventRefs = useRef({
+    newMessage: null,
+  });
 
-    this.onGameJoined({ nickname });
+  const handleNewMessage = ({ text, player }) => pushMessage({
+    message: text,
+    nickname: player && player.nickname,
+  });
 
-    this.channelEventRefs.handleNewMessage = channel.on('new_message', this.onRoundIncorrectGuess);
-  }
+  const handleChangeMessage = event => setNewMessage(event.target.value);
 
-  componentWillUnmount() {
-    const { channel } = this.props;
-
-    channel.off('new_message', this.channelEventRefs.handleNewMessage);
-  }
-
-  onGameJoined({ nickname }) {
-    const joinedMessage = `${nickname} joined the game`;
-    this.addMessage({ message: joinedMessage, nickname: null });
-  }
-
-  onRoundIncorrectGuess({ text, player }) {
-    this.addMessage({
-      message: text,
-      nickname: player && player.nickname,
-    });
-  }
-
-  onKeyPress({ key }) {
-    if (key === 'Enter') {
-      this.sendMessage();
-    }
-  }
-
-  setMessage({ target }) {
-    this.setState({ newMessage: target.value });
-  }
-
-  scrollChatWindowToBottom() {
-    const chatWindow = this.chatWindowRef.current;
-    chatWindow.scrollTo(0, chatWindow.scrollHeight);
-  }
-
-  addMessage(message) {
-    this.setState(
-      { messages: [...this.state.messages, message] },
-      () => this.scrollChatWindowToBottom(),
-    );
-  }
-
-  sendMessage() {
-    const { channel } = this.props;
-    const { newMessage } = this.state;
-
+  const handleSendMessage = useCallback(() => {
     if (!newMessage) {
-      this.props.addNotification({
+      return addNotification({
         message: 'Please enter a message',
         level: 'error',
         autoDismiss: 2,
       });
-    } else {
-      this.setState({ newMessage: '' });
-      channel.push('new_message', { text: newMessage }, 10000);
     }
-  }
 
-  render() {
-    const { messages, newMessage } = this.state;
-    const { canGuess } = this.props;
+    setNewMessage('');
+    channel.push('new_message', { text: newMessage }, 10000);
+  }, [newMessage, addNotification, channel]);
 
-    return (
-      <Container>
-        <Window ref={this.chatWindowRef}>
-          {messages.map((message, index) => (
-            <ChatMessage
-              key={index}
-              nickname={message.nickname}
-              message={message.message}
-            />
-          ))}
-        </Window>
-        <EnterMessage>
-          <MessageInput
-            onChange={this.setMessage}
-            onKeyPress={this.onKeyPress}
-            value={newMessage}
-            disabled={!canGuess}
-            placeholder="Make a guess"
-            type="text"
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  useEffect(() => {
+    pushMessage({
+      message: `${nickname} joined the game`,
+      nickname: null,
+    });
+
+    channelEventRefs.current.newMessage = channel.on('new_message', handleNewMessage);
+
+    return () => {
+      channel.off('new_message', channelEventRefs.current.newMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (chatWindow.current) {
+      scrollToBottom(chatWindow.current);
+    }
+  }, [messages, chatWindow]);
+
+  return (
+    <Container>
+      <div ref={chatWindow} className={WindowStyles}>
+        {messages.map((message, index) => (
+          <ChatMessage
+            key={index}
+            nickname={message.nickname}
+            message={message.message}
           />
-          <MessageButton onClick={this.sendMessage} disabled={!canGuess}>
-            <i className="far fa-paper-plane" />
-          </MessageButton>
-        </EnterMessage>
-      </Container>
-    );
-  }
-}
+        ))}
+      </div>
+      <EnterMessage>
+        <MessageInput
+          onChange={handleChangeMessage}
+          onKeyPress={handleKeyPress}
+          value={newMessage}
+          disabled={!canGuess}
+          placeholder="Make a guess"
+          type="text"
+        />
+        <MessageButton onClick={handleSendMessage} disabled={!canGuess}>
+          <i className="far fa-paper-plane" />
+        </MessageButton>
+      </EnterMessage>
+    </Container>
+  );
+};
 
 ChatBox.propTypes = {
-  channel: PropTypes.object.isRequired,
   canGuess: PropTypes.bool.isRequired,
   nickname: PropTypes.string.isRequired,
-  joinCode: PropTypes.string.isRequired,
   addNotification: PropTypes.func.isRequired,
 };
 
-export default connect(
-  ({ game }) => ({
-    channel: game.channel,
-  }),
-)(ChatBox);
+export default ChatBox;
