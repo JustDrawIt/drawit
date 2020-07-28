@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import NotificationSystem from 'react-notification-system';
 import styled from 'react-emotion';
 
@@ -36,14 +36,13 @@ const Game = styled(Flex)`
 
 const ScreenGame = (props) => {
   const {
-    match,
     dispatchChannel,
     dispatchGame,
     dispatchNickname,
     dispatchSetCurrentRound,
   } = props;
 
-  const { joinCode } = match.params;
+  const { joinCode } = useParams();
 
   const channel = useSelector(state => state.game.channel);
   const nickname = useSelector(state => state.game.nickname);
@@ -240,7 +239,6 @@ const ScreenGame = (props) => {
 };
 
 ScreenGame.propTypes = {
-  match: ReactRouterPropTypes.match.isRequired,
   dispatchJoinCode: PropTypes.func.isRequired,
   dispatchGame: PropTypes.func.isRequired,
   dispatchNickname: PropTypes.func.isRequired,

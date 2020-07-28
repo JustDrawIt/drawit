@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import ReactRouterPropTypes from 'react-router-prop-types';
+import { useHistory } from 'react-router-dom';
 import axios from '../../axios';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
 
-const JoinGame = (props) => {
-  const { history } = props;
+const JoinGame = (_props) => {
+  const history = useHistory();
 
   const [joinCode, setJoinCode] = useState('');
   const [error, setError] = useState('');
@@ -45,7 +45,6 @@ const JoinGame = (props) => {
 };
 
 JoinGame.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
 };
 
 export default JoinGame;
