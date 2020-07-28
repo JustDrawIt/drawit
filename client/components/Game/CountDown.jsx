@@ -1,45 +1,13 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { useCountDown } from '../../hooks/useCountDown';
 
-class CountDown extends PureComponent {
-  constructor(props) {
-    super(props);
+const CountDown = (props) => {
+  const { date } = props;
+  const { formattedTime } = useCountDown(date);
 
-    this.state = {
-      minutes: props.date.getMinutes(),
-      seconds: props.date.getSeconds(),
-    };
-
-    this.interval = null;
-  }
-
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      const { minutes, seconds } = this.state;
-
-      if (seconds - 1 < 0) {
-        if (minutes - 1 < 0) {
-          clearInterval(this.interval);
-        } else {
-          this.setState({ minutes: minutes - 1, seconds: 59 });
-        }
-      } else {
-        this.setState({ seconds: seconds - 1 });
-      }
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  render() {
-    const { minutes, seconds } = this.state;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    return <div>{minutes}:{formattedSeconds}</div>;
-  }
-}
+  return <React.Fragment>{formattedTime}</React.Fragment>;
+};
 
 CountDown.propTypes = {
   date: PropTypes.object.isRequired,

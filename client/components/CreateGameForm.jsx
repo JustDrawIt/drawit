@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { connect } from 'react-redux';
@@ -25,49 +25,16 @@ const Container = styled('div')`
   }
 `;
 
-class CreateGameForm extends PureComponent {
-  constructor(props) {
-    super(props);
+const CreateGameForm = (props) => {
+  const { dispatchGame, dispatchIsAdmin, history } = props;
 
-    this.state = {
-      loggedIn: false,
-      maxPlayers: 5,
-      maxRounds: 5,
-      error: null,
-    };
+  const [maxPlayers, setMaxPlayers] = useState(5);
+  const [maxRounds, setMaxRounds] = useState(5);
+  const [error, setError] = useState(null);
 
-    this.setMaxPlayers = this.setMaxPlayers.bind(this);
-    this.setMaxRounds = this.setMaxRounds.bind(this);
-    this.createGame = this.createGame.bind(this);
-  }
-
-  componentDidMount() {
-    // const { history } = this.props;
-
-    // axios.get('/auth')
-    //   .then((response) => {
-    //     const { user } = response.data;
-
-    //     if (!user) {
-    //       history.push('/login');
-    //     } else {
-    //       this.setState({ loggedIn: !!user });
-    //     }
-    //   })
-    //   .catch(() => history.push('/login'));
-  }
-
-  setMaxPlayers({ target }) {
-    this.setState({ maxPlayers: target.value });
-  }
-
-  setMaxRounds({ target }) {
-    this.setState({ maxRounds: target.value });
-  }
-
-  createGame() {
-    const { maxPlayers, maxRounds } = this.state;
-    const { dispatchGame, dispatchIsAdmin } = this.props;
+  const handleChangeMaxPlayers = event => setMaxPlayers(event.target.value);
+  const handleChangeMaxRounds = event => setMaxRounds(event.target.value);
+  const handleCreateGame = () => {
     const newGamePayload = {
       game: {
         max_players: maxPlayers,
@@ -82,40 +49,34 @@ class CreateGameForm extends PureComponent {
         dispatchGame(game);
         dispatchIsAdmin(true);
 
-        this.props.history.push(`/games/${game.joinCode}`);
+        history.push(`/games/${game.joinCode}`);
       })
       .catch(({ response }) => {
-        const { error } = response.data;
-        this.setState({ error });
+        setError(response.data.error);
       });
-  }
+  };
 
-  render() {
-    const { loggedIn, error } = this.state;
-    const { maxPlayers, maxRounds } = this.state;
-
-    return (
-      <Container>
-        <div>
-          <label htmlFor="max-rounds">
-            <span>Max Rounds</span>
-            <Input onChange={this.setMaxRounds} value={maxRounds} id="max-rounds" type="number" />
-          </label>
-        </div>
-        <div>
-          <label htmlFor="max-players">
-            <span>Max Players</span>
-            <Input onChange={this.setMaxPlayers} value={maxPlayers} id="max-players" type="number" />
-          </label>
-        </div>
-        <div>
-          <Button onClick={this.createGame}>Go!</Button>
-        </div>
-        {error ? <p>{error}</p> : null}
-      </Container>
-    );
-  }
-}
+  return (
+    <Container>
+      <div>
+        <label htmlFor="max-rounds">
+          <span>Max Rounds</span>
+          <Input onChange={handleChangeMaxRounds} value={maxRounds} id="max-rounds" type="number" />
+        </label>
+      </div>
+      <div>
+        <label htmlFor="max-players">
+          <span>Max Players</span>
+          <Input onChange={handleChangeMaxPlayers} value={maxPlayers} id="max-players" type="number" />
+        </label>
+      </div>
+      <div>
+        <Button onClick={handleCreateGame}>Go!</Button>
+      </div>
+      {error ? <p>{error}</p> : null}
+    </Container>
+  );
+};
 
 CreateGameForm.propTypes = {
   history: ReactRouterPropTypes.history.isRequired,

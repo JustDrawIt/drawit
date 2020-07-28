@@ -26,6 +26,7 @@
   "scripts": {
     "start": "npm run dev",
     "test": "jest client/",
+    "lint": "eslint client/**/*.js*",
     "dev": "webpack-dev-server --mode development --open --hot --history-api-fallback --output public/main.js",
     "build": "webpack --mode production ./client/index.jsx --output ./server/apps/draw_it_web/priv/static/main.min.js"
   },
@@ -43,6 +44,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.8.2",
+    "eslint-plugin-react-hooks": "^4.0.8",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^26.0.1",
@@ -61,7 +63,7 @@
     "react-dom": "^16.13.1",
     "react-emotion": "^9.1.3",
     "react-notification-system": "^0.2.17",
-    "react-redux": "^5.0.7",
+    "react-redux": "^7.2.1",
     "react-router-dom": "^4.2.2",
     "react-router-prop-types": "^1.0.3",
     "recompose": "^0.27.1",

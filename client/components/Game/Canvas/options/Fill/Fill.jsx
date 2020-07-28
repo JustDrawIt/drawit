@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { css } from 'react-emotion';
 import ToolButton from '../../../../Utils/ToolButton';
 import FullInput from '../../../../Utils/FullInput';
@@ -10,57 +10,43 @@ const relativeStyle = css`
   position: relative;
 `;
 
-class FillOption extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.onClick = this.onClick.bind(this);
-    this.setFillColor = this.setFillColor.bind(this);
-  }
+const FillOption = (props) => {
+  const { dispatchFill, dispatchFillColor } = props;
+  const fill = useSelector(state => state.game.canvas.options.fill);
+  const fillColor = useSelector(state => state.game.canvas.options.fillColor);
 
-  onClick() {
-    const { fill, dispatchFill } = this.props;
+  const handleToggleFill = useCallback(
+    () => dispatchFill(!fill),
+    [dispatchFill, fill],
+  );
 
-    dispatchFill(!fill);
-  }
+  const handleChangeFillColor = useCallback(
+    event => dispatchFillColor(event.target.value),
+    [dispatchFillColor],
+  );
 
-  setFillColor({ target }) {
-    const { dispatchFillColor } = this.props;
-    const { value } = target;
-
-    dispatchFillColor(value);
-  }
-
-  render() {
-    const { fill, fillColor } = this.props;
-
-    return (
-      <div>
-        <ToolButton onClick={this.onClick} active={fill} className={relativeStyle}>
+  return (
+    <div>
+      <ToolButton onClick={handleToggleFill} active={fill} className={relativeStyle}>
+        <i className="fas fa-adjust" />
+      </ToolButton>
+      {fill ? (
+        <ToolButton color={fillColor} className={relativeStyle}>
           <i className="fas fa-adjust" />
+          <FullInput type="color" onChange={handleChangeFillColor} />
         </ToolButton>
-        {fill ? (
-          <ToolButton color={fillColor} className={relativeStyle}>
-            <i className="fas fa-adjust" />
-            <FullInput type="color" onChange={this.setFillColor} />
-          </ToolButton>
-        ) : null}
-      </div>
-    );
-  }
-}
+      ) : null}
+    </div>
+  );
+};
 
 FillOption.propTypes = {
-  fill: PropTypes.bool.isRequired,
-  fillColor: PropTypes.string.isRequired,
   dispatchFill: PropTypes.func.isRequired,
   dispatchFillColor: PropTypes.func.isRequired,
 };
 
 export default connect(
-  ({ game }) => ({
-    fill: game.canvas.options.fill,
-    fillColor: game.canvas.options.fillColor,
-  }),
+  null,
   dispatch => ({
     dispatchFill: setFillAction(dispatch),
     dispatchFillColor: setFillColorAction(dispatch),
