@@ -1,17 +1,15 @@
 import React from 'react';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import CreateGameForm from '../components/CreateGameForm';
 import Container from '../components/Utils/Centered';
 
-const ScreenCreateGame = ({ history }) => (
+const ScreenCreateGame = _props => (
   <Container>
     <h1>Create Game</h1>
-    <CreateGameForm history={history} />
+    <CreateGameForm />
   </Container>
 );
 
 ScreenCreateGame.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
 };
 
 export default ScreenCreateGame;

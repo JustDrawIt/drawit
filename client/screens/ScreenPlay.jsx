@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'react-emotion';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import JoinGame from '../components/Play/Join';
 import CreateGame from '../components/Play/CreateGame';
 import Centered from '../components/Utils/Centered';
@@ -27,11 +26,11 @@ const Container = styled(Centered)`
   }
 `;
 
-const ScreenPlay = ({ history }) => (
+const ScreenPlay = _props => (
   <Background>
     <Container>
       <h1>Draw It!</h1>
-      <JoinGame history={history} />
+      <JoinGame />
       <span>or</span>
       <CreateGame />
     </Container>
@@ -39,7 +38,6 @@ const ScreenPlay = ({ history }) => (
 );
 
 ScreenPlay.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
 };
 
 export default ScreenPlay;

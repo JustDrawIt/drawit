@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactRouterPropTypes from 'react-router-prop-types';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styled from 'react-emotion';
 import axios from '../axios';
 import Button from './Utils/Button';
@@ -26,7 +26,9 @@ const Container = styled('div')`
 `;
 
 const CreateGameForm = (props) => {
-  const { dispatchGame, dispatchIsAdmin, history } = props;
+  const { dispatchGame, dispatchIsAdmin } = props;
+
+  const history = useHistory();
 
   const [maxPlayers, setMaxPlayers] = useState(5);
   const [maxRounds, setMaxRounds] = useState(5);
@@ -79,7 +81,6 @@ const CreateGameForm = (props) => {
 };
 
 CreateGameForm.propTypes = {
-  history: ReactRouterPropTypes.history.isRequired,
   dispatchGame: PropTypes.func.isRequired,
   dispatchIsAdmin: PropTypes.func.isRequired,
 };
