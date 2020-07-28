@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 import JoinGame from '../components/Play/Join';
 import CreateGame from '../components/Play/CreateGame';
 import Centered from '../components/Utils/Centered';

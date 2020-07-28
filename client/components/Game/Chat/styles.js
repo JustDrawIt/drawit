@@ -1,4 +1,5 @@
-import styled, { css } from 'react-emotion';
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 import { BorderStyles } from '../../../styles';
 import Input from '../../Utils/Input';
 import Button from '../../Utils/Button';

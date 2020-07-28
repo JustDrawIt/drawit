@@ -1,14 +1,10 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { css } from 'react-emotion';
+import styled from '@emotion/styled';
 import ToolButton from '../../../../Utils/ToolButton';
 import FullInput from '../../../../Utils/FullInput';
 import { setFillAction, setFillColorAction } from '../../../../../store/actions/game.actions';
-
-const relativeStyle = css`
-  position: relative;
-`;
 
 const FillOption = (props) => {
   const { dispatchFill, dispatchFillColor } = props;
@@ -27,11 +23,11 @@ const FillOption = (props) => {
 
   return (
     <div>
-      <ToolButton onClick={handleToggleFill} active={fill} className={relativeStyle}>
+      <ToolButton onClick={handleToggleFill} active={fill}>
         <i className="fas fa-adjust" />
       </ToolButton>
       {fill ? (
-        <ToolButton color={fillColor} className={relativeStyle}>
+        <ToolButton color={fillColor}>
           <i className="fas fa-adjust" />
           <FullInput type="color" onChange={handleChangeFillColor} />
         </ToolButton>

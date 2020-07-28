@@ -86,7 +86,7 @@ const SketchPad = (props) => {
   return (
     <canvas
       ref={canvas}
-      className={BorderStyles}
+      css={BorderStyles}
       width={CANVAS_WIDTH}
       height={CANVAS_HEIGHT}
       onMouseDown={handleMouseDown}

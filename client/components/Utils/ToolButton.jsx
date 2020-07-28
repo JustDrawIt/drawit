@@ -1,4 +1,5 @@
-import styled, { css } from 'react-emotion';
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 import withProps from 'recompose/withProps';
 import Button from './Button';
 
@@ -8,6 +9,7 @@ const activeToolButtonStyles = (activeColor = '#f8f8f8') => css`
 `;
 
 const ToolButton = withProps({ circle: true })(styled(Button)`
+  position: relative;
   transition: background 300ms ease-in-out, color 300ms ease-in-out;
   width: 50px;
   height: 50px;

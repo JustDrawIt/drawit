@@ -1,4 +1,5 @@
-import { injectGlobal, css } from 'react-emotion';
+import { injectGlobal } from 'emotion';
+import { css } from '@emotion/core';
 
 export const injectGlobalStyles = () => injectGlobal`
   html, body, #app {
