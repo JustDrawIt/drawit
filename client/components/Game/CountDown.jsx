@@ -4,7 +4,7 @@ import { useCountDown } from '../../hooks/useCountDown';
 
 const CountDown = (props) => {
   const { date } = props;
-  const { formattedTime } = useCountDown(date, 100);
+  const { formattedTime } = useCountDown(date);
 
   return <React.Fragment>{formattedTime}</React.Fragment>;
 };
