@@ -77,7 +77,7 @@ const ChatBox = (props) => {
 
   return (
     <Container>
-      <div ref={chatWindow} className={WindowStyles}>
+      <div ref={chatWindow} css={WindowStyles}>
         {messages.map((message, index) => (
           <ChatMessage
             key={index}

@@ -31,7 +31,7 @@ const StrokeOption = (props) => {
 
   return (
     <div>
-      <ToolButton color={strokeColor} activeColor={strokeColor} className={relativeStyle}>
+      <ToolButton color={strokeColor} activeColor={strokeColor} css={relativeStyle}>
         <i className="fas fa-tint" />
         <FullInput onChange={handleChangeColor} type="color" />
       </ToolButton>

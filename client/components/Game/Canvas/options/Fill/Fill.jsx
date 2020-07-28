@@ -27,11 +27,11 @@ const FillOption = (props) => {
 
   return (
     <div>
-      <ToolButton onClick={handleToggleFill} active={fill} className={relativeStyle}>
+      <ToolButton onClick={handleToggleFill} active={fill} css={relativeStyle}>
         <i className="fas fa-adjust" />
       </ToolButton>
       {fill ? (
-        <ToolButton color={fillColor} className={relativeStyle}>
+        <ToolButton color={fillColor} css={relativeStyle}>
           <i className="fas fa-adjust" />
           <FullInput type="color" onChange={handleChangeFillColor} />
         </ToolButton>
