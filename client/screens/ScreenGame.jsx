@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import NotificationSystem from 'react-notification-system';
@@ -17,7 +17,6 @@ import socket from '../sockets';
 import axios from '../axios';
 import {
   setJoinCodeAction,
-  startAction,
   setGameAction,
   setNicknameAction,
   setChannelAction,
@@ -35,80 +34,103 @@ const Game = styled(Flex)`
   position: relative;
 `;
 
-class ScreenGame extends PureComponent {
-  constructor(props) {
-    super(props);
+const ScreenGame = (props) => {
+  const {
+    match,
+    dispatchChannel,
+    dispatchGame,
+    dispatchNickname,
+    dispatchSetCurrentRound,
+  } = props;
 
-    this.state = {
-      joined: false,
-      endedWord: null,
-      roundEnded: false,
-      gameEnded: false,
-      showScoreBoard: false,
-      currentPlayer: null,
-    };
+  const { joinCode } = match.params;
 
-    this.onGameJoined = this.onGameJoined.bind(this);
-    this.onGameEnd = this.onGameEnd.bind(this);
-    this.handleJoinGame = this.handleJoinGame.bind(this);
-    this.addNotification = this.addNotification.bind(this);
-    this.toggleScoreBoard = this.toggleScoreBoard.bind(this);
-    this.handleStartRound = this.handleStartRound.bind(this);
-    this.handleEndRound = this.handleEndRound.bind(this);
-    this.handleCorrectGuess = this.handleCorrectGuess.bind(this);
-    this.handleChannelError = this.handleChannelError.bind(this);
+  const channel = useSelector(state => state.game.channel);
+  const nickname = useSelector(state => state.game.nickname);
+  const isAdmin = useSelector(state => state.game.isAdmin);
+  const started = useSelector(state => state.game.started);
+  const game = useSelector(state => state.game.game);
+  const currentRound = useSelector(state => state.game.currentRound);
 
-    this.channelEventRefs = {};
-  }
+  const [joined, setJoined] = useState(false);
+  const [endedWord, setEndedWord] = useState(null);
+  const [roundEnded, setRoundEnded] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
+  const [showScoreBoard, setShowScoreBoard] = useState(false);
+  const [guessedCorrectly, setGuessedCorrectly] = useState(false);
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
-  componentDidMount() {
-    const { match, dispatchJoinCode } = this.props;
-    const { joinCode } = match.params;
+  const notificationSystem = useRef();
+  const channelEventRefs = useRef({
+    startRound: null,
+    endRound: null,
+    correctGuess: null,
+  });
 
-    dispatchJoinCode(joinCode);
-  }
-
-  componentWillUnmount() {
-    const { channel } = this.props;
-
-    if (channel) {
-      channel.off('start_round', this.channelEventRefs.startRound);
-      channel.off('end_round', this.channelEventRefs.endRound);
-      channel.off('correct_guess', this.channelEventRefs.correctGuess);
+  const addNotification = (notification) => {
+    if (notificationSystem.current) {
+      notificationSystem.current.addNotification(notification);
     }
-  }
+  };
 
-  onGameJoined({ game, player }) {
+  const handleGameJoined = ({ game, player }) => {
+    setJoined(true);
+    setCurrentPlayer(player);
+
     localStorage.setItem(`game:${game.joinCode}:token`, player.token);
-    this.setState({
-      joined: this.state.joined || player.nickname === this.props.nickname,
-      currentPlayer: player,
-    });
-  }
+  };
 
-  onGameEnd({ word }) {
-    this.setState({
-      guessedCorrectly: false,
-      gameEnded: true,
-      showScoreBoard: true,
-      endedWord: word,
-    });
-  }
+  const handleGameEnd = ({ word }) => {
+    setGameEnded(true);
+    setShowScoreBoard(true);
+    setEndedWord(word);
+    setGuessedCorrectly(false);
+  };
 
-  setRoundEventListeners() {
-    const { channel } = this.props;
+  const handleChannelError = (payload) => {
+    console.error(payload);
 
-    this.channelEventRefs.startRound = channel.on('start_round', this.handleStartRound);
-    this.channelEventRefs.endRound = channel.on('end_round', this.handleEndRound);
-    this.channelEventRefs.correctGuess = channel.on('correct_guess', this.handleCorrectGuess);
-  }
+    let message = 'Something went wrong!';
 
-  async handleJoinGame(nickname) {
+    if (payload === 'nickname_taken') {
+      message = 'Nickname taken.';
+    }
+
+    addNotification({ message, level: 'error' });
+  };
+
+  const handleRoundStart = useCallback((payload) => {
+    const { round } = keysSnakeToCamelCase(payload);
+
+    dispatchSetCurrentRound(round);
+
+    setRoundEnded(false);
+    setEndedWord(null);
+    setShowScoreBoard(false);
+  }, [dispatchSetCurrentRound]);
+
+  const handleRoundEnd = useCallback((payload) => {
+    const { game } = keysSnakeToCamelCase(payload);
+
+    dispatchGame(game);
+    dispatchSetCurrentRound(null);
+
+    setRoundEnded(true);
+    setShowScoreBoard(true);
+    setGuessedCorrectly(false);
+  }, [dispatchGame, dispatchSetCurrentRound]);
+
+  const handleCorrectGuess = () => {
+    setGuessedCorrectly(true);
+  };
+
+  const toggleScoreBoard = () => {
+    setShowScoreBoard(currentlyShowing => !currentlyShowing);
+  };
+
+  const handleJoinGame = async (nickname) => {
     try {
-      const { match, dispatchChannel, dispatchGame, dispatchNickname } = this.props;
-      const { joinCode } = match.params;
-
-      const response = await axios(`/api/games?join_code=${joinCode}`)
+      const response = await axios(`/api/games?join_code=${joinCode}`);
       const game = keysSnakeToCamelCase(response.data.data[0]);
 
       const token = localStorage.getItem(`game:${joinCode}:token`) || undefined;
@@ -118,9 +140,7 @@ class ScreenGame extends PureComponent {
       dispatchGame(game);
       dispatchNickname(nickname);
 
-      this.setRoundEventListeners();
-
-      channel.onError(this.handleChannelError);
+      channel.onError(handleChannelError);
 
       channel
         .join()
@@ -131,161 +151,97 @@ class ScreenGame extends PureComponent {
           const response = await axios(`/api/games?join_code=${joinCode}`);
           const game = keysSnakeToCamelCase(response.data.data[0]);
 
-          this.onGameJoined({
+          handleGameJoined({
             game,
             player,
           });
         }))
         .receive('error', once((error) => {
           channel.leave();
-          this.handleChannelError(error);
+          handleChannelError(error);
         }));
     } catch (error) {
-      this.handleChannelError(error);
+      handleChannelError(error);
     }
-  }
+  };
 
-  handleChannelError(payload) {
-    console.error(payload);
+  useEffect(() => {
+    if (currentRound) {
+      setEndedWord(currentRound.word);
+    }
+  }, [currentRound]);
 
-    let message = 'Something went wrong!';
-
-    if (payload === 'nickname_taken') {
-      message = 'Nickname taken.';
+  useEffect(() => {
+    if (!joined) {
+      return;
     }
 
-    this.addNotification({ message, level: 'error' });
-  }
+    channelEventRefs.current.startRound = channel.on('start_round', handleRoundStart);
+    channelEventRefs.current.endRound = channel.on('end_round', handleRoundEnd);
+    channelEventRefs.current.correctGuess = channel.on('correct_guess', handleCorrectGuess);
 
-  handleStartRound(payload) {
-    const { round } = keysSnakeToCamelCase(payload);
+    const { startRound, endRound, correctGuess } = channelEventRefs.current;
 
-    this.props.dispatchSetCurrentRound(round);
-    this.setState({
-      roundEnded: false,
-      endedWord: null,
-      showScoreBoard: false,
-    });
-  }
+    return () => {
+      if (channel) {
+        channel.off('start_round', startRound);
+        channel.off('end_round', endRound);
+        channel.off('correct_guess', correctGuess);
+      }
+    };
+  }, [joined, channel, handleRoundEnd, handleRoundStart]);
 
-  handleEndRound(payload) {
-    const { game } = keysSnakeToCamelCase(payload);
-    const { currentRound, dispatchSetCurrentRound, dispatchGame } = this.props;
-    const lastWord = currentRound.word;
-
-    dispatchSetCurrentRound(null);
-    dispatchGame(game);
-
-    this.setState({
-      guessedCorrectly: false,
-      roundEnded: true,
-      showScoreBoard: true,
-      endedWord: lastWord,
-    });
-  }
-
-  handleCorrectGuess() {
-    this.setState({
-      guessedCorrectly: true,
-    });
-  }
-
-  toggleScoreBoard() {
-    this.setState({ showScoreBoard: !this.state.showScoreBoard });
-  }
-
-  addNotification(notification) {
-    this.notificationSystem.addNotification(notification);
-  }
-
-  render() {
-    const {
-      match,
-      nickname,
-      isAdmin,
-      started,
-      game,
-      currentRound,
-    } = this.props;
-    const {
-      joined,
-      guessedCorrectly,
-      endedWord,
-      roundEnded,
-      gameEnded,
-      showScoreBoard,
-      currentPlayer,
-    } = this.state;
-    const { joinCode } = match.params;
-    const ended = roundEnded || gameEnded;
-    const isDrawer = !!(currentRound && currentRound.playerDrawer.nickname === nickname);
-    const displayWord = (isDrawer && currentRound && currentRound.word) || (ended && endedWord);
-    const canGuess = !isDrawer && !guessedCorrectly;
-
+  if (!joined) {
     return (
-      <div>
-        {
-          !joined
-          ? (
-            <NicknameForm
-              joinCode={joinCode}
-              onJoinGame={this.handleJoinGame}
-              addNotification={this.addNotification}
-            />
-          )
-          : (
-            <Container>
-              {game && started && !roundEnded ? <CountDown date={new Date(game.roundLengthMs)} /> : null}
-              {started && roundEnded ? <CountDown date={new Date(5000)} /> : null}
-              <TopBar
-                isAdmin={isAdmin}
-                started={started}
-                word={displayWord}
-                joinCode={joinCode}
-                showingScoreBoard={showScoreBoard}
-                toggleScoreBoard={this.toggleScoreBoard}
-              />
-              <Game>
-                {
-                  showScoreBoard
-                  ? (
-                    <ScoreBoard
-                      scores={(game && game.players) || []}
-                      roundEnded={roundEnded}
-                      gameEnded={gameEnded}
-                    />
-                  )
-                  : null
-                }
-                <Canvas drawing={isDrawer} />
-                <ChatBox
-                  canGuess={canGuess}
-                  nickname={nickname}
-                  joinCode={joinCode}
-                  addNotification={this.addNotification}
-                />
-              </Game>
-            </Container>
-          )
-        }
-        <NotificationSystem
-          ref={(notificationSystem) => { this.notificationSystem = notificationSystem; }}
-        />
-      </div>
+      <React.Fragment>
+        <NicknameForm onJoinGame={handleJoinGame} addNotification={addNotification} />
+        <NotificationSystem ref={notificationSystem} />
+      </React.Fragment>
     );
   }
-}
+
+  const ended = roundEnded || gameEnded;
+  const isDrawer = !!(currentRound && currentRound.playerDrawer.nickname === nickname);
+  const displayWord = (isDrawer && currentRound && currentRound.word) || (ended && endedWord);
+  const canGuess = !isDrawer && !guessedCorrectly;
+
+  return (
+    <React.Fragment>
+      <Container>
+        {game && started && !roundEnded ? <CountDown date={new Date(game.roundLengthMs)} /> : null}
+        {started && roundEnded ? <CountDown date={new Date(5000)} /> : null}
+        <TopBar
+          isAdmin={isAdmin}
+          started={started}
+          word={displayWord}
+          joinCode={joinCode}
+          showingScoreBoard={showScoreBoard}
+          toggleScoreBoard={toggleScoreBoard}
+        />
+        <Game>
+          {showScoreBoard && (
+            <ScoreBoard
+              scores={(game && game.players) || []}
+              roundEnded={roundEnded}
+              gameEnded={gameEnded}
+            />
+          )}
+          <Canvas drawing={isDrawer} />
+          <ChatBox
+            canGuess={canGuess}
+            nickname={nickname}
+            addNotification={addNotification}
+          />
+        </Game>
+      </Container>
+      <NotificationSystem ref={notificationSystem} />
+    </React.Fragment>
+  );
+};
 
 ScreenGame.propTypes = {
   match: ReactRouterPropTypes.match.isRequired,
-  channel: PropTypes.object,
-  nickname: PropTypes.string.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
-  started: PropTypes.bool.isRequired,
-  game: PropTypes.object,
-  currentRound: PropTypes.object,
   dispatchJoinCode: PropTypes.func.isRequired,
-  dispatchStart: PropTypes.func.isRequired,
   dispatchGame: PropTypes.func.isRequired,
   dispatchNickname: PropTypes.func.isRequired,
   dispatchChannel: PropTypes.func.isRequired,
@@ -293,17 +249,9 @@ ScreenGame.propTypes = {
 };
 
 export default connect(
-  ({ game }) => ({
-    channel: game.channel,
-    nickname: game.nickname,
-    isAdmin: game.isAdmin,
-    started: game.started,
-    game: game.game,
-    currentRound: game.currentRound,
-  }),
+  null,
   dispatch => ({
     dispatchJoinCode: setJoinCodeAction(dispatch),
-    dispatchStart: startAction(dispatch),
     dispatchGame: setGameAction(dispatch),
     dispatchNickname: setNicknameAction(dispatch),
     dispatchChannel: setChannelAction(dispatch),
