@@ -1,14 +1,9 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { css } from '@emotion/core';
 import ToolButton from '../../../../Utils/ToolButton';
 import FullInput from '../../../../Utils/FullInput';
 import { setSizeAction, setStrokeColorAction } from '../../../../../store/actions/game.actions';
-
-const relativeStyle = css`
-  position: relative;
-`;
 
 const MIN_SIZE = 2;
 const MAX_SIZE = 18;
@@ -31,7 +26,7 @@ const StrokeOption = (props) => {
 
   return (
     <div>
-      <ToolButton color={strokeColor} activeColor={strokeColor} css={relativeStyle}>
+      <ToolButton color={strokeColor} activeColor={strokeColor}>
         <i className="fas fa-tint" />
         <FullInput onChange={handleChangeColor} type="color" />
       </ToolButton>
