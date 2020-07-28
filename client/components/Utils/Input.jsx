@@ -1,4 +1,4 @@
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 import { BorderStyles } from '../../styles';
 
 const width = '180px';

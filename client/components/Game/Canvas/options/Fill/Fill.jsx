@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { css } from 'react-emotion';
+import { css } from '@emotion/core';
 import ToolButton from '../../../../Utils/ToolButton';
 import FullInput from '../../../../Utils/FullInput';
 import { setFillAction, setFillColorAction } from '../../../../../store/actions/game.actions';

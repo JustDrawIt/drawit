@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 import axios from '../axios';
 import Button from './Utils/Button';
 import Input from './Utils/Input';

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import NotificationSystem from 'react-notification-system';
-import styled from 'react-emotion';
+import styled from '@emotion/styled';
 
 import Flex from '../components/Utils/Flex';
 import NicknameForm from '../components/Game/NicknameForm';

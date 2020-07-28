@@ -1,4 +1,5 @@
-import styled, { css } from 'react-emotion';
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
 import withProps from 'recompose/withProps';
 import Button from './Button';
 
