@@ -11,6 +11,6 @@
   </head>
   <body>
     <%= Map.get(assigns, :inner_layout) || render @view_module, @view_template, assigns %>
-    <script src="main.min.js"></script>
+    <script src="/main.min.js"></script>
   </body>
 </html>
