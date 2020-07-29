@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import axios from '../axios';
 import Button from './Utils/Button';
@@ -27,6 +28,8 @@ const Container = styled('div')`
 
 const CreateGameForm = (props) => {
   const { dispatchGame, dispatchIsAdmin } = props;
+
+  const { t } = useTranslation();
 
   const history = useHistory();
 
@@ -54,7 +57,8 @@ const CreateGameForm = (props) => {
         history.push(`/games/${game.joinCode}`);
       })
       .catch(({ response }) => {
-        setError(response.data.error);
+        console.error(response.data.error);
+        setError(t('error.unspecific'));
       });
   };
 
@@ -62,18 +66,18 @@ const CreateGameForm = (props) => {
     <Container>
       <div>
         <label htmlFor="max-rounds">
-          <span>Max Rounds</span>
+          <span>{t('createGame.maxRoundsLabel')}</span>
           <Input onChange={handleChangeMaxRounds} value={maxRounds} id="max-rounds" type="number" />
         </label>
       </div>
       <div>
         <label htmlFor="max-players">
-          <span>Max Players</span>
+          <span>{t('createGame.maxPlayersLabel')}</span>
           <Input onChange={handleChangeMaxPlayers} value={maxPlayers} id="max-players" type="number" />
         </label>
       </div>
       <div>
-        <Button onClick={handleCreateGame}>Go!</Button>
+        <Button onClick={handleCreateGame}>{t('createGame.submit')}</Button>
       </div>
       {error ? <p>{error}</p> : null}
     </Container>

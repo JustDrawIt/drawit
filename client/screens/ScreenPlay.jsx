@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import JoinGame from '../components/Play/Join';
 import CreateGame from '../components/Play/CreateGame';
@@ -26,16 +27,20 @@ const Container = styled(Centered)`
   }
 `;
 
-const ScreenPlay = _props => (
-  <Background>
-    <Container>
-      <h1>Draw It!</h1>
-      <JoinGame />
-      <span>or</span>
-      <CreateGame />
-    </Container>
-  </Background>
-);
+const ScreenPlay = (_props) => {
+  const { t } = useTranslation();
+
+  return (
+    <Background>
+      <Container>
+        <h1>{t('play.title')}</h1>
+        <JoinGame />
+        <span>{t('play.joinOrCreate')}</span>
+        <CreateGame />
+      </Container>
+    </Background>
+  );
+};
 
 ScreenPlay.propTypes = {
 };

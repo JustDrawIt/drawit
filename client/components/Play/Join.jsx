@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from '../../axios';
 import Button from '../Utils/Button';
 import Input from '../Utils/Input';
 
 const JoinGame = (_props) => {
+  const { t } = useTranslation();
+
   const history = useHistory();
 
   const [joinCode, setJoinCode] = useState('');
@@ -12,15 +15,15 @@ const JoinGame = (_props) => {
 
   const handleJoin = () => {
     if (joinCode.length < 7) {
-      return setError('Join code must be at least 7 chars long.');
+      return setError(t('error.joinCodeLength'));
     }
 
     axios.get('/api/games', { params: { join_code: joinCode } })
       .then(response => (response.data.data[0]
         ? history.push(`/games/${joinCode}`)
-        : setError('There are no games with that join code!')
+        : setError(t('error.joinCodeNotFound'))
       ))
-      .catch(() => setError('There are no games with that join code!'));
+      .catch(() => setError(t('error.unspecific')));
   };
 
   const handleChangeJoinCode = event => setJoinCode(event.target.value);
@@ -35,10 +38,10 @@ const JoinGame = (_props) => {
       <Input
         onChange={handleChangeJoinCode}
         onKeyPress={handleInputKeyPress}
-        placeholder="Join code"
+        placeholder={t('play.join.joinCodePlaceholder')}
         type="text"
       />
-      <Button onClick={handleJoin}>Play!</Button>
+      <Button onClick={handleJoin}>{t('play.join.submit')}</Button>
       {error ? <p>{error}</p> : null}
     </div>
   );

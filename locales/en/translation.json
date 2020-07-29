@@ -1,0 +1,43 @@
+{
+  "error": {
+    "unspecific": "Oops! Something went wrong.",
+    "joinCodeLength": "Join code must be at least 7 characters long.",
+    "joinCodeNotFound": "No games found with that join code.",
+    "nicknameTaken": "Nickname taken.",
+    "nicknameMissing": "Please enter a nickname."
+  },
+  "play": {
+    "title": "Draw It!",
+    "joinOrCreate": "or",
+    "join": {
+      "joinCodePlaceholder": "Join code",
+      "submit": "Play!"
+    },
+    "createGame": {
+      "linkText": "Create a game"
+    }
+  },
+  "createGame": {
+    "title": "Create Game",
+    "maxRoundsLabel": "Max Rounds",
+    "maxPlayersLabel": "Max Players",
+    "submit": "Go!"
+  },
+  "game": {
+    "setNickname": {
+      "title": "Enter a nickname",
+      "nicknamePlaceholder": "Nickname",
+      "submit": "Join!"
+    },
+    "startGame": {
+      "starting": "Starting...",
+      "start": "Start Game"
+    },
+    "scoreboard": {
+      "titleInProgress": "Scoreboard",
+      "titleRoundEnded": "Round Ended",
+      "titleGameEnded": "Game Ended",
+      "leave": "Leave"
+    }
+  }
+}

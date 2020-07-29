@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import NotificationSystem from 'react-notification-system';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import Flex from '../components/Utils/Flex';
@@ -41,6 +42,8 @@ const ScreenGame = (props) => {
     dispatchNickname,
     dispatchSetCurrentRound,
   } = props;
+
+  const { t } = useTranslation();
 
   const { joinCode } = useParams();
 
@@ -89,10 +92,10 @@ const ScreenGame = (props) => {
   const handleChannelError = (payload) => {
     console.error(payload);
 
-    let message = 'Something went wrong!';
+    let message = t('error.unspecific');
 
     if (payload === 'nickname_taken') {
-      message = 'Nickname taken.';
+      message = t('error.nicknameTaken');
     }
 
     addNotification({ message, level: 'error' });
