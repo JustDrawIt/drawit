@@ -10,17 +10,17 @@ const NicknameForm = (props) => {
 
   const [nickname, setNickname] = useState('');
 
-  const handleChangeNickname = event => setNickname(event.target.value);
-  const handleInputKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      this.joinGame();
-    }
-  };
   const handleJoinGame = () => {
     if (!nickname) {
       return addNotification({ message: 'Please enter a nickname', level: 'error' });
     }
     return onJoinGame(nickname);
+  };
+  const handleChangeNickname = event => setNickname(event.target.value);
+  const handleInputKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleJoinGame();
+    }
   };
 
   return (
