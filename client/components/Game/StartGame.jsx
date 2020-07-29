@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import Button from '../Utils/Button';
@@ -15,6 +16,8 @@ const StartButton = styled(Button)`
 const StartGame = (props) => {
   const { started, channel, dispatchStart } = props;
 
+  const { t } = useTranslation();
+
   const handleClick = () => {
     dispatchStart();
     channel.push('start');
@@ -22,7 +25,7 @@ const StartGame = (props) => {
 
   return (
     <StartButton onClick={handleClick} disabled={started} color="primary">
-      {started ? 'Starting...' : 'Start Game'}
+      {started ? t('game.startGame.starting') : t('game.startGame.start')}
     </StartButton>
   );
 };

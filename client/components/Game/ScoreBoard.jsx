@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import Flex from '../Utils/Flex';
@@ -55,30 +56,34 @@ const LeaveGame = styled(Button)`
 
 const sortByScore = (playerA, playerB) => playerB.score - playerA.score;
 
-const ScoreBoard = ({ roundEnded, gameEnded, scores }) => (
-  <Container>
-    {roundEnded ? <h1>Round Ended</h1> : null}
-    {!roundEnded && !gameEnded ? <h1>Scoreboard</h1> : null}
-    {
-      gameEnded
-      ? (
-        <Flex>
-          <h1>Game Ended</h1>
-          <LeaveGame>
-            <Link to="/play">Leave</Link>
-          </LeaveGame>
-        </Flex>
-      )
-      : null
-    }
-    {scores.slice().sort(sortByScore).map((player, index) => (
-      <Score winner={gameEnded && index === 0} place={player.score} key={player.id}>
-        <b>{player.nickname}</b>
-        <span>{player.score}</span>
-      </Score>
-    ))}
-  </Container>
-);
+const ScoreBoard = ({ roundEnded, gameEnded, scores }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Container>
+      {roundEnded ? <h1>{t('game.scoreboard.titleRoundEnded')}</h1> : null}
+      {!roundEnded && !gameEnded ? <h1>{t('game.scoreboard.titleInProgress')}</h1> : null}
+      {
+        gameEnded
+        ? (
+          <Flex>
+            <h1>{t('game.scoreboard.titleGameEnded')}</h1>
+            <LeaveGame>
+              <Link to="/play">{t('game.scoreboard.leave')}</Link>
+            </LeaveGame>
+          </Flex>
+        )
+        : null
+      }
+      {scores.slice().sort(sortByScore).map((player, index) => (
+        <Score winner={gameEnded && index === 0} place={player.score} key={player.id}>
+          <b>{player.nickname}</b>
+          <span>{player.score}</span>
+        </Score>
+      ))}
+    </Container>
+  );
+};
 
 ScoreBoard.propTypes = {
   roundEnded: PropTypes.bool.isRequired,
