@@ -1,3 +1,44 @@
 {
-
-}
+    "error": {
+      "unspecific": "¡Ay! Algo salió mal.",
+      "joinCodeLength": "Código de unión debe tener al menos 7 caracteres.",
+      "joinCodeNotFound": "No hay juegos encontrados con ese código de unión.",
+      "nicknameTaken": "Apodo tomado.",
+      "nicknameMissing": "Por favor ingrese un apodo."
+    },
+    "play": {
+      "title": "Draw It!",
+      "joinOrCreate": "o",
+      "join": {
+        "joinCodePlaceholder": "Código de unión",
+        "submit": "¡Jugar!"
+      },
+      "createGame": {
+        "linkText": "Crear un juego"
+      }
+    },
+    "createGame": {
+      "title": "Crear un juego",
+      "maxRoundsLabel": "Rondas máximas",
+      "maxPlayersLabel": "Jugadores máximos",
+      "submit": "¡Continuar!"
+    },
+    "game": {
+      "setNickname": {
+        "title": "Introduzca un apodo",
+        "nicknamePlaceholder": "Apodo",
+        "submit": "¡Juntar!"
+      },
+      "startGame": {
+        "starting": "Comenzando...",
+        "start": "Inciar juego"
+      },
+      "scoreboard": {
+        "titleInProgress": "Marcador",
+        "titleRoundEnded": "Redondo terminado",
+        "titleGameEnded": "Juego terminó",
+        "leave": "Dejar"
+      }
+    }
+  }
+  
