@@ -13,7 +13,7 @@ defmodule DrawItWeb.Endpoint do
     at: "/",
     from: :draw_it_web,
     gzip: false,
-    only: ~w(favicon.ico robots.txt index.html main.min.js main.min.js.map)
+    only: ~w(favicon.ico robots.txt index.html locales main.min.js main.min.js.map)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
