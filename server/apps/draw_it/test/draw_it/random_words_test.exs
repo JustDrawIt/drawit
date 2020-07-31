@@ -30,5 +30,9 @@ defmodule DrawIt.RandomWordsTest do
     test "returns a random word in specific language", %{easy_es: easy_es} do
       assert RandomWords.word(:easy, :es) in easy_es
     end
+
+    test "returns nil if could not find word" do
+      assert RandomWords.word(:hard, :es) == nil
+    end
   end
 end

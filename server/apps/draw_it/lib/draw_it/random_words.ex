@@ -18,12 +18,17 @@ defmodule DrawIt.RandomWords do
   @doc """
   Returns a random word based on `difficulty` and `language`.
   Language defaults to `:en`.
+  If no word can be found, `nil` is returned.
   """
   @spec word(difficulty(), language()) :: String.t()
   def word(difficulty, language \\ :en) do
-    difficulty
-    |> load_words(language)
-    |> Enum.random()
+    words = load_words(difficulty, language)
+
+    if Enum.empty?(words) do
+      nil
+    else
+      Enum.random(words)
+    end
   end
 
   @spec load_words(difficulty(), language()) :: [String.t()]
