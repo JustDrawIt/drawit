@@ -5,9 +5,10 @@ defmodule DrawIt.RandomWords do
   """
 
   @type difficulty :: :easy | :medium | :hard
+  @type language :: :en | :es
 
   @doc """
-  Returns a random word of any difficulty.
+  Returns a random english word of any difficulty.
   """
   def word do
     Enum.random([:easy, :medium, :hard])
@@ -15,35 +16,36 @@ defmodule DrawIt.RandomWords do
   end
 
   @doc """
-  Returns a random word based on `difficulty`.
+  Returns a random word based on `difficulty` and `language`.
+  Language defaults to `:en`.
   """
-  @spec word(difficulty()) :: String.t()
-  def word(difficulty) do
+  @spec word(difficulty(), language()) :: String.t()
+  def word(difficulty, language \\ :en) do
     difficulty
-    |> load_words()
+    |> load_words(language)
     |> Enum.random()
   end
 
-  @spec load_words(difficulty()) :: [String.t()]
-  def load_words(difficulty) do
+  @spec load_words(difficulty(), language()) :: [String.t()]
+  def load_words(difficulty, language \\ :en) do
     directory = Path.dirname(__ENV__.file)
-    path = "#{directory}/random_words/#{difficulty}.json"
+    path = "#{directory}/random_words/#{language}/#{difficulty}.json"
 
     path
     |> File.read!()
     |> Jason.decode!()
   end
 
-  @spec all_words() :: %{
+  @spec all_words(language()) :: %{
           easy: [String.t()],
           medium: [String.t()],
           hard: [String.t()],
           all: [String.t()]
         }
-  def all_words do
-    easy = load_words(:easy)
-    medium = load_words(:medium)
-    hard = load_words(:hard)
+  def all_words(language \\ :en) do
+    easy = load_words(:easy, language)
+    medium = load_words(:medium, language)
+    hard = load_words(:hard, language)
     all = easy ++ medium ++ hard
 
     %{
