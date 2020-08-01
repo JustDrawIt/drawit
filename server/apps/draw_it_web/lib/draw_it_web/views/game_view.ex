@@ -16,6 +16,7 @@ defmodule DrawItWeb.GameView do
       join_code: game.join_code,
       max_players: game.max_players,
       max_rounds: game.max_rounds,
+      language: game.language,
       date_inserted: game.date_inserted,
       date_updated: game.date_updated,
       round_length_ms: game.round_length_ms,
