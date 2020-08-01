@@ -275,7 +275,7 @@ defmodule DrawIt.GameServer do
       {id_player_drawer, player_ids_joined} =
         select_drawer(state.player_ids_drawn, state.player_ids_joined)
 
-      word = RandomWords.word(:easy)
+      word = RandomWords.word(:easy, state.game.language)
 
       {:ok, round} =
         Games.create_round(%{

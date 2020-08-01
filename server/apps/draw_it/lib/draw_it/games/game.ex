@@ -15,6 +15,7 @@ defmodule DrawIt.Games.Game do
     field :max_players, :integer, default: 3
     field :max_rounds, :integer, default: 5
     field :round_length_ms, :integer, default: 80_000
+    field :language, :string, default: "en", size: 2
 
     has_many :rounds, Round, foreign_key: :id_game
     has_many :players, Player, foreign_key: :id_game
@@ -25,7 +26,7 @@ defmodule DrawIt.Games.Game do
   @doc false
   def changeset(game, attrs) do
     game
-    |> cast(attrs, [:join_code, :max_players, :max_rounds, :round_length_ms])
+    |> cast(attrs, [:join_code, :max_players, :max_rounds, :round_length_ms, :language])
     |> validate_required([:join_code])
     |> validate_number(:max_players, less_than_or_equal_to: 20, greater_than: 1)
     |> validate_number(:max_rounds, less_than_or_equal_to: 25, greater_than: 0)
