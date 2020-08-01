@@ -9,6 +9,7 @@ import Button from './Utils/Button';
 import Input from './Utils/Input';
 import { setGameAction, setIsAdminAction } from '../store/actions/game.actions';
 import { keysSnakeToCamelCase } from '../helpers/snakeToCamelCase';
+import i18n from '../i18n';
 
 const Container = styled('div')`
   label span {
@@ -40,10 +41,12 @@ const CreateGameForm = (props) => {
   const handleChangeMaxPlayers = event => setMaxPlayers(event.target.value);
   const handleChangeMaxRounds = event => setMaxRounds(event.target.value);
   const handleCreateGame = () => {
+    const language = i18n.language.slice(0, 2);
     const newGamePayload = {
       game: {
         max_players: maxPlayers,
         max_rounds: maxRounds,
+        language,
       },
     };
 
