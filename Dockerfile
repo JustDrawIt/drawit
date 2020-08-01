@@ -9,6 +9,7 @@ RUN npm ci
 
 COPY webpack.config.js .babelrc  ./
 COPY client ./client
+COPY locales ./locales
 
 RUN npm run build
 
