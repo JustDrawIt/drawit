@@ -1,15 +1,15 @@
 FROM node:12-slim as client_build
 
 RUN mkdir /opt/app
-WORKDIR /opt/app
 
-COPY package*.json ./
+COPY locales/ /opt/app/locales
+COPY client/package*.json /opt/app/client/
+
+WORKDIR /opt/app/client
 
 RUN npm ci
 
-COPY webpack.config.js .babelrc  ./
-COPY client ./client
-COPY locales ./locales
+COPY client/ ./
 
 RUN npm run build
 

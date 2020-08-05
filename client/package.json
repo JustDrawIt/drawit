@@ -16,19 +16,19 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "^10"
+    "node": ">=10 <=12"
   },
   "jest": {
     "setupFiles": [
-      "./client/setupJest.js"
+      "./setupJest.js"
     ]
   },
   "scripts": {
     "start": "npm run dev",
-    "test": "jest client/",
-    "lint": "eslint client/**/*.js*",
-    "dev": "webpack-dev-server --mode development --hot --history-api-fallback --output public/main.js",
-    "build": "webpack --mode production --output ./server/apps/draw_it_web/priv/static/main.min.js && cp -r locales/ server/apps/draw_it_web/priv/static/"
+    "test": "jest",
+    "lint": "eslint **/*.js*",
+    "dev": "webpack-dev-server --mode development --progress",
+    "build": "webpack --mode production --output ../server/apps/draw_it_web/priv/static/main.min.js && cp -r ../locales/ ../server/apps/draw_it_web/priv/static/"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

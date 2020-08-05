@@ -3,8 +3,9 @@
 .elixir_ls
 .dockerignore
 
-node_modules
-public
-server/_build
-server/deps
-server/apps/**/test
+/client/node_modules
+/client/**/*.test.*
+
+/server/_build
+/server/deps
+/server/apps/**/test
