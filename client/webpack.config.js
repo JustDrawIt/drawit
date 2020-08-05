@@ -1,10 +1,11 @@
+const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
   entry: [
     '@babel/polyfill',
-    './client/index.jsx',
+    './index.jsx',
   ],
   module: {
     rules: [
@@ -29,14 +30,16 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
   },
-  output: {
-    publicPath: '/',
-  },
   devtool: isProd ? 'source-map' : 'inline-source-map',
   plugins: [
     new HtmlWebPackPlugin({
-      template: './client/index.html',
+      template: 'index.html',
       filename: 'index.html',
     }),
   ],
+  devServer: {
+    contentBase: path.join(__dirname, '../'),
+    historyApiFallback: true,
+    hot: true,
+  },
 };

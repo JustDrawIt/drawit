@@ -25,6 +25,7 @@ See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for contribution guidelines.
 ### Getting started
 
 ```sh
+cd client/
 npm install # installs client dependencies
 npm start # start client webpack server
 
