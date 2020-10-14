@@ -24,6 +24,18 @@
         "infra",
         "review"
       ]
+    },
+    {
+      "login": "ejeric23",
+      "name": "Eric O'Neal Jr. ",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/33336793?v=4",
+      "profile": "https://www.linkedin.com/in/ejeric23/",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7
