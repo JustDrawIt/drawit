@@ -48,6 +48,15 @@
         "ideas",
         "review"
       ]
+    },
+    {
+      "login": "natastro",
+      "name": "Natalie Stroud",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/17433156?v=4",
+      "profile": "http://www.natalieastroud.com/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7
