@@ -9,6 +9,22 @@
   "imageSize": 80,
   "commit": true,
   "commitConvention": "angular",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "cainwatson",
+      "name": "Cain Watson",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/23223956?v=4",
+      "profile": "https://github.com/cainwatson",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "design",
+        "ideas",
+        "infra",
+        "review"
+      ]
+    }
+  ],
   "contributorsPerLine": 7
 }
