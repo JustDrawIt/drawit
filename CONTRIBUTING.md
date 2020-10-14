@@ -53,7 +53,7 @@ To start developing the client, you will need the following tools installed:
 
 - Node 14.12.0, install [here](https://nodejs.org/en/download/)
 
-Once you've installed these, run the following commands in the **root directory**, and not `client/`.
+Once you've installed these, run the following commands in the `client/` directory.
 
 - Install the client dependencies:
 
