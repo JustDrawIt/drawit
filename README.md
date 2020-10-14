@@ -2,37 +2,20 @@
 
 > Draw It! is a multiplayer online game where you try to guess what your friends are drawing.
 
-## Team
-
-- __Product Owner__: Jelani Hankins
-- __Scrum Master__: Cain Watson
-- __Development Team Members__: Jelani Hankins, Cain Watson, Eric O'Neal
-
-## Requirements
-
-- Node 10
-- Elixir 1.10.3 (Erlang 22.0)
-- PostgresSQL 10.2
-
-### Roadmap
-
-View the project roadmap [here](https://github.com/JustDrawIt/drawit/issues)
-
 ## Contributing
 
-See [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for contribution guidelines.
+Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for the development process.
 
-### Getting started
+## Contributors ✨
 
-```sh
-cd client/
-npm install # installs client dependencies
-npm start # start client webpack server
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-cd server/
-mix deps.get # install dependencies
-mix test # run tests
-mix test.watch # run test in watch mode
-mix phx.server # run server
-iex -S mix phx.server # runs server with iex
-```
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
