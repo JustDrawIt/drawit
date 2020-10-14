@@ -6,9 +6,59 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 80,
+  "imageSize": 100,
   "commit": true,
   "commitConvention": "angular",
-  "contributors": [],
+  "contributorsSortAlphabetically": true,
+  "contributors": [
+    {
+      "login": "cainwatson",
+      "name": "Cain Watson",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/23223956?v=4",
+      "profile": "https://github.com/cainwatson",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "design",
+        "ideas",
+        "infra",
+        "review"
+      ]
+    },
+    {
+      "login": "ejeric23",
+      "name": "Eric O'Neal Jr. ",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/33336793?v=4",
+      "profile": "https://www.linkedin.com/in/ejeric23/",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "review"
+      ]
+    },
+    {
+      "login": "jelani504",
+      "name": "jelani504",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/24530876?v=4",
+      "profile": "https://github.com/jelani504",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "review"
+      ]
+    },
+    {
+      "login": "natastro",
+      "name": "Natalie Stroud",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/17433156?v=4",
+      "profile": "http://www.natalieastroud.com/",
+      "contributions": [
+        "translation"
+      ]
+    }
+  ],
   "contributorsPerLine": 7
 }
