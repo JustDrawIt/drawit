@@ -25,7 +25,7 @@ secret_key_base =
 port = System.get_env("PORT")
 host = System.get_env("HOST")
 
-config :draw_it_web, DrawItWeb.Endpoint,
+config :draw_it, DrawItWeb.Endpoint,
   http: [port: port],
   url: [scheme: "https", host: host, port: port],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],

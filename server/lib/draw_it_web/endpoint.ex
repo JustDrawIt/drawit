@@ -1,5 +1,5 @@
 defmodule DrawItWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :draw_it_web
+  use Phoenix.Endpoint, otp_app: :draw_it
 
   socket "/socket", DrawItWeb.UserSocket,
     websocket: [timeout: 45_000],
@@ -11,7 +11,7 @@ defmodule DrawItWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :draw_it_web,
+    from: :draw_it,
     gzip: false,
     only: ~w(favicon.ico robots.txt index.html locales main.min.js main.min.js.map)
 
