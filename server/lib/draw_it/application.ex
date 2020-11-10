@@ -11,7 +11,7 @@ defmodule DrawIt.Application do
       DrawIt.Repo,
       {Registry, [keys: :unique, name: :game_server_registry]},
       # Start the Endpoint (http/https)
-      DrawItWeb.Endpoint,
+      DrawItWeb.Endpoint
       # Start the Telemetry supervisor
       # DrawItWeb.Telemetry,
       # Start the PubSub system

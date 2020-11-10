@@ -34,21 +34,18 @@ defmodule DrawIt.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-    defp dialyzer do
+  defp dialyzer do
     [
       plt_core_path: "priv/plts",
       plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
     ]
   end
 
-
   defp docs do
     [
       main: DrawIt
     ]
   end
-
-
 
   # Dependencies can be Hex packages:
   #
@@ -80,7 +77,7 @@ defmodule DrawIt.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:cors_plug, "~> 2.0"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
