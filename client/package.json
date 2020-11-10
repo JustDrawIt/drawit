@@ -28,7 +28,7 @@
     "test": "jest",
     "lint": "eslint **/*.js*",
     "dev": "webpack-dev-server --mode development --progress",
-    "build": "webpack --mode production --output ../server/apps/draw_it_web/priv/static/main.min.js && cp -r ../locales/ ../server/apps/draw_it_web/priv/static/"
+    "build": "webpack --mode production --output ../server/priv/static/main.min.js && cp -r ../locales/ ../server/priv/static/"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

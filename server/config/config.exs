@@ -2,17 +2,28 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-# By default, the umbrella project as well as each child
-# application will require this configuration file, ensuring
-# they all use the same configuration. While one could
-# configure all applications here, we prefer to delegate
-# back to each application for organization purposes.
-import_config "../apps/*/config/config.exs"
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :draw_it,
+  ecto_repos: [DrawIt.Repo]
+
+# General application configuration
+config :draw_it,
+  ecto_repos: [DrawIt.Repo],
+  generators: [context_app: :draw_it]
+
+# Configures the endpoint
+config :draw_it, DrawItWeb.Endpoint,
+  url: [host: "localhost"],
+  secret_key_base: "i7VAZmXVLl9qndnB9mD9dyQWk37OcTeOnHkQhKsvhoICoeWzq/qUhnyqMBLg0BLk",
+  render_errors: [view: DrawItWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub: [name: DrawItWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

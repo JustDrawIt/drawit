@@ -51,7 +51,6 @@ release :drawit do
   set applications: [
     :runtime_tools,
     draw_it: :permanent,
-    draw_it_web: :permanent
   ]
   set config_providers: [
     {Distillery.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/etc/config.exs"]}
@@ -60,4 +59,3 @@ release :drawit do
     {:copy, "rel/config/config.exs", "etc/config.exs"}
   ]
 end
-
