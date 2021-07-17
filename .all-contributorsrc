@@ -6,7 +6,7 @@
   "files": [
     "README.md"
   ],
-  "imageSize": 100,
+  "imageSize": 80,
   "commit": true,
   "commitConvention": "angular",
   "contributorsSortAlphabetically": true,
@@ -17,13 +17,8 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/23223956?v=4",
       "profile": "https://github.com/cainwatson",
       "contributions": [
-        "bug",
         "code",
-        "doc",
-        "design",
         "ideas",
-        "infra",
-        "review",
         "maintenance"
       ]
     },
@@ -34,9 +29,7 @@
       "profile": "https://www.linkedin.com/in/ejeric23/",
       "contributions": [
         "code",
-        "design",
-        "ideas",
-        "review"
+        "ideas"
       ]
     },
     {
@@ -46,9 +39,7 @@
       "profile": "https://github.com/jelani504",
       "contributions": [
         "code",
-        "design",
-        "ideas",
-        "review"
+        "ideas"
       ]
     },
     {
