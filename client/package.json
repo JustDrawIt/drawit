@@ -58,7 +58,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "emotion": "^10.0.27",
     "i18next": "^19.6.3",
     "i18next-browser-languagedetector": "^5.0.0",
